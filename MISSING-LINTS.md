@@ -1,5 +1,7 @@
 # Requirements none of these four tools checks
 
+[![中文](https://img.shields.io/badge/中文-readme-blue)](MISSING-LINTS.zh.md) · [English](MISSING-LINTS.md)
+
 Written for the package, not for this tree. Each item says what is unchecked,
 why it is unchecked, and — where it matters — a real incident that a check
 would have caught.

@@ -4,6 +4,15 @@
 
 **193 confirmed defects across four linters.**
 
+## Contents
+
+- [zlint](zlint/) — 94 defects, 75 with scripts
+- [pkilint](pkilint/) — 39 defects, 14 with scripts
+- [x509lint](x509lint/) — 21 defects, 6 with scripts
+- [certlint](certlint/) — 39 defects, 15 with scripts
+- [Requirements none of these four tools checks](MISSING-LINTS.md)
+- [zlint-runner](zlint-runner/) — interactive helper to run zlint on a certificate
+
 | tool | entries | with a script | pinned at | tracker read |
 |---|---:|---:|---|---|
 | [zlint](zlint/) | 94 | 75 | `v3.7.1-20-g1007b1d5` | 2026-08-24 |

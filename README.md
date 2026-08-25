@@ -12,6 +12,7 @@
 - [certlint](certlint/) — 39 defects, 15 with scripts
 - [Requirements none of these four tools checks](MISSING-LINTS.md)
 - [zlint-runner](zlint-runner/) — interactive helper to run zlint on a certificate
+- [How to run this project](USAGE.md)
 
 | tool | entries | with a script | pinned at | tracker read |
 |---|---:|---:|---|---|

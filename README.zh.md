@@ -12,6 +12,7 @@
 - [certlint](certlint/) —— 39 条缺陷，15 条带脚本
 - [四个工具都没有检查的合规要求](MISSING-LINTS.zh.md)
 - [zlint-runner](zlint-runner/) —— 交互式运行 zlint 检查证书的小工具
+- [项目运行指南（中文）](USAGE.zh.md)
 
 | 工具 | 条目数 | 带复现脚本 | 固定版本 | 跟踪器读取日期 |
 |---|---:|---:|---|---|

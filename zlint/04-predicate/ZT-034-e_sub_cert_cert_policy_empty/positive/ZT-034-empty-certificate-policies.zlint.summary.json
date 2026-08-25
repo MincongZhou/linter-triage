@@ -1,8 +1,0 @@
-{
-  "w_ext_subject_key_identifier_not_recommended_subscriber": {
-    "result": "warn"
-  },
-  "w_subject_common_name_included": {
-    "result": "warn"
-  }
-}

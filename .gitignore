@@ -5,3 +5,10 @@ zlint-runner/*.spec
 # Python 缓存
 __pycache__/
 *.pyc
+
+# 运行产物（run_zlint / run-readable 生成的输出）
+*.zlint.json
+*.zlint.summary.json
+*.batch.summary.json
+zlint-readable.log
+zlint-readable.pretty.log

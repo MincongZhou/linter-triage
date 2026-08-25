@@ -20,6 +20,8 @@
 | [x509lint](x509lint/) | 21 | 6 | `103c92f` | 2026-08-24 |
 | [certlint](certlint/) | 39 | 15 | `528d78e` | 2026-08-24 |
 
+> **Note on `zlint.exe`:** the `zlint.exe` in this repository's root is **version 3.6.8**. This is the latest zlint release that still ships a Windows binary — newer versions dropped Windows (and FreeBSD) release targets, so no prebuilt `zlint.exe` is available for the pinned `v3.7.1-20-g1007b1d5`. On Windows you must build newer zlint from source yourself, or use 3.6.8 as provided here.
+
 **110 of 193 ship a runnable `repro.sh`.** The rest were confirmed by reading the pinned source and running the tool by hand; each of those states what it was verified against and what the tool printed, and most name a fixture already in your own tree. A claim about unreachable code is settled by reading it, and packaging a script that demonstrates silence would add nothing.
 
 Each tool directory has its own index, its own contiguous numbering and a `run-all.sh`. Nothing here depends on anything else here.

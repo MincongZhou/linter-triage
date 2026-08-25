@@ -29,6 +29,29 @@ zlint-runner/
    - 可选填单个 lint 名（`-includeNames`），留空表示全部。
 4. 结果会打印到屏幕，并保存为 `<证书>.zlint.json`。若输出为 JSON，还会额外生成一份只含 `error`/`warn`/`fatal` 的 `<证书>.zlint.summary.json`。
 
+### 批量模式 —— 遍历一个文件夹里的所有证书
+
+无需交互，直接指定文件夹即可递归遍历其中所有证书（`.pem`/`.der`/`.crt`/`.cer`）：
+
+```powershell
+# 批量为某个文件夹下的所有证书运行 zlint
+python run_zlint.py --dir "路径/到/证书文件夹" --zlint "路径/到/zlint.exe"
+
+# 或从已打包的 exe（独立版无需 Python）
+run_zlint.exe --dir "路径/到/证书文件夹" --zlint "路径/到/zlint.exe"
+```
+
+可选参数：
+- `--pattern`：只匹配特定 glob，例如只跑项目的 positive 样本：
+  ```powershell
+  python run_zlint.py --dir "zlint" --pattern "*/positive/*.pem" --zlint "zlint.exe"
+  ```
+- `--include`：只运行某个 lint 名（同 `-includeNames`）。
+
+批量模式的行为：
+- 每个证书单独保存 `<证书>.zlint.json` 与 `<证书>.zlint.summary.json`（仅含 error/warn/fatal）。
+- 额外在文件夹下生成 `<文件夹名>.batch.summary.json`，汇总所有证书的命中结果，并打印命中证书数与检查总数。
+
 ### 方式二 —— 从源码运行（需 Python）
 
 ```powershell

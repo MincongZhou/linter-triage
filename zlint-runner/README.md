@@ -29,6 +29,29 @@ zlint-runner/
    - optionally a single lint name (`-includeNames`); leave blank for all.
 4. Results print to screen and are saved as `<cert>.zlint.json`. If the output is JSON, a `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal` entries is also written.
 
+### Batch mode — scan every certificate in a folder
+
+No interaction needed; just point at a folder and it recursively scans all certificates (`.pem`/`.der`/`.crt`/`.cer`):
+
+```powershell
+# Batch-run zlint over every cert in a folder
+python run_zlint.py --dir "path/to/cert-folder" --zlint "path/to/zlint.exe"
+
+# Or from the bundled standalone exe (no Python needed)
+run_zlint.exe --dir "path/to/cert-folder" --zlint "path/to/zlint.exe"
+```
+
+Optional arguments:
+- `--pattern`: match a specific glob, e.g. only the project's positive samples:
+  ```powershell
+  python run_zlint.py --dir "zlint" --pattern "*/positive/*.pem" --zlint "zlint.exe"
+  ```
+- `--include`: run only one lint name (same as `-includeNames`).
+
+Batch-mode behavior:
+- Each certificate is saved as `<cert>.zlint.json` and `<cert>.zlint.summary.json` (error/warn/fatal only).
+- An extra `<folder-name>.batch.summary.json` is written in the folder, summarizing hits across all certificates, and the count of hit certificates and total checks is printed.
+
 ### Option B — run from source (needs Python)
 
 ```powershell

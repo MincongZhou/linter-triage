@@ -1,0 +1,3100 @@
+
+################ ZT-001-six-subjectAltName-name-type-lints-hold-CA-c
+== positive/ZT-001-subordinate-ca-san-directoryname.pem
+   subject: subject=C=MO, O=Macao Post and Telecommunications Bureau, OU=CTT eSignTrust Services, OU=Terms of use at https://www.esigntrust.com/CPS, CN=eSignTrust Government Certification Authority (G03)
+   X509v3 Basic Constraints: critical
+       CA:TRUE, pathlen:0
+   X509v3 Subject Alternative Name: 
+       DirName:/CN=MPEST-PROD-Online-1-11
+{
+  "e_ext_san_directory_name_present": {
+    "result": "error"
+  },
+  "e_ext_san_edi_party_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_missing": {
+    "result": "NA"
+  },
+  "e_ext_san_other_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_registered_id_present": {
+    "result": "pass"
+  },
+  "e_ext_san_rfc822_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_uniform_resource_identifier_present": {
+    "result": "pass"
+  }
+}
+
+
+== negative/ZT-001-control-subscriber-san-directoryname.pem
+   subject: subject=description=Qualified Certificate: AAPP-SEA-M-SW-KPSC, OU=sede electrónica, OU=SEDE ELECTRONICA AUTORIDAD PORTUARIA DE LAS PALMAS, serialNumber=Q3567002E, O=AUTORIDAD PORTUARIA DE LAS PALMAS, CN=http://sede.palmasport.es/sedeelectronica/, C=ES
+   X509v3 Basic Constraints: critical
+       CA:FALSE
+   X509v3 Subject Alternative Name: 
+       DNS:http://sede.palmasport.es/sedeelectronica/, DirName:/2.16.724.1.3.5.1.2.1=sede electr\xC3\xB3nica/2.16.724.1.3.5.1.2.2=AUTORIDAD PORTUARIA DE LAS PALMAS/2.16.724.1.3.5.1.2.3=Q3567002E/2.16.724.1.3.5.1.2.4=SEDE ELECTRONICA AUTORIDAD PORTUARIA DE LAS PALMAS
+{
+  "e_ext_san_directory_name_present": {
+    "result": "error"
+  },
+  "e_ext_san_edi_party_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_missing": {
+    "result": "pass"
+  },
+  "e_ext_san_other_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_registered_id_present": {
+    "result": "pass"
+  },
+  "e_ext_san_rfc822_name_present": {
+    "result": "pass"
+  },
+  "e_ext_san_uniform_resource_identifier_present": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  eSignTrust Government Certification Authority (G03), CA:TRUE pathlen:0,
+subjectAltName holding one directoryName, notBefore 2017-01-01
+e_ext_san_directory_name_present error
+      e_ext_san_missing                  NA      <- same clause, scoped
+
+A Spanish port authority end-entity certificate, CA:FALSE, subjectAltName
+holding a dNSName and a directoryName, notBefore 2016-08-28
+e_ext_san_directory_name_present error e_ext_san_missing pass
+
+Correct: NA on the first, error on the second. The requirement the six lints
+cite binds Subscriber Certificates, and the lint beside them that cites it
+says so.
+
+Per lint, firings and how many of them are CA certificates:
+
+e_ext_san_directory_name_present 444 411 e_ext_san_rfc822_name_present 438 385
+e_ext_san_uniform_resource_identifier_present 53 30
+e_ext_san_other_name_present 11 4 e_ext_san_edi_party_name_present 3 1
+e_ext_san_registered_id_present 4 0
+
+The scope is deliberate rather than an oversight, which is worth stating
+plainly: the directoryName lint's own fixtures are
+SANDirectoryNameBeginning.pem
+and SANDirectoryNameEnd.pem, both CA:TRUE and both expected `lint.Error`, and
+its negative fixture is named SANCaGood.pem. Narrowing CheckApplies therefore
+requires new fixtures, and the two existing positives become NA. That is the
+work the fix costs, not an argument against it — the clause the lint cites has
+never bound those certificates.
+
+Fix: open each of the six CheckApplies with util.IsSubscriberCert(c), matching
+lint_ext_san_missing.go on the same clause, and reissue the fixtures as
+end-entity certificates. NOTE
+
+################ ZT-002-e_ext_cert_policy_explicit_text_too_long
+== positive/ZT-002-explicittext-200-characters-205-bytes.pem
+{
+  "e_ext_cert_policy_explicit_text_too_long": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-002-control-explicittext-201-characters.pem
+{
+  "e_ext_cert_policy_explicit_text_too_long": {
+    "result": "error"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  200 characters / 205 bytes (bug1536213-crtsh250875409)
+      e_ext_cert_policy_explicit_text_too_long   error
+
+  201 characters / 201 bytes (trust-store intermediate-239a0e23591d7413)
+      e_ext_cert_policy_explicit_text_too_long   error
+
+Correct: pass on the first, error on the second. The first is inside the bound
+the lint's own Description and citation state; only its UTF-8 encoding is over.
+
+The counts are 197 to 200 characters against 202 to 205 bytes, so the whole
+population sits within five characters of the bound and is faulted by the
+encoding rather than by the text.
+
+Fix: `utf8.RuneCountInString(runes) > 200`. For BMPString the same call is
+correct after ParseBMPString, since the decode has already produced code
+points. A stricter reading would count UTF-16 code units for BMPString, which
+differs only for astral characters that BMPString cannot represent anyway.
+
+################ ZT-003-e_subject_dn_not_printable_characters
+== positive/ZT-003-subject-givenname-bmpstring.pem
+   subject=GN=BMPSTRING:BMPString
+{
+  "e_subject_dn_not_printable_characters": {
+    "result": "error"
+  },
+  "e_subject_rdns_correct_encoding": {
+    "result": "error",
+    "details": "Attribute givenName in subjectDN has the wrong encoding BMPString."
+  }
+}
+
+
+== positive/ZT-003-subject-commonname-universalstring.pem
+   subject=CN=UNIVERSALSTRING:U
+{
+  "e_subject_dn_not_printable_characters": {
+    "result": "error"
+  },
+  "e_subject_rdns_correct_encoding": {
+    "result": "error",
+    "details": "Attribute commonName in subjectDN has the wrong encoding UniversalString."
+  }
+}
+
+
+== negative/ZT-003-control-real-control-character.pem
+   subject=O=UTF8STRING:Business Enablement – North American Quality Systems
+{
+  "e_subject_dn_not_printable_characters": {
+    "result": "error"
+  },
+  "e_subject_rdns_correct_encoding": {
+    "result": "NE"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  subjectGivenNameWrongEncoding.pem, givenName = BMPString "BMPString"
+      e_subject_dn_not_printable_characters   error
+      e_subject_rdns_correct_encoding         error   (correct)
+
+  subjectCNWrongEncoding.pem, commonName = UniversalString "U"
+      e_subject_dn_not_printable_characters   error
+      e_subject_rdns_correct_encoding         error   (correct)
+
+  subjectDNNotPrintableCharacters.pem, a UTF8String holding U+0080 and U+0093
+      e_subject_dn_not_printable_characters   error   (correct)
+
+Correct: pass on the first two. Neither subject contains a character below
+U+0020 or in U+007F..U+009F. What they contain is a string type the BR
+encoding table forbids, which the sibling lint reports and is the finding a CA
+would act on.
+
+UniversalString subject attribute; all thirteen have a 0x00 in the content
+octets, all thirteen are faulted, and none of them holds a control character.
+The other 12 firings are narrow-string attributes that really do -- eleven
+subscriber certificates from CA incident bugs and one trust-store root. So 13
+of 25 firings, 52 percent, are this defect. Eight of the thirteen are zlint's
+own testdata.
+
+Fix: decode by tag before scanning. util.ParseBMPString already exists for the
+two-octet case and the lint file next door,
+lint_ext_cert_policy_explicit_text_too_long.go, calls it for exactly this
+reason. UniversalString needs a four-octet equivalent. NOTE
+
+################ ZT-004-e_ev_organization_id_missing
+== the certificate the Problem Report was about
+   subject=C=NL, O=QuoVadis Trustlink B.V., organizationIdentifier=NTRNL-30237459, CN=DigiCert QuoVadis G3 Qualified TLS RSA4096 SHA256 2023 CA1
+               X509v3 Basic Constraints: critical
+                   CA:TRUE, pathlen:0
+
+{
+  "e_ev_organization_id_missing": {
+    "result": "error",
+    "details": "subject:organizationIdentifier field is present in an EV certificate but the CA/Browser Forum Organization Identifier Field Extension is missing"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  e_ev_organization_id_missing   error
+      "subject:organizationIdentifier field is present in an EV certificate
+       but the CA/Browser Forum Organization Identifier Field Extension is
+       missing"
+
+Correct: NA.
+
+They are predominantly EU qualified-hierarchy intermediates whose
+subjects carry an organizationIdentifier under ETSI EN 319 412-1 (forms such
+as NTRNL-30237459 and VATES-Q2826004J) and which assert an EV policy because
+they may *issue* EV, not because they are EV certificates. The corpus holds 749
+CA certificates naming an organizationIdentifier without the extension; the 26
+are those also asserting an EV policy, which is this lint's own gate.
+
+The population is the one least able to act on the report. A subordinate CA
+cannot be reissued to add an extension without being redistributed, and the
+requirement it would be satisfying does not exist.
+
+Fix: gate CheckApplies on the certificate being a Subscriber Certificate, as
+the lints implementing the rest of section 7.1.2 do. Independently, the EV
+Guidelines would benefit from the profile cleanup the Baseline Requirements
+received in Ballot SC-62; the incident report proposes exactly that.
+
+################ ZT-005-e_key_usage_and_extended_key_usage_inconsist
+== positive/ZT-005-zlint-fixture-serverauth-plus-nonrepudiation.pem
+               X509v3 Key Usage: critical
+                   Digital Signature, Non Repudiation
+               X509v3 Extended Key Usage: 
+                   TLS Web Server Authentication
+       Signature Algorithm: ecdsa-with-SHA256
+{
+  "e_key_usage_and_extended_key_usage_inconsistent": {
+    "result": "error",
+    "details": "KeyUsage [DigitalSignature ContentCommitment] (00000011) inconsistent with ExtKeyUsage serverAuth"
+  }
+}
+
+
+== negative/ZT-005-control-zlint-fixture-serverauth-digitalsignature.pem
+               X509v3 Key Usage: critical
+                   Digital Signature
+               X509v3 Extended Key Usage: 
+                   TLS Web Server Authentication
+       Signature Algorithm: ecdsa-with-SHA256
+{
+  "e_key_usage_and_extended_key_usage_inconsistent": {
+    "result": "pass"
+  }
+}
+
+
+== positive/ZT-005-zlint-fixture-multipurpose-plus-dataencipherment.pem
+               X509v3 Key Usage: critical
+                   Digital Signature, Data Encipherment
+               X509v3 Extended Key Usage: 
+                   E-mail Protection, TLS Web Client Authentication
+       Signature Algorithm: ecdsa-with-SHA256
+{
+  "e_key_usage_and_extended_key_usage_inconsistent": {
+    "result": "error",
+    "details": "KeyUsage [DataEncipherment DigitalSignature] (00001001) inconsistent with multiple purpose ExtKeyUsage [clientAuth emailProtection]"
+  }
+}
+
+
+== positive/ZT-005-serverauth-all-three-listed-bits.pem
+               X509v3 Key Usage: critical
+                   Digital Signature, Key Encipherment, Key Agreement
+               X509v3 Extended Key Usage: 
+                   TLS Web Server Authentication
+               Netscape Cert Type: 
+{
+  "e_key_usage_and_extended_key_usage_inconsistent": {
+    "result": "error",
+    "details": "KeyUsage [KeyAgreement DigitalSignature KeyEncipherment] (00010101) inconsistent with ExtKeyUsage serverAuth"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  kuEkuInconsistent.pem      KU digitalSignature+nonRepudiation, EKU serverAuth
+      error   "KeyUsage [DigitalSignature ContentCommitment] (00000011)
+               inconsistent with ExtKeyUsage serverAuth"
+kuEkuConsistent.pem KU digitalSignature, EKU serverAuth pass
+kuEkuInconsistentMp.pem KU digitalSignature+dataEncipherment, EKU
+emailProtection+clientAuth error bug1262610-crtsh13043775 KU
+digitalSignature+keyEncipherment+keyAgreement, EKU serverAuth error
+
+Correct: pass on all four.
+
+The first two are zlint's own fixtures for this lint and differ by exactly one
+bit. Both assert digitalSignature, which the clause lists for
+id-kp-serverAuth, so both are usable for TLS server authentication and neither
+is in the state 4.2.1.12 forbids. The lint's own details line prints
+DigitalSignature while declaring the certificate inconsistent. The third is
+zlint's multi-purpose fixture and has the same shape: digitalSignature is on
+the list for both id-kp-emailProtection and id-kp-clientAuth.
+
+The fourth is a real certificate and isolates a second reading inside the same
+table. Its three bits -- digitalSignature, keyEncipherment, keyAgreement --
+are exactly the three RFC 5280 names for id-kp-serverAuth:
+
+    id-kp-serverAuth             OBJECT IDENTIFIER ::= { id-kp 1 }
+-- TLS WWW server authentication -- Key usage bits that may be consistent:
+digitalSignature, -- keyEncipherment or keyAgreement
+
+The table enumerates the pairs but not the triple, its comment reading the "or"
+as exclusive: "(digitalSignature OR (keyEncipherment XOR keyAgreement))". That
+reading is arguable for id-kp-emailProtection, whose comment parenthesises
+"(keyEncipherment or keyAgreement)" against an "and/or" earlier in the same
+sentence, and it is not supported for id-kp-serverAuth, whose comment has no
+such parenthesis. It is recorded here as the sharper half of the same defect
+rather than as a separate issue, because the fix below removes both.
+
+299 dataEncipherment 16 keyEncipherment 130 nonRepudiation 10 cRLSign 35
+keyCertSign 1 keyAgreement
+
+counted per certificate, so a certificate carrying two surplus bits appears
+twice. The other 6 assert only bits that are listed and fail on the exclusive
+reading alone. The remaining 3 of the 403 are certificates where no consistent
+purpose exists, which is what the clause forbids and what the lint should
+report.
+
+Adjacent, and not numbered: two of the six above, crtsh6039677462 and
+crtsh6221458302 from bug1793692, carry a keyUsage BIT STRING declaring one
+unused bit whose padding bit is set (03 02 01 81). zlint reports that correctly
+under e_incorrect_ku_encoding and under e_key_usage_incorrect_length, whose
+details say "the key usage ... extension is not parseable" -- and this lint
+then computes a finding from the zero mask zcrypto returned, printing
+"KeyUsage [] (00000000) inconsistent with ExtKeyUsage ocspSigning". A finding
+derived from a value the same run declared unparseable is a smaller problem
+than the one recorded here and has not been isolated further.
+
+Fix: key the table on a mask rather than on exact combinations, and test
+intersection rather than membership:
+
+    var eku = map[x509.ExtKeyUsage]x509.KeyUsage{
+        x509.ExtKeyUsageServerAuth: x509.KeyUsageDigitalSignature |
+            x509.KeyUsageKeyEncipherment | x509.KeyUsageKeyAgreement,
+        ...
+    }
+    // union the masks of every tabulated purpose present, then
+    if c.KeyUsage & union == 0 { Error }
+
+That is the state the clause and this lint's own Description name, and it
+collapses strictPurpose and multiPurpose into one path. A keyUsage bit that no
+present purpose lists is a separate observation, and if it is wanted it
+belongs to a lint with a w_ or n_ prefix -- the clause does not forbid it, and
+reporting it at error condemns certificates that break nothing. NOTE
+
+################ ZT-006-e_ext_cert_policy_explicit_text_too_long
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/00-already-filed/ZT-006-e_ext_cert_policy_explicit_text_too_long/repro.sh: line 19: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- observed --
+
+observed: error   (a 200-character explicitText reported as too long)
+correct : pass
+fix     : count runes, not bytes, in both arms of the tag switch
+
+################ ZT-007-e_subject_dn_not_printable_characters
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/00-already-filed/ZT-007-e_subject_dn_not_printable_characters/repro.sh: line 23: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- positive/ZT-007-universalstring-cn-u.pem --
+  subject=CN=U
+
+-- positive/ZT-007-bmpstring-real-root.der --
+  subject=C=AT, O=A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH, OU=A-Trust-Qual-01, CN=A-Trust-Qual-01
+
+observed: error   (control characters reported)
+correct : pass    (no decoded value contains one)
+fix     : decode the value per its declared tag before scanning for C0
+
+################ ZT-008-e_qcstatem_mandatory_etsi_statems
+== the two certificates
+   subject: FNMT-RCM 'AC Componentes Informaticos' -- the CA and the
+            profile of Mozilla bug 1625421, from 
+   control: pdsAllHttps.pem -- zlint's OWN test fixture.
+   Neither carries QcCompliance. Both carry other ETSI ESI statements.
+   subject.pem                                issuer C=ES, O=FNMT-RCM, OU=AC Componentes Informáticos
+   ZT-008-control-qualified-policy.pem        issuer CN=Lint CA, O=Lint, C=DE
+
+== the certificate policy each asserts, which is the whole question
+   subject.pem                                0.4.0.2042.1.7 
+   ZT-008-control-qualified-policy.pem        0.4.0.194112.1.1 
+   0.4.0.2042.1.7  is OVCP, from EN 319 411-1  -- NOT qualified
+   0.4.0.194112.1.1 is QCP-n, from EN 319 411-2 --     qualified
+
+== what the lint says about each
+   subject.pem                                {"e_qcstatem_mandatory_etsi_statems":{"result":"error","details":"missing mandatory ETSI QC statement"}}
+   ZT-008-control-qualified-policy.pem        {"e_qcstatem_mandatory_etsi_statems":{"result":"error","details":"missing mandatory ETSI QC statement"}}
+
+   observed  error on both, with identical details.
+   correct   pass on the OVCP certificate, which QCS-5-01 does not
+             govern; error on the QCP-n one, which it does.
+
+   The two differ only in the arc of the policy they assert, and the
+   lint's verdict does not move -- which is the mechanism: CheckApplies
+   never reads certificatePolicies at all.
+
+== fix
+   Gate CheckApplies on the certificate claiming EU qualified status:
+   an EN 319 411-2 policy identifier (arc 0.4.0.194112.1.), which is
+   the only claim available to a certificate that lacks QcCompliance.
+
+################ ZT-009-e_ext_duplicate_extension
+== zlint's own fixture multDupeExts.pem, which duplicates two extensions
+   2.5.29.14 subjectKeyIdentifier and 2.5.29.35 authorityKeyIdentifier
+
+   distinct details strings over 40 runs of the same binary:
+
+   observed  the same two OIDs in either order.
+   correct   one order, every time.
+
+== fix
+   sort.Strings(duplicateOIDsList) before the Join. The list is built
+   solely to be joined, so nothing else depends on its order.
+
+################ ZT-010-util.CABV201Date
+== notBefore 2017-07-10, inside the ballot-201 window
+{
+  "e_ext_tor_service_descriptor_hash_invalid": {
+    "result": "NE"
+  }
+}
+
+== notBefore 2017-07-28, on CABV201Date  (control)
+{
+  "e_ext_tor_service_descriptor_hash_invalid": {
+    "result": "error",
+    "details": "certificate contained a .onion domain but is missing a TorServiceDescriptor extension (oid 2.23.140.1.31)"
+  }
+}
+
+
+observed  NE inside the window, error on the constant
+correct   error for both - ballot 201 took effect 2017-07-08
+
+################ ZT-011-e_excessively-backdated-is-switched-off-by-t
+== notBefore 2023-06-12, an SCT 133.5 hours later (before SC-62)
+FAILED
+
+== notBefore 2026-02-11, an SCT 72.0 hours later (after SC-62)
+FAILED
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  before SC-62   {"e_excessively backdated":{"result":"NE"}}
+  after  SC-62   {"e_excessively backdated":{"result":"error", ...}}
+
+Both certificates are backdated by the lint's own definition. Only the one
+whose falsified notBefore lands after 2023-09-15 is reported.
+
+Upstream's own test states the behaviour as intended —
+lints/cabf_br/lint_excessively_backdated_test.go:
+
+    desc: "Certificate with SCTs and a bad notBefore, issued before Effective Date"
+    path: "excbakdat_sct1_old1_eff0.pem"
+    want: lint.NE
+
+The framework's applicability test is
+lint/base.go:  checkEffective(l.EffectiveDate, l.IneffectiveDate, c.NotBefore)
+
+A correct tool would decide applicability for this lint from an issuance-time
+signal the certificate cannot restate — the earliest embedded SCT timestamp is
+already parsed by the lint body — or set OverrideFrameworkFilter and gate on
+that. Any lint whose subject is the trustworthiness of notBefore cannot use
+notBefore as its own scope test. NOTE
+
+################ ZT-012-e_mp_ecdsa_signature_encoding_correct
+== notBefore 2022-12-07, P-256 key signed with SHA-384
+{
+  "e_mp_ecdsa_signature_encoding_correct": {
+    "result": "NE"
+  }
+}
+
+== notBefore 2025-07-18, conformant  (control)
+{
+  "e_mp_ecdsa_signature_encoding_correct": {
+    "result": "pass"
+  }
+}
+
+
+observed  NE on the violation, pass on the control
+correct   error on the violation - MRSP 5.1.2 has bound P-256 and P-384
+          since MRSP 2.7, effective 2020-01-01
+
+################ ZT-013-two-superseded-validity-lints-never-stop-app
+== positive/ZT-013-issued-after-the-window.pem
+   notBefore=Sep  1 00:00:00 2021 GMT notAfter=Nov 30 00:00:00 9998 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "error"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "error"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-013-control-inside-the-window.pem
+   notBefore=Aug 31 02:10:54 2017 GMT notAfter=Dec  2 03:10:54 2020 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "error"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "NE"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "NE"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+SANIPv4Address.pem, notBefore 2021-09-01
+e_sub_cert_valid_time_longer_than_39_months error
+e_sub_cert_valid_time_longer_than_825_days error
+e_tls_server_cert_valid_time_longer_than_398_days error
+
+subCertValidTimeTooLong.pem, notBefore 2017-08-31
+e_sub_cert_valid_time_longer_than_39_months error
+e_sub_cert_valid_time_longer_than_825_days NE
+e_tls_server_cert_valid_time_longer_than_398_days NE
+
+Correct: NE for the 39-month and 825-day lints on the first certificate. The
+control shows the mechanism working — CheckEffective already returns NE below
+each lint's EffectiveDate, and the only thing missing is the bound above.
+
+It was subject to the 398-day limit, which is reported correctly and on its
+own would say everything a reader needs.
+
+Reach, over the 21,778 corpus certificates zlint read:
+
+  e_sub_cert_valid_time_longer_than_39_months   fires 133, of which 126 were
+      issued on or after 2018-03-02 — 2018 (22), 2019 (6), 2021 (15),
+      2022 (3), 2023 (70), 2024 (9), 2025 (1)
+  e_sub_cert_valid_time_longer_than_825_days    fires 159, of which 113 were
+      issued on or after 2020-09-01 — 2021 (16), 2022 (4), 2023 (71),
+      2024 (9), 2025 (12), and one dated 2055
+
+No conformance verdict changes: every certificate reported outside a window is
+also reported by the stricter limit that replaced it. What changes is the
+count and the reason. A consumer tallying distinct violated requirements sees
+three where the document states one, and each superfluous finding cites a
+clause that had been superseded before the certificate was signed.
+
+Fix: IneffectiveDate: util.SubCert825Days on the 39-month lint, and
+IneffectiveDate: util.AppleReducedLifetimeDate on the 825-day lint. NOTE
+
+################ ZT-014-two-root-keyUsage-lints-are-dated-13-years-b
+== positive/ZT-014-root-2003-keyusage-not-critical.pem
+   notBefore=Feb  7 10:36:58 2003 GMT notAfter=Feb  7 11:06:58 2023 GMT 
+   subject=C=SI, O=POSTA, OU=POSTArCA
+{
+  "e_ca_key_usage_missing": {
+    "result": "pass"
+  },
+  "e_root_ca_key_usage_must_be_critical": {
+    "result": "error"
+  },
+  "e_root_ca_key_usage_present": {
+    "result": "pass"
+  }
+}
+
+
+== negative/ZT-014-control-root-2016-keyusage-not-critical.pem
+   notBefore=Jan 15 10:54:37 2016 GMT notAfter=Dec 31 17:28:07 2029 GMT 
+   subject=C=PA, ST=Panama, L=Panama City, O=TrustCor Systems S. de R.L., OU=TrustCor Certificate Autho
+{
+  "e_ca_key_usage_missing": {
+    "result": "pass"
+  },
+  "e_root_ca_key_usage_must_be_critical": {
+    "result": "error"
+  },
+  "e_root_ca_key_usage_present": {
+    "result": "pass"
+  }
+}
+
+
+== positive/ZT-014-root-2002-no-keyusage.pem
+   notBefore=Apr 30 10:39:50 2002 GMT notAfter=Apr 27 09:39:50 2012 GMT 
+   subject=C=es, O=Servicio de Certificacion del Colegio de Registradores (SCR), OU=Certificado Propio,
+{
+  "e_ca_key_usage_missing": {
+    "result": "error"
+  },
+  "e_root_ca_key_usage_must_be_critical": {
+    "result": "NA"
+  },
+  "e_root_ca_key_usage_present": {
+    "result": "error"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+POSTArCA, notBefore 2003-02-07, keyUsage present and not critical
+e_root_ca_key_usage_must_be_critical error e_root_ca_key_usage_present pass
+
+TrustCor ECA-1, notBefore 2016-01-15, keyUsage present and not critical
+e_root_ca_key_usage_must_be_critical error e_root_ca_key_usage_present pass
+
+Colegio de Registradores root, notBefore 2002-04-30, no keyUsage at all
+e_root_ca_key_usage_present error e_ca_key_usage_missing error
+
+Reach, over the 21,778 corpus certificates zlint read:
+
+  e_root_ca_key_usage_must_be_critical   93 firings, 73 on roots issued before
+      2012-07-01 — 1999 (13), 2000 (4), 2001 (9), 2002 (5), 2003 (4), 2004 (6),
+      2005 (7), 2006 (6), 2007 (6), 2008 (2), 2009 (2), 2010 (2), 2011 (5),
+      2012 (2 before the date). 68 of the 73 are trust-store roots.
+e_root_ca_key_usage_present 36 firings, 29 on roots issued before 2012-07-01,
+23 of them trust-store roots.
+
+The rest are worth a line each:
+
+e_dnsname_hyphen_in_sld, e_dnsname_underscore_in_sld and
+w_dnsname_underscore_in_trd cite the BRs and are dated util.RFC5280Date
+  (2008-05-01); together they fault one corpus certificate before 2012.
+  w_sub_ca_name_constraints_not_critical is dated util.CABV102Date
+  (2012-06-08), the ballot rather than the effective date — the same shape as
+  against Citation "RFC 5280: 4.2.1.6", where the Source rather than the date
+  is the mismatch.
+
+Lints whose EffectiveDate is util.ZeroDate are excluded throughout: zlint
+treats a zero date as no lower bound at all rather than as a date, so those
+make no dating claim to contradict.
+
+Fix: EffectiveDate: util.CABEffectiveDate on both root keyUsage lints. For the
+presence lint the alternative is to keep the date and add RFC 5280 4.2.1.3 to
+the Citation, as lint_ca_key_usage_missing.go already does. NOTE
+
+################ ZT-015-e_root_ca_key_usage_must_be_critical
+== positive/ZT-015-root-in-window.pem
+   subject=C=ES, O=FNMT, OU=FNMT Clase 2 CA
+   notBefore=Mar 18 14:56:19 1999 GMT
+               X509v3 Key Usage: 
+                   Certificate Sign, CRL Sign
+{
+  "e_ca_key_usage_not_critical": {
+    "result": "NE"
+  },
+  "e_root_ca_key_usage_must_be_critical": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-015-control-root-post-br.pem
+   subject=C=IN, O=India PKI, CN=CCA India 2014
+   notBefore=Mar  5 10:10:49 2014 GMT
+               X509v3 Key Usage: 
+                   Certificate Sign, CRL Sign
+{
+  "e_ca_key_usage_not_critical": {
+    "result": "error"
+  },
+  "e_root_ca_key_usage_must_be_critical": {
+    "result": "error"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+positive/ZT-015-root-in-window.pem — self-signed CA, notBefore 1999-03-18,
+keyUsage present and not critical
+
+e_ca_key_usage_not_critical NE e_root_ca_key_usage_must_be_critical error
+
+  negative/ZT-015-control-root-post-br.pem — the same shape, notBefore 2014-03-05
+
+e_ca_key_usage_not_critical error e_root_ca_key_usage_must_be_critical error
+
+Correct: NE from both on the first. The control holds every other property
+fixed and moves only the issuance date, so the date is demonstrably the whole
+of the difference — and on the first certificate zlint states both answers at
+once about one requirement.
+
+The Baseline Requirements' own Effective Date is 2012-07-01, which is what
+util.CABEffectiveDate is for and what the sibling lint uses. BR 1.1.0's
+Appendix B states the criticality requirement identically in the Root CA and
+Subordinate CA profiles and scopes the appendix to certificates generated
+after its date; no earlier Forum document states it at all, and RFC 2459
+§4.2.1.3 makes the extension's criticality a SHOULD rather than a MUST.
+
+notBefore falls between 1999-01-01 and 2012-07-01; the three-certificate
+difference is zlint's own root test, which is not DN equality alone.
+
+These are overwhelmingly trust-store roots — the population least able to act
+on the report, since a root cannot be reissued to fix an extension without
+being redistributed.
+
+Fix: EffectiveDate: util.CABEffectiveDate, matching the sibling lint and the
+Source both already declare. If the intent was to state a requirement that
+predates the Forum, the Source is what is wrong rather than the date, and RFC
+2459 will not support it either — its keyUsage criticality is a SHOULD. NOTE
+
+################ ZT-016-e_dnsname_empty_label
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/01-dating/ZT-016-e_dnsname_empty_label/repro.sh: line 19: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- observed --
+  subject=C=CH, ST=Jura, L=Porrentruy, O=JuraTronic Sàrl, OU=IT, CN=*.juratronic.ch.
+  notBefore=Apr 21 13:06:50 2017 GMT
+  notAfter=Apr 21 13:06:50 2018 GMT
+
+observed: error, on a certificate issued before the clause existed
+correct : NE (not effective) until 2019-12-19
+fix     : EffectiveDate: the BR 1.6.7 date, not util.CABEffectiveDate
+
+################ ZT-017-e_qcstatem_qctype_oneonly
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/01-dating/ZT-017-e_qcstatem_qctype_oneonly/repro.sh: line 16: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+Sep 25 09:31:18 2019 GMT May  1 00:00:00 2025 GMT 
+observed: NE on the 2019 certificate, which names all three purposes
+correct : error — EN 319 412-5 § 4.2.3 has said 'one and only one' since
+          v2.2.1, 2017-11-01
+fix     : use util.EtsiEn319_412_5_V2_2_1_Date, as the two sibling QcType
+          lints already do, and correct the Citation to the version that
+          states the clause rather than the newest one that repeats it.
+
+reach   : 3 of 21,778 — QcStmtValidLimitValue.pem,
+          QcStmtInvalidLimitValue.pem and QcStmtEtsiTwoQcTypesCert15.pem,
+          all zlint's own fixtures, issued 2018 and 2019, each naming
+          more than one purpose and each returning NE.
+
+################ ZT-018-e_qcstatem_pds_must_have_https_only
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/01-dating/ZT-018-e_qcstatem_pds_must_have_https_only/repro.sh: line 19: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+notBefore Jul 17 14:12:36 2018 GMT
+
+observed: NE — the lint is not effective for this certificate
+correct : error — the clause has said https since v1.1.1, January 2013
+fix     : date the lint to EN 319 412-5 v1.1.1 rather than to the version
+          in which the requirement was read. The sibling QcPDS lints,
+          e_qcstatem_qcpds_valid and w_qcstatem_qcpds_lang_case, are
+          dated v2.2.1 and carry requirements that are also v1.1.1's.
+
+################ ZT-019-e_etsi_natural_person_key_usage_mandatory
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/01-dating/ZT-019-e_etsi_natural_person_key_usage_mandatory/repro.sh: line 25: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+Mar 14 2018    
+Aug 1 2020     
+
+    both certificates assert QCP-n (0.4.0.194112.1.0) and carry no keyUsage:
+    positive/ZT-019-qcp-n-no-keyusage-2018 policies Policy:0.4.0.194112.1.0  keyUsage 0
+    negative/ZT-019-control-2020-08-01     policies Policy:0.4.0.194112.1.0  keyUsage 0
+
+observed: NE on the 2018 certificate, error on the 2020 one
+correct : error on both — EN 319 412-2 has required the extension since
+          v2.1.1, February 2016, the document's first edition
+fix     : date the lint to v2.1.1 rather than to the edition in which the
+          requirement was read. The sibling lints on the same sentence,
+          e_etsi_natural_person_key_usage_correct_values and
+          w_etsi_natural_person_key_usage_preferred_values, carry the same date
+          and the same clause, so the fix is one constant for three.
+
+################ ZT-020-e_cs_rsa_key_size
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/01-dating/ZT-020-e_cs_rsa_key_size/repro.sh: line 26: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+--- ZT-020-code-signing-rsa2048-2021-03.pem
+subject : C=FR, postalCode=91140, L=VILLEJUST, street=ZA Courtaboeuf, street=6, al
+issued  : Mar 19 00:00:00 2021 GMT
+key     : RSA-2048
+
+--- ZT-020-control-after-deadline.pem
+subject : CN=Example Co, O=Example Co, L=Mountain View, ST=California, C=US, juris
+issued  : Jul  6 03:31:54 2024 GMT
+key     : RSA-2048
+
+observed: error on both -- the same verdict for a certificate issued
+          inside the transition window and one issued three years after
+correct : NE on the first. On 19 March 2021 the Requirements in force
+          were v2.2, whose Appendix A gave RSA-2048 until 1 June 2021.
+fix     : a CABF_CS_CSC_4_Date = 2021-06-01 as this lint's EffectiveDate.
+
+################ ZT-021-e_signature_algorithm_not_supported
+== the lint's declared source and citation
+  citation: BRs: 6.1.5   source: CABF_BR
+
+== a certificate from 1999, thirteen years before the BRs took effect
+notBefore=Jan 28 12:00:00 1999 GMT
+subject=C=BE, O=GlobalSign nv-sa, OU=Primary Class 2 CA, CN=GlobalSign Primary Class 2 CA
+        Signature Algorithm: md5WithRSAEncryption
+{
+  "e_signature_algorithm_not_supported": {
+    "result": "error"
+  }
+}
+
+
+observed  error, under a citation to a document published in 2012.
+correct   NA. EffectiveDate should be util.CABEffectiveDate
+          (2012-07-01), as the other BR-sourced lints carry.
+
+note      MD5 is genuinely unacceptable; the defect is the citation and
+          the date, not the judgement. RFC 5280 is the document that
+          reaches a 1999 certificate, and it is a different shelf.
+
+################ ZT-069-e_crl_extensions_validity
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint.exe
+
+== a 2019 revocation list, four years before the table existed ==
+           Last Update: May  3 12:33:03 2019 GMT
+           Next Update: Oct 30 12:33:03 2019 GMT
+   ^ warn, from a lint named e_.
+
+== the metadata, which declares no EffectiveDate at all ==
+
+== the two returns, from one Execute ==
+
+============================================================== observed
+e_crl_extensions_validity returns lint.Warn for an extension outside the table
+and lint.Error for a listed extension with the wrong criticality -- two
+severities from one identifier -- and it declares no EffectiveDate, so it
+judges a 2019 list against a table written by ballot SC-63 in 2023.
+
+correct   Two lints, one per severity, and an EffectiveDate of
+          util.CABFBRs_1_8_7_Date (2023-07-15). zlint's own contributor guide
+          states the first half: "Lints only return one non-success or
+          non-fatal status, which must also match their name prefix."
+
+mechanism lint_crl_extensions.go. The Execute body has two loops: the first
+returns Warn for any extension not in allowedExtensions, the second returns
+Error for an allowed extension whose Critical does not match the table. The
+LintMetadata block carries Name, Description, Citation and Source and no
+EffectiveDate, which the framework reads
+          as "always".
+
+severity Medium. The date half reports a requirement against lists issued
+years before it existed -- the same class the reproduction beside this file
+another entry here reports against cablint. The severity half misleads a
+consumer selecting by prefix: a caller including
+          only `e_` lints gets warnings, and one filtering on severity cannot
+          select half a lint.
+
+fix Split the Execute body into two registered lints -- e_ for the criticality
+MUST, w_ for the NOT RECOMMENDED row -- and give both
+
+              EffectiveDate: util.CABFBRs_1_8_7_Date,
+
+The value already exists in util/time.go and the sibling CRL lints use it.
+
+################ ZT-022-e_subject_not_dn
+== subject of the case certificate
+subject=CN=NTDVWPRPTPKP02.hca.corpad.net, O=HCA - Information Technology & Services, Inc., L=Nashville, ST=Tennessee, C=US
+
+== what zlint says about that subject
+{
+  "e_invalid_subject_rdn_order": {
+    "result": "error"
+  },
+  "e_subject_not_dn": {
+    "result": "pass"
+  },
+  "e_subject_rdns_correct_encoding": {
+    "result": "pass"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  {"e_invalid_subject_rdn_order":{"result":"error"},
+   "e_subject_not_dn":{"result":"pass"},
+   "e_subject_rdns_correct_encoding":{"result":"pass"}}
+
+Over 11,714 certificates (this project's corpus) the lint returns
+pass=11709, NE=5, error=0.
+
+Settled by execution rather than by reading, since the claim rests on Go's
+reflect. This program, built against the same zcrypto revision zlint pins
+(v0.0.0-20260514033604-a1159eb3cad9), prints "false" for both cases:
+
+    package main
+
+    import (
+        "fmt"
+        "reflect"
+
+        "github.com/zmap/zcrypto/x509"
+        "github.com/zmap/zcrypto/x509/pkix"
+    )
+
+    func main() {
+        c := new(x509.Certificate)
+        fmt.Println(reflect.TypeOf(c.Subject) != reflect.TypeOf(*(new(pkix.Name))))
+        c.Subject = pkix.Name{CommonName: "example.com"}
+        fmt.Println(reflect.TypeOf(c.Subject) != reflect.TypeOf(*(new(pkix.Name))))
+    }
+
+    static type of Certificate.Subject : pkix.Name
+    reflect.TypeOf(c.Subject)          : pkix.Name
+    reflect.TypeOf(*(new(pkix.Name)))  : pkix.Name
+    predicate (Error branch taken?)    : false
+    populated Subject predicate        : false
+
+A correct tool would either delete the lint or give it a body: RFC 5280
+4.1.2.6 makes subject a Name, and the checkable content is whether the encoded
+RDNSequence is well formed — which requires looking at c.RawSubject, not at
+the static type of the field the decoder wrote into. As shipped the lint is
+dead code that reports a requirement as covered. NOTE
+
+################ ZT-023-e_generalized_time_does_not_include_seconds
+== positive/ZT-023-generalizedtime-no-seconds.pem
+   REFUSED, 0 bytes of JSON:
+   time="2026-08-25T17:07:26+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: parsing time \"205712010607Z\" as \"20060102150405Z0700\": cannot parse \"Z\
+
+== positive/ZT-023-generalizedtime-fraction-seconds.pem
+   REFUSED, 0 bytes of JSON:
+   time="2026-08-25T17:07:27+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: asn1: time did not serialize back to the original value and may be invalid: 
+
+== negative/ZT-023-control-generalizedtime-well-formed.pem
+   parsed; lint results: 20918 bytes of JSON
+   the two lints in question:
+{
+  "e_generalized_time_does_not_include_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_includes_fraction_seconds": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  no-seconds       level=fatal ... parsing time "205712010607Z" as
+                   "20060102150405Z0700": cannot parse "Z" as "05"
+fraction-seconds level=fatal ... asn1: time did not serialize back to the
+original value and may be invalid: given
+                   "20571201060708.999Z", but serialized as "20571201060708Z"
+  control          parses, 22837 bytes of JSON; both lints return pass
+
+Mechanism, zcrypto encoding/asn1/asn1.go:375 —
+
+    func parseGeneralizedTime(bytes []byte) (ret time.Time, err error) {
+        const formatStr = "20060102150405Z0700"
+        s := string(bytes)
+        if ret, err = time.Parse(formatStr, s); err != nil { return }
+        if !AllowPermissiveParsing {
+            if serialized := ret.Format(formatStr); serialized != s {
+                err = fmt.Errorf("asn1: time did not serialize back ...")
+            }
+        }
+        return
+    }
+
+The layout requires seconds, so a GeneralizedTime without them fails
+time.Parse; the round-trip check rejects a fractional part. zlint never sets
+asn1.AllowPermissiveParsing (grep across v3: no occurrence; zcrypto's default
+is false), so neither lint has any reachable input.
+
+Neither fixture is referenced by any test — grep for their filenames across
+v3/**/*.go returns nothing — and neither lint has a _test.go file at all.
+
+The 225 passes are certificates whose validity
+uses GeneralizedTime correctly; nothing else can reach the lint body.
+
+A correct tool would test the two requirements against the raw validity bytes
+it already keeps, or accept the certificate in a degraded mode and report the
+malformation as a finding. NOTE
+
+################ ZT-024-e_rsa_exp_negative
+== positive/ZT-024-rsa-negative-exponent.pem
+   REFUSED, 0 bytes of JSON:
+   time="2026-08-25T17:07:29+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: x509: RSA public exponent is not a positive number parsing as CRL:
+
+== positive/ZT-024-rsa-key-bits-not-a-key.pem
+   REFUSED, 0 bytes of JSON:
+   time="2026-08-25T17:07:30+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: asn1: structure error: tags don't match (16 vs {class:0 tag:4 leng
+
+== negative/ZT-024-control-rsa-well-formed.pem
+   parsed; 19933 bytes of JSON
+   the two lints in question:
+{
+  "e_rsa_exp_negative": {
+    "result": "pass"
+  },
+  "e_rsa_no_public_key": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+negative exponent level=fatal ... parsing as certificate: x509: RSA public
+exponent is not a positive number key bits not a key level=fatal ... asn1:
+structure error: tags don't match
+                      (16 vs {class:0 tag:4 ...}) pkcs1PublicKey @2
+  control             parses, 21425 bytes of JSON; both lints return pass
+
+The NA count is the
+non-RSA keys; the passes are certificates on which the body ran and found the
+key it expected. Nothing reaches either Error branch.
+
+Correct: report the malformation as a finding rather than as a refusal, or
+delete the lints.
+
+The distinction between the two is worth keeping. e_rsa_exp_negative has a
+reachable body under asn1.AllowPermissiveParsing, which exists in zcrypto and
+is set nowhere in zlint v3; a caller embedding the library could enable it and
+the lint would work. e_rsa_no_public_key would still not fire, because the
+branch it needs is not a parse strictness setting but a return type. NOTE
+
+################ ZT-025-e_crl_unique_revoked_certificate
+== real-world CRL with a repeated revoked-certificate serial number
+   positive/ZT-025-crl-duplicate-revoked-serial.crl (Mozilla CA incident bug 1943379, sha256 60914b68b65a...)
+   11,327 revokedCertificates entries; serial 5a6e9bb44e7ae6eb95a07e20a37b6d07 appears twice
+{
+  "e_crl_unique_revoked_certificate": {
+    "result": "warn",
+    "details": "Revoked certificates list contains duplicate serial number: 5a6e9bb44e7ae6eb95a07e20a37b6d07"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  {"e_crl_unique_revoked_certificate":{"result":"warn",
+   "details":"Revoked certificates list contains duplicate serial number: 5a6e9bb44e7ae6eb95a07e20a37b6d07"}}
+
+The lint fires — the property is real and the class sees it — but it can only
+ever return Pass or Warn. The Execute body quoted at the top of this script is
+copied in full: no lint.Error and no lint.Fatal literal appears anywhere in
+it.
+
+reachable Error branch (RFC 5280 §5.1.2.6 and CABF BRs 7.2.1 are both silent
+on whether a CRL MUST or merely SHOULD avoid a duplicate revoked-certificate
+entry, which is exactly the citation a maintainer needs to supply), or the
+class is renamed w_crl_unique_revoked_certificate to match the status it
+actually returns. What is not in question is that, as shipped, an e_-prefixed
+class that structurally cannot return Error should not be counted as an
+unmeasured gap when it stays silent on a CRL without the duplicate — it was
+never going to answer past Warn on any input.
+
+Same family as ZT-022 (a lint whose own comparison can never take the Error
+branch) and ZT-023 (lints unreachable by construction): the common shape is a
+
+################ ZT-026-e_qcstatem_qctype_valid
+== the lint's effective window, from the source constants
+   EffectiveDate   EtsiEn319_412_5_V2_2_1_Date = 2017-11-01
+   IneffectiveDate EtsiEn319_411_2_V2_5_0_Date = 2023-07-01
+
+== the fixture the test declares lint.Error for
+notBefore=May  1 00:00:00 2024 GMT
+{
+  "e_qcstatem_qctype_valid": {
+    "result": "error",
+    "details": "encountered invalid ETSI QcType OID: 0.4.0.1862.1.2"
+  }
+}
+
+
+== control: a certificate inside the window, same lint, judged not gated
+notBefore=Nov 21 03:21:31 2018 GMT
+{
+  "e_qcstatem_qctype_valid": {
+    "result": "pass"
+  }
+}
+
+
+observed  qctWithWrongType_2024.pem answers NE; TestEtsiQcType passes
+          anyway, because it compares result.Details and never
+          result.Status. No fixture makes this lint return error.
+correct   assert result.Status against tc.ExpectedResult, then re-date
+          the qct* fixtures inside the window (or expect NE for them).
+
+################ ZT-027-the-serverAuth-pre-flight-filter-suppresses
+== EKU = id-kp-OCSPSigning, RSA 1024
+{
+  "e_mp_modulus_must_be_2048_bits_or_more": {
+    "result": "error"
+  },
+  "e_rsa_mod_less_than_2048_bits": {
+    "result": "NA"
+  }
+}
+
+
+== EKU = id-kp-serverAuth, the same 1024-bit key
+{
+  "e_mp_modulus_must_be_2048_bits_or_more": {
+    "result": "error"
+  },
+  "e_rsa_mod_less_than_2048_bits": {
+    "result": "error"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  OCSPSigning  {"e_mp_modulus_must_be_2048_bits_or_more":{"result":"error"},
+                "e_rsa_mod_less_than_2048_bits":{"result":"NA"}}
+  serverAuth   {"e_mp_modulus_must_be_2048_bits_or_more":{"result":"error"},
+                "e_rsa_mod_less_than_2048_bits":{"result":"error"}}
+
+The Mozilla-sourced lint fires on both, which is how you know the certificate
+really is non-conformant and that only the BR filter is hiding it.
+
+Running the lints directly against the same certificate, bypassing the
+framework, shows what the filter suppresses on a real delegated responder
+(, EKU = OCSPSigning only):
+
+IsServerAuthCert = false CABF_BR certificate lints registered : 166 suppressed
+by the pre-flight filter alone : 6 e_rsa_mod_less_than_2048_bits body would
+have said pass e_signature_algorithm_not_supported body would have said pass
+e_no_underscores_before_1_6_2 body would have said pass
+e_dnsname_hyphen_in_sld, e_dnsname_underscore_in_sld,
+w_dnsname_underscore_in_trd
+
+The four lints that do set OverrideFrameworkFilter are
+e_ocsp_cert_cdp_forbidden, e_ocsp_cert_cp_forbidden, e_ocsp_cert_invalid_ku
+and e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth — every one of
+them a lint whose entire population is the population the filter excludes.
+They had to opt out individually to see their own subject matter.
+
+Note what the filter is *right* about: on an S/MIME or code-signing
+certificate it correctly suppresses subscriber-TLS lints that would otherwise
+be false positives, which is why most BR lints must not carry the override.
+The defect is not the filter's existence but that its predicate is a proxy —
+IsServerAuthCert is true for anyEKU, for no EKU at all, and for any BR policy
+OID — and nothing enumerates the BR requirements that bind a certificate the
+proxy rejects.
+
+A correct tool would scope BR lints by the role the document profiles
+(subscriber, subordinate CA, root CA, OCSP responder) so that a BR-wide
+requirement such as 7.1.3.1 key sizes applies to every profile the BRs define,
+and a profile-specific requirement applies only to its own. NOTE
+
+################ ZT-028-IsDelegatedOCSPResponderCert-calls-any-OCSPS
+== positive/ZT-028-subordinate-ca-ocspsigning.pem
+   X509v3 Basic Constraints: critical
+       CA:TRUE
+   X509v3 Extended Key Usage: 
+       TLS Web Server Authentication, TLS Web Client Authentication, OCSP Signing
+{
+  "e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-028-control-delegated-responder.pem
+   X509v3 Extended Key Usage: 
+       OCSP Signing
+{
+  "e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth": {
+    "result": "error"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+a trust-store subordinate CA, CA:TRUE, EKU serverAuth + clientAuth +
+OCSPSigning, notBefore 2017-10-18
+e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth error
+
+zlint's own fixture o1s0ep0a0nc0.pem, CA:FALSE, EKU OCSPSigning alone, no
+nocheck e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth error
+
+Correct: NA on the first, error on the second. The control is the lint's own
+test case and its expectation is lint.Error; nothing here disputes it.
+
+The remaining 13 are end-entity certificates and are the population the lint
+is for. The EKU sets behind the CA firings are ordinary issuing-CA sets:
+serverAuth + clientAuth +
+OCSPSigning (141), and Microsoft-extended sets carrying clientAuth,
+emailProtection and OCSPSigning (127 across two shapes).
+
+The lint sets OverrideFrameworkFilter: true, so util.IsServerAuthCert does not
+narrow it either — the guard above is the whole population test.
+
+The lint's 32-case fixture matrix varies OCSPSigning, serverAuth,
+emailProtection, anyEKU and nocheck, and every case is an end-entity
+certificate. No fixture asserts what the lint should do with a CA, so the
+narrowing below breaks no test.
+
+Fix: `return util.IsDelegatedOCSPResponderCert(c) && !util.IsCACert(c)`, or
+add the basicConstraints test to util.IsDelegatedOCSPResponderCert itself,
+where the name already claims more than HasEKU delivers. NOTE
+
+################ ZT-029-three-e_sub_cert_-lints-hold-CA-certificates
+== positive/ZT-029-subordinate-ca-crldp-no-http.pem
+   subject=C=PT, O=ACIN iCloud Solutions, Lda, OU=Global Trusted Sign, CN=Global Trusted Sign Certification Authority 01
+   X509v3 Basic Constraints: critical
+       CA:TRUE
+{
+  "e_sub_ca_crl_distribution_points_does_not_contain_url": {
+    "result": "error"
+  },
+  "e_sub_ca_crl_distribution_points_marked_critical": {
+    "result": "pass"
+  },
+  "e_sub_cert_crl_distribution_points_does_not_contain_url": {
+    "result": "error"
+  },
+  "e_sub_cert_crl_distribution_points_marked_critical": {
+    "result": "pass"
+  },
+  "e_sub_cert_eku_server_auth_client_auth_missing": {
+    "result": "NA"
+  }
+}
+
+
+== positive/ZT-029-subordinate-ca-crldp-critical.pem
+   subject=C=US, ST=FL, L=Tallahassee, street=3210 Holly Mill Run, postalCode=30062, O=Extreme Discord, OU=Chaos, CN=gov.us
+   X509v3 Basic Constraints: critical
+       CA:TRUE
+{
+  "e_sub_ca_crl_distribution_points_does_not_contain_url": {
+    "result": "pass"
+  },
+  "e_sub_ca_crl_distribution_points_marked_critical": {
+    "result": "error"
+  },
+  "e_sub_cert_crl_distribution_points_does_not_contain_url": {
+    "result": "pass"
+  },
+  "e_sub_cert_crl_distribution_points_marked_critical": {
+    "result": "error"
+  },
+  "e_sub_cert_eku_server_auth_client_auth_missing": {
+    "result": "NA"
+  }
+}
+
+
+== positive/ZT-029-subordinate-ca-eku-timestamping.pem
+   subject=serialNumber=PT507015851, C=PT, L=Guimaraes (see current address at www.digitalsign.pt), O=DigitalSign Certificadora Digital, CN=DIGITALSIGN QUALIFIED TSA CA
+   X509v3 Basic Constraints: critical
+       CA:TRUE, pathlen:0
+{
+  "e_sub_ca_crl_distribution_points_does_not_contain_url": {
+    "result": "pass"
+  },
+  "e_sub_ca_crl_distribution_points_marked_critical": {
+    "result": "pass"
+  },
+  "e_sub_cert_crl_distribution_points_does_not_contain_url": {
+    "result": "pass"
+  },
+  "e_sub_cert_crl_distribution_points_marked_critical": {
+    "result": "pass"
+  },
+  "e_sub_cert_eku_server_auth_client_auth_missing": {
+    "result": "error"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5), on three CA certificates:
+
+intermediate-097538169f89d9ec, cRLDistributionPoints with no http URI
+e_sub_cert_crl_distribution_points_does_not_contain_url error
+      e_sub_ca_crl_distribution_points_does_not_contain_url     error   (correct)
+
+subCAWcrlDistCrit.pem, cRLDistributionPoints marked critical
+e_sub_cert_crl_distribution_points_marked_critical error
+      e_sub_ca_crl_distribution_points_marked_critical          error   (correct)
+
+intermediate-5b8f7eaf75d18d67, extKeyUsage = id-kp-timeStamping
+e_sub_cert_eku_server_auth_client_auth_missing error
+
+Correct: NA from every e_sub_cert_* lint above. The first two certificates are
+already reported by the correctly scoped sibling, so the substance is not lost;
+the third is reported by nothing else, and would need either a sub-CA sibling
+or nothing at all, since BR 7.1.2.2(g) does not require either authentication
+purpose of a subordinate CA.
+
+Reach, over the 21,778 corpus certificates zlint read:
+
+lint fires on CA certs e_sub_cert_crl_distribution_points_does_not_contain_url
+90 25 e_sub_cert_eku_server_auth_client_auth_missing 15 6
+e_sub_cert_crl_distribution_points_marked_critical 10 5
+
+36 CA certificates in all. The two CRLDP siblings fire 23 and 5 times, and
+every one of those firings is on a certificate the unguarded lint has already
+reported -- so 28 of the 36 are duplicates and 8 are findings no correctly
+scoped lint makes.
+
+Two of the 25 CA certificates under the first lint are root CAs, which
+util.IsSubCA excludes, so adding the guard would leave those two unreported.
+BR 7.1.2.11.2 does state the http requirement unconditionally of any
+cRLDistributionPoints that is present, so the right end state is a guard plus
+a third lint, or one lint scoped to every certificate and named for the clause
+rather than for one profile.
+
+Fix: `util.IsSubscriberCert(c) &&` in front of each of the three CheckApplies
+bodies. util.IsSubscriberCert already exists and 33 lints in lints/ use it.
+
+################ ZT-030-e_sub_cert_or_sub_ca_using_sha1
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/03-scope/ZT-030-e_sub_cert_or_sub_ca_using_sha1/repro.sh: line 16: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- observed --
+  subject=CN=62.93.9.5
+  issuer=CN=62.93.9.5
+  CA:TRUE
+
+  subject equals issuer and CA is TRUE: this is a root.
+
+observed: error, on a root certificate
+correct : NA
+fix     : CheckApplies should be !util.IsRootCA(c)
+
+################ ZT-031-e_mailbox_validated_allowed_subjectdn_attrib
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/03-scope/ZT-031-e_mailbox_validated_allowed_subjectdn_attrib/repro.sh: line 17: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+--- ZT-031-mailbox-validated-subordinate-ca.pem
+subject : C=PL, O=Krajowa Izba Rozliczeniowa S.A., CN=SZAFIR Trusted CA9 SMIME
+CA      : CA:TRUE
+    
+    
+
+--- ZT-031-control-subscriber.pem
+subject : O=Lint
+CA      : 
+    
+    
+
+observed: the subordinate CA is reported by the lint without the role
+          test and passed by the lint with it -- one clause, two
+          answers, and the section addresses subscriber certificates
+correct : NA on a CA certificate, as the sibling already answers
+fix     : CheckApplies -> IsMailboxValidatedCertificate(c) &&
+          util.IsSubscriberCert(c), matching the sibling. The wider
+          question is whether the two lints should both exist: they
+          cite one section and read one table.
+
+################ ZT-032-e_algorithm_identifier_improper_encoding
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/03-scope/ZT-032-e_algorithm_identifier_improper_encoding/repro.sh: line 29: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+--- positive/ZT-032-ed25519-smime.pem (S/MIME, id-Ed25519)
+policy  : 2.23.140.1.5.4.1
+key     : ED25519
+
+--- negative/ZT-032-control-dsa-tls.pem (TLS, DSA)
+key     : dsaEncryption
+
+observed: on the S/MIME certificate, e_algorithm_identifier_improper_encoding
+          reports error while e_invalid_legacy_spki_algoid reports pass --
+          the same field, judged by two documents, and the one that does
+          not govern the certificate is the one that condemns it.
+          On the control the lint reports error, correctly: the byte
+          comparison works and scope is the whole defect.
+correct : NA on the S/MIME certificate. BR s1.1 addresses certificates
+          for TLS server authentication; S/MIME BR s7.1.3.1 states its
+          own permitted list and zlint already implements it in
+          e_invalid_spki_algoid and e_invalid_legacy_spki_algoid.
+fix     : give CheckApplies a scope test. zlint has util.IsServerAuthCert
+          and the S/MIME predicates in util already, and 157 of the 172
+          lint files on the cabf_br shelf carry a conditional
+          CheckApplies -- so a scope test is the house convention there
+          and its absence here is a slip rather than a design.
+
+Reach on this corpus is 4 of 21,778, all zlint's own S/MIME fixtures --
+but the population is every Ed25519, Ed448, ML-DSA and ML-KEM S/MIME
+certificate, which the S/MIME BR has permitted since 2023-09-01 and
+which post-quantum migration will make ordinary.
+
+################ ZT-033-e_sub_cert_or_sub_ca_using_sha1
+== the certificate: self-signed, CA:TRUE, SHA-1, issued after the cliff
+subject=CN=62.93.9.5
+issuer=CN=62.93.9.5
+notBefore=Apr 25 23:09:43 2016 GMT
+        Signature Algorithm: sha1WithRSAEncryption
+            X509v3 Basic Constraints: 
+                CA:TRUE
+
+== what the lint declares about its own scope
+  description: CAs MUST NOT issue any new Subscriber certificates or Subordinate CA certificates using SHA-1 after 1 January 2016
+
+== what it does
+{
+  "e_sub_cert_or_sub_ca_using_sha1": {
+    "result": "error"
+  }
+}
+
+
+observed  error on a Root CA certificate.
+correct   NA. BR 9.4.2 (ballot 118): "This Section 9.4.2 does not apply
+          to Root CA or CA cross certificates." CheckApplies should be
+          util.IsSubCert(c) || util.IsSubCA(c), not `return true`.
+
+################ ZT-034-e_sub_cert_cert_policy_empty
+{
+  "e_sub_cert_cert_policy_empty": {
+    "result": "pass"
+  }
+}
+
+
+observed  pass
+correct   error - the extension is present and asserts no policy identifier
+
+################ ZT-035-e_distribution_point_incomplete
+{
+  "e_distribution_point_incomplete": {
+    "result": "pass"
+  }
+}
+
+
+observed  pass
+correct   error - neither distributionPoint nor cRLIssuer is present
+
+################ ZT-036-e_crlissuer_must_not_be_present_in_cdp
+{
+  "e_crlissuer_must_not_be_present_in_cdp": {
+    "result": "NA"
+  },
+  "e_distribution_point_incomplete": {
+    "result": "error"
+  }
+}
+
+
+observed  e_crlissuer_must_not_be_present_in_cdp NA
+correct   error - BR 7.1.2.11.2 forbids the reasons field
+
+################ ZT-037-util.IsOnionV2Address
+== www.<v2addr>.onion
+{
+  "e_ext_tor_service_descriptor_hash_invalid": {
+    "result": "NA"
+  }
+}
+
+== <v2addr>.onion  (control)
+{
+  "e_ext_tor_service_descriptor_hash_invalid": {
+    "result": "error",
+    "details": "certificate contained a .onion domain but is missing a TorServiceDescriptor extension (oid 2.23.140.1.31)"
+  }
+}
+
+
+observed  NA for the subdomain form, error for the bare form
+correct   error for both - both are EV certificates for a v2 onion
+          service with no TorServiceDescriptor extension
+
+################ ZT-038-e_generalized_time_includes_fraction_seconds
+== positive/ZT-038-generalizedtime-positive-offset.pem
+   notAfter: notAfter=Dec  1 01:07:08 2057 GMT
+{
+  "e_generalized_time_does_not_include_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_includes_fraction_seconds": {
+    "result": "error"
+  },
+  "e_generalized_time_not_in_zulu": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-038-control-generalizedtime-negative-offset.pem
+   notAfter: notAfter=Dec  1 11:07:08 2057 GMT
+{
+  "e_generalized_time_does_not_include_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_includes_fraction_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_not_in_zulu": {
+    "result": "error"
+  }
+}
+
+
+== ../../02-unreachable/ZT-023-e_generalized_time_does_not_include_seconds/negative/ZT-023-control-generalizedtime-well-formed.pem
+   notAfter: openssl will not read it
+{
+  "e_generalized_time_does_not_include_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_includes_fraction_seconds": {
+    "result": "pass"
+  },
+  "e_generalized_time_not_in_zulu": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+notAfter 20571201060708+0500 e_generalized_time_includes_fraction_seconds
+error e_generalized_time_does_not_include_seconds pass
+e_generalized_time_not_in_zulu error
+
+notAfter 20571201060708-0500 e_generalized_time_includes_fraction_seconds pass
+e_generalized_time_does_not_include_seconds pass
+e_generalized_time_not_in_zulu error
+
+  notAfter 20571201060708Z   (the fixture as shipped)
+      all three pass
+
+Correct: pass on both offset forms. Neither value contains a fractional second
+— the seconds field is 08 in both, and what follows is a time differential,
+which RFC 5280 4.1.2.5.2 mentions in the same paragraph as a thing a
+GeneralizedTime may syntactically include. The nonconformity that is present
+is the departure from Zulu, and e_generalized_time_not_in_zulu already reports
+it on both.
+
+Two consequences worth separating:
+
+  * The class is a false positive on a shape it does not name, so a consumer
+    reading zlint's output learns "fractional seconds" about a certificate
+whose seconds are whole. * It is the only reachable path into this lint at
+all. ZT-023 records that the parser refuses every certificate carrying a real
+fractional second, so the one input that makes the lint fire is the one input
+it is not about.
+
+The sibling checkSeconds in lint_generalized_time_does_not_include_seconds.go
+carries the same misread index, and is harmless there: its fall-through tests
+`len < 14`, which no 19-octet offset form satisfies.
+
+Fix: test for '+' five octets from the end, alongside '-', rather than at the
+last octet. NOTE
+
+################ ZT-039-e_missing_crl_distrib_point
+== positive/ZT-039-ocsp-accesslocation-dnsname.pem
+   Authority Information Access: 
+       OCSP - DNS:ocsp.example.com
+       CA Issuers - URI:http://ca.example.com/issuer.crt
+   cRLDistributionPoints: 0 URIs
+{
+  "e_missing_crl_distrib_point": {
+    "result": "error",
+    "details": "The CRLDistributionPoints extension MUST be present in non-Short-Lived certificates lacking an OCSP URI"
+  }
+}
+
+
+== negative/ZT-039-control-ocsp-accesslocation-uri.pem
+   Authority Information Access: 
+       OCSP - URI:http://ocsp.example.com
+       CA Issuers - URI:http://ca.example.com/issuer.crt
+   cRLDistributionPoints: 0 URIs
+{
+  "e_missing_crl_distrib_point": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+id-ad-ocsp with a dNSName accessLocation, no cRLDistributionPoints
+e_missing_crl_distrib_point error
+      e_aia_must_contain_permitted_access_method   error   (correct)
+
+the same certificate with a uniformResourceIdentifier accessLocation
+e_missing_crl_distrib_point pass
+
+Correct: pass on both. Both certificates include an authorityInformationAccess
+extension with an id-ad-ocsp accessMethod, which is the condition BR
+7.1.2.11.2 states, so neither is required to carry cRLDistributionPoints.
+
+The shape is rare in issued certificates precisely because it is already
+prohibited by BR 7.1.2.7.7, which requires the accessLocation to be a
+uniformResourceIdentifier with an http scheme. The defect is nonetheless a
+second, wrong finding on every certificate that has the first one.
+
+Provenance: fabricated. Built by python cryptography 43.0.0 as an ordinary OV
+subscriber certificate — notBefore 2024-06-01, so after SC-63's 2024-03-15; 90
+days of validity, so not a Short-lived Subscriber Certificate under either the
+ten-day or the seven-day threshold; serverAuth, CA:FALSE, no
+cRLDistributionPoints — differing only in the accessLocation general-name type.
+On the control every zlint error is absent; on the case the only errors are the
+two above.
+
+Fix: test the accessMethod the clause names rather than the URI list. zlint
+has util.AiaOID and no constant for id-ad-ocsp itself, so the lint-local fix
+is to
+unmarshal c.ExtensionsMap[util.AiaOID.String()] and look for the method OID
+regardless of accessLocation type -- lint_ext_cannot_be_empty_seq.go already
+reads raw extensions that way. The fix one level down is for zcrypto to record
+the id-ad-ocsp access descriptions it currently drops on the tag test, which
+would also let e_aia_ocsp_must_have_http_only see them. NOTE
+
+################ ZT-040-e_key_usage_incorrect_length
+== positive/ZT-040-keyusage-undefined-bit-9-only.pem
+               X509v3 Extended Key Usage: 
+                   TLS Web Server Authentication
+               X509v3 Key Usage: critical
+{
+  "e_incorrect_ku_encoding": {
+    "result": "pass"
+  },
+  "e_key_usage_incorrect_length": {
+    "result": "pass"
+  },
+  "e_superfluous_ku_encoding": {
+    "result": "pass"
+  }
+}
+
+
+== negative/ZT-040-control-keyusage-undefined-bit-9-and-digitalsignature.pem
+               X509v3 Extended Key Usage: 
+                   TLS Web Server Authentication
+               X509v3 Key Usage: critical
+{
+  "e_incorrect_ku_encoding": {
+    "result": "pass"
+  },
+  "e_key_usage_incorrect_length": {
+    "result": "error",
+    "details": "the key usage ([128 64]) contains a value that is out of bounds of the range of possible KU values. (raw ASN: [3 3 6 128 64])"
+  },
+  "e_superfluous_ku_encoding": {
+    "result": "pass"
+  }
+}
+
+
+== positive/ZT-040-keyusage-nonminimal-but-in-range.pem
+               X509v3 Key Usage: critical
+                   Key Agreement, Decipher Only
+               X509v3 Certificate Policies: 
+{
+  "e_incorrect_ku_encoding": {
+    "result": "error",
+    "details": "KeyUsage contains an inefficient encoding wherein the number of 'unused bits' is declared to be 0, but it should be 7. Raw Bytes: [3 3 0 8 128], Raw Binary: [00000011 00000011 00000000 00001000 10000000]"
+  },
+  "e_key_usage_incorrect_length": {
+    "result": "error",
+    "details": "the key usage ([8 128]) contains a value that is out of bounds of the range of possible KU values. (raw ASN: [3 3 0 8 128])"
+  },
+  "e_superfluous_ku_encoding": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+keyUsage 03 03 06 00 40 -- ten declared bits, only undefined bit 9 asserted
+e_key_usage_incorrect_length pass e_incorrect_ku_encoding pass
+e_superfluous_ku_encoding pass
+
+keyUsage 03 03 06 80 40 -- the same, plus digitalSignature
+e_key_usage_incorrect_length error
+
+keyUsage 03 03 00 08 80 -- keyAgreement + decipherOnly, unused declared 0
+e_key_usage_incorrect_length error
+          "the key usage ([8 128]) contains a value that is out of bounds of
+           the range of possible KU values."
+      e_incorrect_ku_encoding        error   (correct)
+          "the number of 'unused bits' is declared to be 0, but it should be 7"
+
+Correct: error on the first, error on the second, pass on the third from this
+lint. 0x08 is keyAgreement and 0x80 in the second octet is decipherOnly; both
+are defined, so nothing about that value is out of bounds. What is wrong with
+it is the encoding, and the lint that says so gets it exactly right.
+
+Three are the false-positive shape -- zlint's own
+ec_multipurpose_key_agreement_decipher_only.pem,
+ec_multipurpose_valid_ku_august_2023.pem and
+ec_legacy_digital_signature_key_agreement_content_commitment_decipher_only_ku.pem,
+each a decipherOnly keyUsage written with unused=0 -- and
+e_incorrect_ku_encoding reports every one of them correctly.
+
+Provenance: the first two files are fabricated. Built by python cryptography
+43.0.0 as an ordinary serverAuth subscriber certificate -- notBefore
+2024-06-01, CA:FALSE, one dNSName SAN, same key and same fields in both --
+with keyUsage written through x509.UnrecognizedExtension, since the library's
+KeyUsage type cannot express a bit past decipherOnly, which is the point. The
+third is zlint's own testdata.
+
+Fix: test the declared length rather than the value. The used bit count is
+`len(keyUsageVal.Bytes)*8 - int(unused)`; error when a bit at position 9 or
+beyond is set within it. That reports the case file, keeps the control, and
+leaves the non-minimal encoding to e_incorrect_ku_encoding. NOTE
+
+################ ZT-041-e_rsa_fermat_factorization
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/04-predicate/ZT-041-e_rsa_fermat_factorization/repro.sh: line 25: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+modulus is p*p (p == q)                        
+control: two primes 240 apart                  
+
+observed: pass on the square, error on the control
+correct : error on both — p == q is the worst case of the property this
+          lint exists to detect, and it factors in one square root
+fix     : start the search at ceil(sqrt(n)) as the comment already says,
+          which needs a branch on whether n is a perfect square. Report
+          upstream to Boulder as well as to zlint.
+
+################ ZT-042-e_invalid_legacy_spki_algoid
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/04-predicate/ZT-042-e_invalid_legacy_spki_algoid/repro.sh: line 28: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+--- ZT-042-mldsa44-in-legacy-window.pem
+issued  : Jul 22 05:40:30 2025 GMT
+key     : ML-DSA-44
+
+--- ZT-042-control-p224.pem
+issued  : Jul 29 05:38:53 2025 GMT
+key     : id-ecPublicKey
+
+observed: pass on the ML-DSA-44 certificate, error on the P-224 one.
+          The lint is running; it is running the twelve-entry list.
+correct : error on both. ML-DSA is not in s7.1.3.1 as it stood in the
+          window this lint alone judges; v1.0.11 (2025-08-22) added it,
+          and that is where the sibling e_invalid_spki_algoid begins.
+fix     : lint_invalid_legacy_spki_alogid.go:44 --
+          Lint: NewInvalidSPKIAlgoId -> Lint: NewInvalidLegacySPKIAlgoId
+
+The lint's own test file asserts the defective behaviour, which is why
+the suite is green: six cases named *_pqf0 expect Pass where the
+pre-1.0.11 list gives Error.
+
+################ ZT-043-e_utf8_latin1_mixup
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/04-predicate/ZT-043-e_utf8_latin1_mixup/repro.sh: line 22: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+--- ZT-043-damage-in-second-ou.pem
+    OU: OU=sede electrónica
+    OU: OU=SEDE ELECTRONICA DEL AYUNTAMIENTO DE LA TORRE DÂEN BESORA
+
+--- ZT-043-control-damage-in-first-ou.pem
+    OU: OU=Sistemas de InformaciÃ³n
+    OU: OU=PremiumSSL Legacy Wildcard
+
+observed: pass where the damage is in the second organizationalUnitName,
+          error where it is in the first.
+correct : error on both. Nothing about a distinguished name makes the
+          first occurrence of an attribute the only one worth reading.
+fix     : iterate the slice --
+              for _, s := range strSlice {
+                  if containsUtf8Latin1Mixup(s) { ... }
+              }
+          and the same in lint_subj_contains_html_entities.go, which has
+          the identical shape.
+
+Reach on this corpus is 1 of 21,778, and it is a real certificate rather
+than a fixture. The population is any subject carrying an attribute more
+than once, which is common for organizationalUnitName.
+
+################ ZT-080-e_utf8_latin1_mixup
+== two certificates from the same CA incident, Mozilla bug 1724458
+   Sectigo, 2021-08-06, 'certificates containing Mojibake in place of
+   UTF-8 encoded Extended ASCII characters'
+
+   ZT-080-a-grave-mangled.der       organizationName holds 'AutoritÃ\xa0' -- à mangled, U+00C3 U+00A0
+                                    zlint says:          (MISSED)
+
+   ZT-080-e-grave-control.der       localityName holds 'VallÃ¨s' -- è mangled, U+00C3 U+00A8
+                                    zlint says:          (in the table)
+
+   observed  the à certificate passes; the è certificate is reported.
+   correct   both are the same defect and both should be reported.
+
+== the omission, derived rather than asserted
+
+== fix
+   add two entries, written as escapes so the invisible characters
+   survive review:
+      "\u00c3\u00a0", // à
+      "\u00c3\u00ad", // í
+   The remaining five need the table to hold bytes cp1252 leaves
+   undefined, which is a different change and may not be worth making.
+
+################ ZT-081-an-IP-address-in-a-dNSName-is-reported-as-an
+== the certificate's only subjectAltName entry
+   DNS:213.16.25.173
+
+== zlint, non-passing results
+
+Observed: e_dnsname_not_valid_tld Correct: a finding that the value is not a
+domain name at all.
+
+e_dnsname_not_valid_tld declares:
+
+    Description:   "DNSNames must have a valid TLD."
+    Citation:      "BRs: 3.2.2.4"
+
+BR 3.2.2.4 is *Validation of Domain Authorization or Control*. It is about
+proving control of a domain name. `213.16.25.173` is not a domain name, so the
+
+The repair the finding names cannot be made. There is no TLD that can be
+registered to turn `213.16.25.173` into a conforming dNSName; the value has to
+move into an iPAddress entry. A CA reading this finding is told to fix the
+wrong thing.
+
+NO LINT REPORTS THE REAL DEFECT. zlint has 33 lints whose names mention a DNS
+name and none of them tests whether the value parses as an IP address.
+(lint_subject_contains_malformed_arpa_ip and lint_subject_contains_reserved_arpa_ip
+parse IPs, but both are about .arpa names, not about an IP literal in a dNSName.)
+
+SEVERITY
+
+Low. The certificate is reported either way and the verdict does not change --
+an IP address in a dNSName is non-conforming, and zlint condemns it. What is
+wrong is the requirement named and the repair implied.
+
+Reach over the corpus (21,802 certificates): 98 certificates carry a dNSName that
+parses as an IP address. 97 draw e_dnsname_not_valid_tld and nothing else about
+the IP; the 98th is NE, issued 2012-02-02, before util.CABEffectiveDate -- the
+requirement is RFC 5280's and predates the Baseline Requirements, so dating
+this lint to the BRs exempts a certificate from a rule that already bound it.
+
+FIX
+
+Two changes, either useful alone:
+
+1. Add a lint for a dNSName that parses as an IP address, citing BR
+7.1.2.7.12.
+
+RELATED
+
+
+################ ZT-082-not-a-CA-certificate-is-used-to-mean-a-Subsc
+== SUBJECT: a delegated OCSP responder — extendedKeyUsage is id-kp-OCSPSigning and nothing else
+      subject=C=DE, O=D-Trust GmbH, CN=D-TRUST OCSP 1 BR CA 1-20-2 2020
+          OCSP Signing
+
+== CONTROL: a TLS subscriber certificate from the same collection
+
+Observed: four errors against a delegated OCSP responder, from lints whose own
+          Descriptions begin "Subscriber certificates" and "Subscriber
+          Certificate", citing BRs 7.1.4.2.1 and 7.1.4.2.2.
+Correct: NA. BR 7.1.2.8 is the OCSP Responder Certificate Profile, and it
+answers all four questions differently:
+
+            subjectAltName    MUST NOT be present   (7.1.2.8.2)
+            subject           see 7.1.2.10.2, CA Certificate Naming
+                                                    (7.1.2.8, subject row)
+
+e_ext_san_missing reports the ABSENCE of an extension this certificate's
+profile forbids it to have, and e_subject_common_name_not_from_san asks a
+commonName to come from SAN entries the profile forbids it to carry --
+unsatisfiable, not merely inapplicable. The two naming lints read the
+subscriber clause where 7.1.2.8 names the CA one.
+
+The control shows those lints applying and passing on an ordinary TLS
+subscriber certificate, so this is the population and not the predicate. One
+column reads NE there rather than pass: e_subject_common_name_not_from_san
+carries IneffectiveDate CABFBRs_1_8_0_Date and the control is recent, while
+the responder is old enough for the lint to be in force. That is the lint
+dating itself correctly and is unrelated to the finding.
+
+THE MECHANISM
+
+    lint_ext_san_missing.go:50                 return !util.IsCACert(c)
+    lint_subject_common_name_not_from_san.go   CommonName != "" && !IsCACert(c)
+    lint_sub_cert_locality_name_must_appear.go return util.IsSubscriberCert(c)
+    lint_sub_cert_province_must_appear.go      return util.IsSubscriberCert(c)
+
+    util/ca.go:43  func IsSubscriberCert(c) { return !IsCACert(c) && !IsSelfSigned(c) }
+
+A delegated responder is not a CA and is not self-signed, so it satisfies both.
+"Not a CA certificate" is being used to mean "a Subscriber Certificate", and the
+BRs define a third thing.
+
+**zlint already has the predicate**, four lines below the one being used:
+
+util/ca.go:47 // IsDelegatedOCSPResponderCert returns true if the //
+id-kp-OCSPSigning EKU is set
+    util/ca.go:50  func IsDelegatedOCSPResponderCert(cert) bool {
+                       return HasEKU(cert, x509.ExtKeyUsageOcspSigning) }
+
+**Exactly one lint in the tree calls it**:
+lint_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth.go. Four lints on
+the responder profile exist -- cdp_forbidden, cp_forbidden, invalid_ku,
+nocheck
+-- so the profile is known; the subscriber lints simply do not exclude it.
+
+Note that IsDelegatedOCSPResponderCert is INCLUSIVE (the EKU contains
+OCSPSigning) where BR 7.1.2.8.5 makes the profile exclusive (id-kp-OCSPSigning
+MUST be present and any other value MUST NOT). Either reading excludes the
+certificate here, whose EKU is exactly id-kp-OCSPSigning.
+
+REACH
+
+One certificate over the corpus (21,802), drawing four errors -- the corpus holds
+73 delegated responders and most carry no commonName or place attributes to
+fault. Reach is small; the mechanism is not, because it decides which profile a
+whole certificate class is judged against.
+
+FIX
+
+Add `&& !util.IsDelegatedOCSPResponderCert(c)` to each of the four CheckApplies,
+or narrow IsSubscriberCert itself -- the latter reaches every lint that uses
+it and is the reason to prefer it.
+
+rules corrected on 2026-08-22 (26 findings over the same corpus). Three
+implementations, one confusion: "not a CA" is not "a Subscriber Certificate".
+
+################ ZT-083-e_dsa_shorter_than_2048_bits
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint.exe
+   ZLint version 3.6.8
+
+== L=2048, N=224 — the FIRST pair BR 6.1.5 names ==
+   ^ one clause, two lints, opposite verdicts on the same certificate.
+
+== the control: L=2048, N=256 — the second pair ==
+
+== executed, not read: the comparison itself ==
+   lint_dsa_shorter_than_2048_bits.go:59-63
+   
+       L := dsaParams.P.BitLen()
+       N := dsaParams.Q.BitLen()
+       if L >= 2048 && N >= 244 {
+           return &lint.LintResult{Status: lint.Pass}
+       }
+       return &lint.LintResult{Status: lint.Error}
+
+============================================================== observed
+e_dsa_shorter_than_2048_bits = error on a DSA key with L=2048 and N=224, while
+e_dsa_improper_modulus_or_divisor_size passes the same certificate.
+
+correct Pass. BRs v1.7.0 6.1.5 names three pairs -- L=2048/N=224, L=2048/N=256
+and L=3072/N=256 -- and L=2048/N=224 is the first of them. Both lints cite
+that clause.
+
+mechanism lint_dsa_shorter_than_2048_bits.go:62 tests `N >= 244`. FIPS 186-4
+          defines N as 160, 224 or 256; 244 is not a value q can take, and
+the digits are 224 transposed. Every N below 244 -- which is every conformant
+N except 256 -- takes the error branch.
+
+severity Medium. It reports a real requirement's compliant case as a
+violation, and it does so on the pair the Baseline Requirements name first. A
+CA using L=2048/N=224 -- FIPS 186-4's smaller conformant choice -- is told to
+change a key that is correct.
+
+fix       One character.
+
+              if L >= 2048 && N >= 224 {
+
+Or delete the lint: e_dsa_improper_modulus_or_divisor_size states the same
+clause completely, and a requirement stated twice is how two implementations
+of it come to disagree.
+
+################ ZT-084-e_crl_next_update_invalid
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint.exe
+
+== what the list says about itself ==
+               X509v3 Issuing Distribution Point: critical
+                   Only CA Certificates
+   
+           Last Update: May 13 18:00:00 2026 GMT
+           Next Update: May 11 23:59:59 2027 GMT
+   ^ a critical extension saying CA certificates only, and 363 days.
+
+== what zlint says ==
+
+== where that comes from: the shipped default ==
+   [e_crl_next_update_invalid]
+   SubscriberCRL = true
+   ^ every CRL is a Subscriber CRL unless a caller says otherwise.
+
+==============================================================
+observed  e_crl_next_update_invalid = error, "For CRLs covering Subscriber
+          Certificates, nextUpdate must be at most 10 days after thisUpdate",
+on a list whose critical issuingDistributionPoint asserts onlyContainsCACerts
+and whose period is under twelve months.
+
+correct Pass. BR 7.2 gives twelve months for a CRL covering CA Certificates,
+and this list states that it is one.
+
+mechanism lint_crl_next_update_invalid.go carries the scope as configuration:
+
+              type CrlNextUpdateInvalid struct {
+                  SubscriberCRL bool `comment:"Set this to false if the CRL
+                                       to be linted covers CA certificates"`
+              }
+
+          Execute() branches on l.SubscriberCRL and never reads
+issuingDistributionPoint, which RFC 5280 5.2.5 makes the CRL's own statement
+of its population. The shipped default is true, so the answer for an ARL is
+wrong unless the caller knew to say so.
+
+pkimetal sets it false for its ARL profiles only, so a *full* CRL covering CA
+certificates still gets the subscriber ceiling in production.
+
+severity Medium. It reports a conforming list as violating a requirement, and
+it does so for every CA that publishes an ARL without knowing to reconfigure
+the linter.
+
+fix Read the extension, and keep the flag as an override for a caller that has
+other information:
+
+              only_ca := false
+              for _, ext := range c.Extensions {
+                  if ext.Id.Equal(util.IssuingDistOID) {
+// decode IssuingDistributionPoint, take // onlyContainsCACerts
+                  }
+              }
+              if !only_ca && l.SubscriberCRL { ...10 days... }
+
+A list asserting neither boolean should keep the subscriber ceiling: one that
+has not excluded end-entity certificates may hold them.
+
+################ ZT-044-e_signature_algorithm_not_supported
+== positive/ZT-044-rsassa-pss-hash-params-absent.pem
+           Signature Algorithm: rsassaPss        
+           Hash Algorithm: sha256
+           Mask Algorithm: mgf1 with sha256
+            Salt Length: 0x20
+           Trailer Field: 0x01 (default)
+   --
+{
+  "e_mp_rsassa-pss_parameters_encoding_in_signature_algorithm_correct": {
+    "result": "error",
+    "details": "RSASSA-PSS parameters are not properly encoded. 3 presentations are allowed but got the unsupported 303d06092a864886f70d01010a3030a00d300b0609608648016503040201a11a301806092a864886f70d010108300b0609608648016503040201a203020120"
+  },
+  "e_signature_algorithm_not_supported": {
+    "result": "error"
+  }
+}
+
+
+== negative/ZT-044-control-rsassa-pss-canonical.pem
+           Signature Algorithm: rsassaPss        
+           Hash Algorithm: sha256
+           Mask Algorithm: mgf1 with sha256
+            Salt Length: 0x20
+           Trailer Field: 0x01 (default)
+   --
+{
+  "e_mp_rsassa-pss_parameters_encoding_in_signature_algorithm_correct": {
+    "result": "pass"
+  },
+  "e_signature_algorithm_not_supported": {
+    "result": "warn"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+rsassapssWithSHA256EmptyHashParams.pem e_signature_algorithm_not_supported
+error e_mp_rsassa-pss_parameters_encoding_in_signature_algorithm_correct
+                                                              error   (correct)
+
+rsassapssWithSHA256.pem, the same algorithm canonically encoded
+e_signature_algorithm_not_supported warn
+
+Correct: warn on both, which is what the lint's own table says about
+SHA256WithRSAPSS. The control demonstrates the mechanism -- the two files
+carry the same algorithm OID and differ only in the PSS parameter encoding,
+and the severity moves two levels.
+
+BR 7.1.3.2 lists RSASSA-PSS with SHA-256, SHA-384 and SHA-512 among the
+algorithms a CA SHALL use, with a byte-for-byte encoding for each. The lint's
+own comment records the reading: "The BRs do not forbid the use of RSA-PSS as a
+signature scheme in certificates but it is not broadly supported by
+user-agents", which is why it is a warning.
+
+The other 62 firings are 50 md5WithRSAEncryption, 11 md2WithRSAEncryption and
+one
+GOST R 34.11-94 (1.2.643.2.2.3), and are correct.
+
+This corrects an aside in ZT-050, which says of that same root that "zlint
+separately and correctly reports e_public_key_type_not_allowed and
+e_signature_algorithm_not_supported". The first of those is right -- BR 7.1.3.1
+says the CA "SHALL NOT use a different algorithm, such as the id-RSASSA-PSS
+(OID: 1.2.840.113549.1.1.10) algorithm identifier, to indicate an RSA key",
+which is about the subjectPublicKeyInfo. The second is this defect: the
+signature algorithm is in the table.
+
+Fix: read the severity from the algorithm identifier rather than from zcrypto's
+mapping -- test `c.SignatureAlgorithmOID.Equal(oidSignatureRSAPSS)` before
+falling through to Error. Independently, zcrypto could keep the three PSS
+constants for parameter sets it recognises and return a fourth for
+"id-RSASSA-PSS, parameters not one of the three", so a caller can tell an
+unrecognised algorithm from an unrecognised encoding of a recognised one. NOTE
+
+################ ZT-045-the-two-oldest-validity-lints-measure-the-Va
+== positive/ZT-045-at-the-825-day-ceiling.pem
+   notBefore=Mar  2 15:49:34 2018 GMT notAfter=Jun  4 15:49:34 2020 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "pass"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "pass"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "NE"
+  }
+}
+
+
+== positive/ZT-045-real-825-days-and-one-second.pem
+   notBefore=Jul  4 11:05:36 2018 GMT notAfter=Oct  6 11:05:36 2020 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "pass"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "pass"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "NE"
+  }
+}
+
+
+== positive/ZT-045-at-the-39-month-ceiling.pem
+   notBefore=Jan  1 00:00:00 2017 GMT notAfter=Apr  1 00:00:00 2020 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "pass"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "NE"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "NE"
+  }
+}
+
+
+== negative/ZT-045-control-at-the-398-day-ceiling.pem
+   notBefore=Sep  1 00:00:00 2020 GMT notAfter=Oct  3 23:59:59 2021 GMT 
+{
+  "e_sub_cert_valid_time_longer_than_39_months": {
+    "result": "pass"
+  },
+  "e_sub_cert_valid_time_longer_than_825_days": {
+    "result": "pass"
+  },
+  "e_tls_server_cert_valid_time_longer_than_398_days": {
+    "result": "pass"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+subCert825DaysOK.pem notBefore 2018-03-02 15:49:34 notAfter 2020-06-04
+15:49:34 Validity Period 825 days and 1 second
+e_sub_cert_valid_time_longer_than_825_days pass
+
+bug1651132-crtsh574121977 notBefore 2018-07-04 11:05:36 notAfter 2020-10-06
+11:05:36 Validity Period 825 days and 1 second
+e_sub_cert_valid_time_longer_than_825_days pass
+
+39months.pem notBefore 2017-01-01 00:00:00 notAfter 2020-04-01 00:00:00
+Validity Period 39 months and 1 second
+e_sub_cert_valid_time_longer_than_39_months pass
+
+eeServerCertValidEqual398.pem notBefore 2020-09-01 00:00:00 notAfter
+2021-10-03 23:59:59 Validity Period exactly 398 days
+e_tls_server_cert_valid_time_longer_than_398_days pass
+
+Correct: error on the first three, pass on the fourth.
+
+The fourth is the control and it is the whole argument. It is zlint's own
+boundary fixture for the *newer* family, and it is built one second shorter
+than the two old ones — notAfter at 23:59:59 rather than at the same clock
+time as notBefore. Under `GreaterThan` that is exactly 398 x 86,400 seconds
+and compliant. The old family's two fixtures are one second past their
+ceilings and are asserted `Pass` by
+lint_sub_cert_valid_time_longer_than_825_days_test.go:TestSubCertValidTime825Days
+and
+lint_sub_cert_valid_time_longer_than_39_months_test.go:TestSubCertValidTimeExactly39months.
+One project, one clause, two definitions of the boundary.
+
+are passed by this lint — 5 from bug1576013 (DigiCert), 5 from bug1595921
+(DigiCert), 4 from bug1651132 (T-Systems / DFN-PKI), and one each from
+bug1500621, bug1551363 and bug1654896. Every one was issued between 2018-03-02
+and 2020-09-01, so no other zlint lint judges its Validity Period:
+e_tls_server_cert_valid_time_longer_than_398_days returns NE below its own
+effective date. zlint reports these certificates as conformant on BR 6.3.2.
+
+The population is closed. Both windows ended before 2020-09-01, so no new
+issuance can enter either set, and the newer lints already use the inclusive
+arithmetic.
+
+Fix: replace both comparisons with the helper the rest of the family uses.
+
+    if util.GreaterThan(c, 825) { Error }
+
+and, for the month-stated ceiling, compare against the calendar instant
+inclusively rather than with Before:
+
+    if !c.NotAfter.Before(c.NotBefore.AddDate(0, 39, 0)) { Error }
+
+Both fixtures then need their notAfter moved back one second to keep asserting
+what their test names say they assert. NOTE
+
+################ ZT-046-e_subject_postal_code_max_length
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/05-spec-reading/ZT-046-e_subject_postal_code_max_length/repro.sh: line 6: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- observed --
+  postalCode=中国（上海）自由贸易试验区银城路99号12、15层
+
+observed: error   (25 characters faulted against a 16-character bound)
+correct : pass    (X.520 ub-postal-code is 40)
+fix     : bound id-at-postalCode at 40 per ITU-T X.520, not at
+          RFC 5280 A.1's ub-postal-code-length, which bounds an
+          X.400 OR-address type
+
+################ ZT-047-e_subject_contains_noninformational_value
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/05-spec-reading/ZT-047-e_subject_contains_noninformational_value/repro.sh: line 27: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+Jun 19 04:33:22 2012 GMT                       
+    subject OU=-
+Aug 16 09:23:28 2012 GMT                       
+    subject OU=-
+Sep 18 09:40:55 2012 GMT                       
+    subject OU=-
+
+observed: error on the 2012-08-16 certificate
+correct : pass   — BR 1.0 § 9.2.6 excepts subject:organizationalUnitName
+                   from the sentence this lint enforces, and BR 1.0 was
+                   the version in force until 2012-09-14
+fix     : skip organizationalUnitName when notBefore is earlier than
+          2012-09-14, the effective date of BR 1.1.0. The other attributes
+          carry the requirement from 2012-07-01 and need no change.
+
+note    : the Forum's own archive page lists no version before 1.1, so a
+          search of the published series reports this clause as beginning
+          2012-09-14 and the lint as ten weeks early. It is not: the BR 1.0
+          PDF is at cabforum.org/uploads/Baseline_Requirements_V1.pdf, and
+          it carries the clause. This project reached the opposite, wrong
+          conclusion first from exactly that gap.
+
+################ ZT-048-an-out-of-range-iPAddress-SAN-becomes-silenc
+== positive/ZT-048-san-ip-three-octets.pem
+   REFUSED, 0 bytes of JSON:
+   time="2026-08-25T17:09:34+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: x509: certificate contained IP address of length 3 parsing as CRL: x509: uns
+
+== negative/ZT-048-control-san-ip-four-octets.pem
+   parsed, 19763 bytes of JSON; findings:
+     "e_ext_authority_key_identifier_no_key_identifier":{"result":"error"}
+     "e_ext_san_contains_reserved_ip":{"result":"error"}
+     "e_sub_cert_aia_missing":{"result":"error"}
+     "e_sub_cert_cert_policy_empty":{"result":"error"}
+     "e_sub_cert_certificate_policies_missing":{"result":"error"}
+     "w_ext_subject_key_identifier_missing_sub_cert":{"result":"warn"}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  three octets  level=fatal msg="unable to parse input as any known type,
+                errors: [parsing as certificate: x509: certificate contained
+                IP address of length 3 ...]"          0 bytes of JSON
+four octets parses, lints, reports e_ext_san_contains_reserved_ip and five
+others
+
+Mechanism, zcrypto x509/x509.go:1470 —
+
+    case 7:
+        switch len(v.Bytes) {
+        case net.IPv4len, net.IPv6len:
+            ipAddresses = append(ipAddresses, v.Bytes)
+        default:
+            err = errors.New("x509: certificate contained IP address of length " + ...)
+            return
+        }
+
+and zlint never sets asn1.AllowPermissiveParsing, which is the flag that would
+route the malformed name into failedToParse instead.
+
+A correct tool would decode the SubjectAltName leniently and report the
+non-conforming iPAddress length as a lint result, because "the address is
+three octets" is exactly the sort of finding a certificate linter exists to
+produce. NOTE
+
+################ ZT-049-e_crl_auth_key_id_only_contains_keyid
+== real-world CRL, AuthorityKeyIdentifier carries authorityCertIssuer + authorityCertSerialNumber
+   positive/ZT-049-crl-constructed-authority-cert-issuer.crl (, sha256 0e59cbb70fca...)
+176277:d=5  hl=2 l=   3 prim: OBJECT            :X509v3 Authority Key Identifier
+176282:d=5  hl=3 l= 136 prim: OCTET STRING      [HEX DUMP]:308185801450495AC48A6142FEB8FF2B3A51A2F0611DE0F322A169A4673065310B300906035504061302435A311730150603550461130E4E5452435A2D3437313134393833311D301B060355040A0C14C48C65736BC3A120706FC5A174612C20732E702E311E301C06035504031315506F73745369676E756D20526F6F7420514341203482021013
+{
+  "e_crl_auth_key_id_only_contains_keyid": {
+    "result": "pass"
+  }
+}
+
+
+== control: zlint's own test fixture for the same lint
+   negative/ZT-049-control-zlint-fixture-primitive-issuer.pem (v3/testdata/crlWithAuthKeyIDContainsAuthorityCertIssuer.pem, unmodified)
+{
+  "e_crl_auth_key_id_only_contains_keyid": {
+    "result": "error",
+    "details": "Forbidden authorityCertIssuer or authorityCertSerialNumber in authorityKeyIdentifier extension"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  real-world CRL (constructed [1])   pass
+  zlint's own fixture (primitive [1]) error
+
+Correct: error on the real-world CRL. BRs 7.2.2 forbids authorityCertIssuer
+and authorityCertSerialNumber in a CRL's AuthorityKeyIdentifier; this CRL
+carries both.
+
+The mechanism, read from the bytes (openssl asn1parse, both files):
+
+  zlint's fixture     81 0a 8208726f6f742e646e73          tag [1], PRIMITIVE, len 10
+  real-world CRL       a1 69 a467 30 65 31 0b ...          tag [1], CONSTRUCTED, len 105
+
+GeneralNames is, by its own ASN.1 definition, a SEQUENCE — always constructed.
+encoding/asn1 will not unmarshal a constructed element into a []byte through
+an implicit tag: the field is left nil rather than erroring, so the guard
+`AuthorityCertIssuer != nil` never sees it. The trailing
+authorityCertSerialNumber then goes unconsumed too — Go's asn1 leaves it for
+the next optional field, which is exactly what it is, so that field is also
+read correctly in isolation, but only the issuer's absence is what the guard
+tests, and that test has already gone false.
+
+zlint's own test (TestAuthKeyIDOnlyContainsKeyID, case
+"crlWithAuthKeyIDContainsAuthorityCertIssuer") asserts lint.Error and the
+binary agrees — the test is not wrong given its fixture. The fixture is wrong:
+BRs 7.2.2 gives authorityCertIssuer no encoding of its own, and
+GeneralNames (RFC 5280 §4.2.1.6) has none but the constructed one. A
+primitive [1] is not valid DER for the field the lint claims to be testing;
+it is a different malformation (a truncated OCTET STRING-shaped [1]) that
+happens to also make the guard fire, for a reason the lint's own comment does
+not describe. Against DER encoded the only way the ASN.1 module allows, the
+lint is blind to every certificate carrying the property it forbids.
+
+pkilint corroborates the field is genuinely present on this class of CRL: run
+against full-0d34dd618012.crl (also in , not shipped here)
+it reports at node path
+certificateList.tbsCertList.crlExtensions.0.extnValue.authorityKeyIdentifier.authorityCertSerialNumber.
+
+Corpus (2026-08-15, 286 CRLs): 9 carry authorityCertIssuer and
+authorityCertSerialNumber together, 8 with thisUpdate inside the lint's
+effective window (CABFBRs_2_0_1_Date). zlint returns pass on all 8.
+
+Fix: decode tag 1 into an asn1.RawValue, or into a properly typed
+GeneralNames, so a constructed element matches instead of being skipped. NOTE
+
+################ ZT-050-a-root-CA-whose-signature-zcrypto-cannot-ver
+== positive/ZT-050-root-ca-rsassa-pss-spki.pem
+   subject=C=DE, O=D-Trust GmbH, CN=D-TRUST Root CA 1 2017, organizationIdentifier=NTRDE-HRB74346
+              Public Key Algorithm: rsassaPss
+   openssl verify -check_ss_sig: self-signature OK
+{
+  "e_root_ca_extended_key_usage_present": {
+    "result": "NA"
+  },
+  "e_root_ca_key_usage_present": {
+    "result": "NA"
+  },
+  "e_sub_ca_aia_missing": {
+    "result": "error"
+  },
+  "e_sub_ca_certificate_policies_missing": {
+    "result": "error"
+  },
+  "e_sub_ca_crl_distribution_points_missing": {
+    "result": "pass"
+  }
+}
+
+
+== negative/ZT-050-control-root-ca-rsaencryption.pem
+   subject=C=US, O=Network Solutions L.L.C., CN=Network Solutions Certificate Authority
+              Public Key Algorithm: rsaEncryption
+   openssl verify -check_ss_sig: self-signature OK
+{
+  "e_root_ca_extended_key_usage_present": {
+    "result": "NE"
+  },
+  "e_root_ca_key_usage_present": {
+    "result": "pass"
+  },
+  "e_sub_ca_aia_missing": {
+    "result": "NA"
+  },
+  "e_sub_ca_certificate_policies_missing": {
+    "result": "NA"
+  },
+  "e_sub_ca_crl_distribution_points_missing": {
+    "result": "NA"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+D-TRUST Root CA 1 2017, SPKI id-RSASSA-PSS, subject == issuer
+e_root_ca_key_usage_present NA e_root_ca_extended_key_usage_present NA
+e_sub_ca_aia_missing error e_sub_ca_certificate_policies_missing error
+
+Network Solutions Certificate Authority, SPKI rsaEncryption, subject == issuer
+e_root_ca_key_usage_present pass e_sub_ca_aia_missing NA
+e_sub_ca_certificate_policies_missing NA
+
+Correct: the root profile on both. A root CA is not required to carry
+authorityInformationAccess or certificatePolicies -- BR 7.1.2.10 lists both as
+NOT RECOMMENDED for Root CA Certificates -- and the two errors above are
+requirements from the Subordinate CA profile applied to a certificate that is
+not one.
+
+zlint separately, and correctly, reports e_public_key_type_not_allowed and
+e_signature_algorithm_not_supported on the same certificate. Nothing here
+disputes those: an id-RSASSA-PSS SPKI is prohibited by Mozilla Root Store
+Policy 5.1.1 and outside the BR's algorithm table. The defect is that the
+prohibited encoding also silently changes which profile the certificate is
+linted against, so the tool reports the Subordinate CA requirements and stays
+silent on every Root CA one.
+
+This is the shape README.md calls the serious one: the subject of the check
+controls whether the check runs. Any self-issued CA whose signature zcrypto
+declines -- an unrecognised key OID, an unrecognised signature OID, or a
+signature that genuinely does not verify -- is silently promoted into the
+subordinate-CA profile, and no lint says so.
+
+Reach: 1 of the 21,778 corpus certificates has an id-RSASSA-PSS SPKI and is a
+CA (Mozilla CA incident bug 1917405, this file). Two further
+trust-store roots reach the same state by the other route --
+ (Vintegris) and
+root-c34c5df53080078f.der (CCA India 2015 SPL) -- whose self-signatures do not
+verify under openssl either, so for those two IsSubCA is doing what it
+documents. Three roots in all are linted as subordinate CAs.
+
+Case: Mozilla CA incident bug 1917405 Control: , chosen because it is a root
+with no authorityInformationAccess, so the sub-CA lints report NA on it rather
+than pass -- the classification, not the extension, is what differs.
+
+Fix: add oidPublicKeyRSAPSS to getPublicKeyAlgorithmFromOID in zcrypto,
+parsing the key as RSA -- RFC 4055 3.1 states the subjectPublicKey for
+id-RSASSA-PSS is an RSAPublicKey, so nothing else changes. Independently of
+that, zlint could
+stop inferring "subordinate" from a failed verification: IsSubCA(c) is true for
+every self-issued CA whose signature could not be checked, and a third state
+(self-issued, signature unverifiable) would keep those out of both profiles
+rather than silently placing them in one. NOTE
+
+################ ZT-051-e_ext_cert_policy_disallowed_any_policy_qual
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/06-parser/ZT-051-e_ext_cert_policy_disallowed_any_policy_qual/repro.sh: line 25: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- case 1: anyPolicy with policyQualifiers present and empty --
+   certificatePolicies of a real Government of Korea GPKI root:
+   30 0a 30 08 06 04 55 1d 20 00 30 00
+     SEQUENCE { SEQUENCE { OID 2.5.29.32.0 anyPolicy, SEQUENCE {} } }
+   control, anyPolicy carrying one CPS qualifier:
+
+-- case 2: policyMappings present and empty --
+   the same certificate, judged by three lints:
+   control, one well-formed mapping pair:
+
+observed: fatal, 'Could not unmarshal policy qualifiers' / 'inner sequence'
+correct : pass  — no qualifier is asserted, so none is disallowed; and no
+          issuerDomainPolicy is mapped, so none is unasserted. The
+          SIZE (1..MAX) violation belongs to e_ext_cannot_be_empty_sequence,
+          which reports it.
+fix     : test for the end of the sequence before decoding an element —
+          for len(seq.Bytes) > 0 { ... } — in GetMappedPolicies and in the
+          copy of it inside the anyPolicy-qualifier lint.
+
+note    : e_ext_cannot_be_empty_sequence tests only the extension's own
+          top-level SEQUENCE, so the nested empty policyQualifiers in
+          case 1 is reported by nothing. Case 1's certificate draws no
+          finding from any zlint lint about it.
+
+################ ZT-052-a-keyUsage-that-did-not-decode-is-indistingu
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/06-parser/ZT-052-a-keyUsage-that-did-not-decode-is-indistingu/repro.sh: line 30: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+-- the certificate, from Mozilla bug 1742195 --
+
+-- control: keyUsage present, well-formed, asserting no bits (03 02 07 00) --
+
+observed: the two certificates draw the same verdicts, except that
+          e_incorrect_ku_encoding is fatal on the first and error on the
+          control. Five lints state which bits are unset on a value none
+          of them read.
+correct : a keyUsage that did not decode is unknown, not empty. The
+          bit-presence lints should not run, and e_ca_key_usage_missing
+          should report the extension as present.
+fix     : give zcrypto a KeyUsageValid flag mirroring BasicConstraintsValid,
+          set it in the case 15 branch, and gate the keyUsage lints on it.
+          Failing that, test util.IsExtInCert(c, util.KeyUsageOID) rather
+          than c.KeyUsage != 0 for the presence question.
+
+################ ZT-053-a-root-whose-signature-algorithm-the-parser
+== the two certificates
+   both are publicly trusted roots, both self-signed, both RSASSA-PSS,
+   and both have subject == issuer. They differ in one field.
+   ZT-053-pss-root-absent-hash-params.pem         D-TRUST Root CA 1 2017
+   ZT-053-control-pss-root-null-hash-params.pem   Staat der Nederlanden - G4 Root Publ G-SMIME - 2024
+
+== the field: the hashAlgorithm inside RSASSA-PSS-params
+   ZT-053-pss-root-absent-hash-params.pem
+         16:d=2  hl=2 l=   9 prim: OBJECT            :rsassaPss
+         27:d=2  hl=2 l=  48 cons: SEQUENCE          
+         29:d=3  hl=2 l=  13 cons: cont [ 0 ]        
+         31:d=4  hl=2 l=  11 cons: SEQUENCE          
+   ZT-053-control-pss-root-null-hash-params.pem
+         33:d=2  hl=2 l=   9 prim: OBJECT            :rsassaPss
+         44:d=2  hl=2 l=  52 cons: SEQUENCE          
+         46:d=3  hl=2 l=  15 cons: cont [ 0 ]        
+         48:d=4  hl=2 l=  13 cons: SEQUENCE          
+   The [0] hashAlgorithm holds 13 octets in the first and 15 in the
+   second: the same id-sha512 OBJECT IDENTIFIER, plus a two-octet
+   NULL (05 00). That NULL is the whole difference between the two
+   certificates as far as this defect is concerned.
+
+== the role each is given, by the lints that only a ROOT can be judged by
+   e_root_ca_key_usage_present                                    absent=NA   NULL=pass
+   e_root_ca_key_usage_must_be_critical                           absent=NA   NULL=pass
+   e_root_ca_extended_key_usage_present                           absent=NA   NULL=pass
+   w_root_ca_contains_cert_policy                                 absent=NA   NULL=pass
+   w_root_ca_basic_constraints_path_len_constraint_field_present  absent=NA   NULL=pass
+
+== and by the lints only a SUBORDINATE CA can be judged by
+   e_sub_ca_certificate_policies_missing                          absent=error NULL=NA
+   e_sub_ca_aia_missing                                           absent=error NULL=NA
+   e_sub_ca_crl_distribution_points_missing                       absent=pass NULL=NA
+   n_sub_ca_eku_missing                                           absent=info NULL=NA
+   w_sub_ca_aia_does_not_contain_issuing_ca_url                   absent=warn NULL=NA
+
+== a third consequence of the same unrecognised algorithm
+   subject: {"e_signature_algorithm_not_supported":{"result":"error"}}
+   control: {"e_signature_algorithm_not_supported":{"result":"warn"}}
+   Both are SHA-512 RSASSA-PSS. The recognised one warns, which is what
+   zlint means to say about PSS; the unrecognised one errors, because the
+   lint reads c.SignatureAlgorithm and finds UnknownSignatureAlgorithm.
+
+observed  D-TRUST Root CA 1 2017 is judged as a subordinate CA: it is
+          reported for a missing certificatePolicies and a missing AIA,
+          neither of which a root must carry, and the five root-profile
+          lints never run on it at all.
+correct   the role is a property of the certificate, not of whether this
+          parser could check its signature. Either give IsRootCA a
+          name-equality path when the signature cannot be checked, or
+          accept absent hashAlgorithm parameters as RFC 4055 s2.1
+          requires -- the one-line form is to use the same condition the
+          unexported sibling in the same file already uses.
+
+################ ZT-054-zcrypto-s-DSA-verification-omits-the-FIPS-18
+== the certificate
+   subject=C=AU, ST=Some-State, O=Internet Widgits Pty Ltd
+   issuer=C=AU, ST=Some-State, O=Internet Widgits Pty Ltd
+           Signature Algorithm: dsa_with_SHA256
+                   Public-Key: (1024 bit)
+
+== an independent verifier on the self-signature, and on a corrupted copy
+   real      : C:/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/06-parser/ZT-054-zcrypto-s-DSA-verification-omits-the-FIPS-18/positive/ZT-054-dsa-selfsigned.pem: OK
+   corrupted : error 7 at 0 depth lookup: certificate signature failure
+
+== the role zlint gives it, by lints only a ROOT can be judged by
+   e_root_ca_key_usage_present                              NA
+   e_root_ca_extended_key_usage_present                     NA
+   w_root_ca_contains_cert_policy                           NA
+
+== and by lints only a SUBORDINATE CA can be judged by
+   e_sub_ca_certificate_policies_missing                    error
+   e_sub_ca_aia_missing                                     NE
+   e_sub_ca_crl_distribution_points_missing                 error
+
+observed  a self-signed DSA CA whose signature openssl verifies is given
+          zcrypto's SelfSigned=false, so the root profile never runs on
+          it and the subordinate profile does.
+correct   restore the two dropped lines of crypto/dsa's Verify:
+            n >>= 3; if n > len(hash) { n = len(hash) }
+            z := new(big.Int).SetBytes(hash[:n])
+          FIPS 186-4 s4.7. Verified by executing zcrypto's own Verify
+          twice on this certificate: false with the 32-byte digest,
+          true with it truncated to q's 20 bytes.
+
+################ ZT-055-a-parse-failure-ends-the-run-and-discards-th
+== 1. the bad file alone
+   exit: NON-ZERO
+   stdout bytes: 0
+   stderr: time="2026-08-25T17:10:44+08:00" level=fatal msg="unable to parse input as any known type, errors: [parsing as certificate: asn1: syntax error: PrintableString contains invalid character parsing as CRL: x509: unsupported crl version parsing as OCSP response: asn1: structure error: tags don't match (10 vs {class:0 tag:16 length:1124 isCompound:true}) {optional:false explicit:false application:false private:false defaultValue:<nil> tag:<nil> stringType:0 timeType:0 set:false omitEmpty:false} Enumerated @4]"
+
+== 2. a missing file, for comparison of what a consumer can tell apart
+   exit: NON-ZERO
+   stderr: time="2026-08-25T17:10:45+08:00" level=fatal msg="unable to open file C:/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/07-robustness/ZT-055-a-parse-failure-ends-the-run-and-discards-th/no-such-file.pem: open C:/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/07-robustness/ZT-055-a-parse-failure-ends-the-run-and-discards-th/no-such-file.pem: The system cannot find the file specified."
+
+== 3. bad file first, good file second — the good file is never linted
+   stdout bytes: 0   (a lint report is ~21 kB)
+
+== 4. good file first, bad file second — the run still aborts
+   stdout bytes: 19878
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  1. exit NON-ZERO, 0 bytes on stdout, and on stderr
+       level=fatal msg="unable to parse input as any known type, errors:
+         [parsing as certificate: asn1: syntax error:
+          PrintableString contains invalid character ...]"
+  2. exit NON-ZERO, level=fatal msg="unable to open file ...".
+     Same channel, same level, same exit class as (1): a consumer reading the
+     exit code cannot tell a nonconformant certificate from a bad path.
+3. 0 bytes. The good certificate that followed it was never linted. 4. 21470
+bytes — the first file's report — then the process dies.
+
+certlint on the same bytes reports the defect as a finding and continues:
+  E: Constraint failure in X520OrganizationName ... (X520OrganizationName.c:115)
+
+A correct tool would emit a JSON object for every input, with a reserved key
+(or a fatal-status entry) naming the parse failure, and would carry on to the
+next file. As shipped, zlint's most severe class of nonconformity — DER the
+parser will not accept — is the one class it cannot report, and a batch
+consumer loses both the finding and every file queued behind it. NOTE
+
+################ ZT-056-e_org_validated_invalid_cn
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/07-robustness/ZT-056-e_org_validated_invalid_cn/repro.sh: line 7: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+positive/ZT-056-ov-no-organization-name
+    subject: C=GB, organizationIdentifier=NTRGB-12345678
+
+negative/ZT-056-control-ov-with-common-name
+    subject: C=ES, L=Algún lugar, O=Alguna Compañía, CN=Firma Registros Médicos, organizationIdentifier=ABCES-1234567890
+
+observed: Fatal, from an index out of range, on a certificate whose
+          commonName is absent and therefore conformant
+correct : NA — §7.1.4.2.2(a) binds the attribute only "If present"
+fix     : already written on the upstream branch origin/pr1069_followup,
+          unmerged as of master 1007b1d5:
+              CheckApplies: ... && c.Subject.CommonName != ""
+              Execute:      ... || (len(c.Subject.Organization) > 0 &&
+                                    c.Subject.CommonName == c.Subject.Organization[0])
+
+################ ZT-057-GetKeyUsageStrings-ranges-over-a-map-so-two
+== the certificate's key usage, from openssl
+
+== 12 runs of the same binary over the same file
+   distinct orderings of the bit list: MORE THAN ONE -- non-deterministic
+
+== the status is stable; only the wording moves
+     12 "result":"error"
+
+observed  the bit list is printed in a fresh random order per call, so
+          the same binary on the same certificate emits different
+          Details text between runs.
+correct   one ordering. Sort the slice before returning it, or range
+          over an ordered slice of (bit, name) rather than a map.
+
+################ ZT-058-e_org_validated_invalid_cn
+== an OV S/MIME certificate whose subject has no organizationName
+subject=C=GB, organizationIdentifier=NTRGB-12345678
+                Policy: 2.23.140.1.5.2.1
+
+== control: an OV S/MIME certificate that does carry one, same lint
+subject=C=ES, L=Algún lugar, O=Alguna Compañía, CN=Firma Registros Médicos, organizationIdentifier=ABCES-1234567890
+
+observed  fatal, from a runtime panic indexing Organization[0].
+correct   the lint should reach a verdict. An OV certificate with no
+          organizationName cannot have a commonName matching it, so
+          error is the answer once the index is guarded.
+
+################ ZT-059-e_ext_cannot_be_empty_sequence
+== 1. zlint's own fixture, unmodified
+   frshCRLNotCritical.pem carries SubjectInformationAccess and FreshestCRL
+   with byte-identical malformed contents (extnValue 0201 in both), so two
+   of the ten target extensions fail. Only one is ever reported.
+   outcomes:
+
+   observed  the extension NAMED changes between runs.
+   correct   a stable report. Both extensions are defective and neither is
+             more the answer than the other -- report both, or iterate in
+             a defined order and say so.
+
+   The corpus has exactly two such certificates and both are zlint's own
+   fixtures: frshCRLCritical.pem and frshCRLNotCritical.pem.
+
+== 2. a constructed certificate, where the STATUS moves too
+   Recipe: a self-signed certificate carrying
+     SubjectInformationAccess = 3000   (a well-formed EMPTY SEQUENCE
+                                        -> parses, len 0 -> lint.Error)
+     FreshestCRL              = 020101 (an INTEGER where a SEQUENCE
+                                        belongs -> lint.Fatal)
+   Whichever the map reaches first decides the status of the whole lint.
+   outcomes:
+
+   observed  error and fatal, from one binary on one certificate.
+   correct   one status, deterministically.
+
+   Two consumers reading this lint disagree about the same certificate,
+   and a re-run disagrees with itself. The empty-SEQUENCE violation is
+   simply not reported on the runs that pick FreshestCRL.
+
+== fix
+   Collect over a sorted key set rather than the map, and accumulate
+   instead of returning on the first hit:
+
+     oids := make([]string, 0, len(targetExtensionsMap))
+     for oid := range targetExtensionsMap { oids = append(oids, oid) }
+     sort.Strings(oids)
+
+   Sorting alone makes the report deterministic; accumulating is what
+   makes it complete. util.GetEKUStrings already sorts for exactly this
+   reason -- see ZT-057, which is the same root cause reaching a
+   different part of the output.
+
+################ ZT-060-a-test-names-a-fixture-it-does-not-lint
+== the file both tests name, as it sits on disk
+{
+  "e_dsa_correct_order_in_subgroup": {
+    "result": "pass"
+  }
+}
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+  {"e_dsa_correct_order_in_subgroup":{"result":"pass"}}
+
+and from a checkout:
+
+  $ go test ./lints/cabf_br/ -run 'TestDSACorrectOrderSubgroup|TestDSANotCorrectOrderSubgroup' -v
+  === RUN   TestDSACorrectOrderSubgroup
+  --- PASS: TestDSACorrectOrderSubgroup (0.00s)
+  === RUN   TestDSANotCorrectOrderSubgroup
+  --- PASS: TestDSANotCorrectOrderSubgroup (0.00s)
+
+Both tests pass, and the file named by the one expecting Error returns pass.
+
+test.TestLintCert is documented upstream as intentional — "useful when a unit
+test reads a certificate from disk and then mutates it in some way before
+trying to lint it" — so the helper is not the defect. The defect is that the
+mutated case is labelled with the filename of the unmutated one, and there is
+no artifact for the mutation. Three call sites do this:
+
+lints/cabf_br/lint_dsa_correct_order_in_subgroup_test.go:44
+lints/cabf_br/lint_dsa_unique_correct_representation_test.go:48
+lints/community/lint_rsa_fermat_factorization_test.go:117
+
+test.TestLintWithConfig (16 call sites) is a milder version: the same filename
+carries two contradictory expectations distinguished only by a Go value.
+
+A correct suite would serialise the mutated certificate to testdata/ and lint
+it by filename, so that every stated expectation names bytes that exist. NOTE
+
+################ ZT-061-n_multiple_subject_rdn
+== every citation mentioning certlint, with counts
+     14 "citation":"awslabs certlint"
+      6 "citation":"lint.AWSLabs certlint"
+
+== the six that carry the package selector
+  w_issuer_dn_leading_whitespace
+  w_issuer_dn_trailing_whitespace
+  w_subject_dn_leading_whitespace
+  w_subject_dn_trailing_whitespace
+  n_multiple_subject_rdn
+  e_validity_time_not_positive
+
+observed  6 lints cite   lint.AWSLabs certlint
+correct   awslabs certlint, as the other 14 from the same source do
+
+################ ZT-062-two-lints-anchor-against-a-value-that-may-be
+== positive/ZT-062-empty-country-and-printablestring.pem
+   subject=C=,ST=FL,L=Tallahassee,street=3210 Holly Mill Run,postalCode=30062,O=Extreme Discord,OU=Chaos,CN=gov.us
+{
+  "e_ca_country_name_invalid": {
+    "result": "error"
+  },
+  "e_ca_country_name_missing": {
+    "result": "error"
+  },
+  "e_subj_country_not_uppercase": {
+    "result": "error",
+    "details": "Country codes must be comprised of uppercase A-Z letters"
+  },
+  "e_subject_country_not_iso": {
+    "result": "error"
+  },
+  "e_subject_printable_string_badalpha": {
+    "result": "error",
+    "details": "RawSubject attr oid 2.5.4.6 encoded PrintableString contained illegal characters"
+  }
+}
+
+
+== negative/ZT-062-control-real-illegal-character.pem
+   subject=CN=*.b4a87c.aws.radiantlock.org
+{
+  "e_ca_country_name_invalid": {
+    "result": "NA"
+  },
+  "e_ca_country_name_missing": {
+    "result": "NA"
+  },
+  "e_subj_country_not_uppercase": {
+    "result": "pass"
+  },
+  "e_subject_country_not_iso": {
+    "result": "pass"
+  },
+  "e_subject_printable_string_badalpha": {
+    "result": "error",
+    "details": "RawSubject attr oid 2.5.4.3 encoded PrintableString contained illegal characters"
+  }
+}
+
+
+
+Observed (zlint v3.7.1-20-g1007b1d5):
+
+caBlankCountry.pem, countryName present and empty
+e_subject_printable_string_badalpha error
+          "RawSubject attr oid 2.5.4.6 encoded PrintableString contained
+           illegal characters"
+      e_subj_country_not_uppercase         error
+          "Country codes must be comprised of uppercase A-Z letters"
+      e_ca_country_name_missing            error   (correct)
+      e_ca_country_name_invalid            error   (correct)
+      e_subject_country_not_iso            error   (correct)
+
+  subjectCommonNamePrintableStringBadAlpha.pem
+      e_subject_printable_string_badalpha  error   (correct)
+
+Correct: pass from the first two lints on the empty value. Three other lints
+already state the defect, and each states it accurately.
+
+Reach, over the 21,778 corpus certificates zlint read:
+
+e_subject_printable_string_badalpha fires 25, of which 8 carry an empty
+PrintableString and no character outside the repertoire -- 7 of zlint's own
+fixtures and Mozilla CA incident bug 1391074, whose organizationalUnitName is
+present and empty e_subj_country_not_uppercase fires 145, of which 6 carry an
+empty countryName -- all zlint's own fixtures
+
+No conformance verdict changes; every certificate is non-conformant for the
+reason the other three lints give. What changes is the reason and the count. A
+consumer tallying distinct violated requirements sees five where the document
+states one, and two of the five name a character that is not there.
+
+Fix: `*` in place of `+` in both patterns, with an explicit emptiness test
+where emptiness is the finding -- or, for the country lint, guard on
+`len(cc) > 0` and leave the empty case to the three lints that own it.
+
+################ ZT-063-e_subscribers_crl_distribution_points_are_ht
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/08-hygiene/ZT-063-e_subscribers_crl_distribution_points_are_ht/repro.sh: line 7: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+positive/ZT-063-legacy-no-crldp  (cRLDistributionPoints extensions: 0)
+
+negative/ZT-063-control-legacy-with-crldp  (cRLDistributionPoints extensions: 1)
+
+observed: two errors for one missing extension, and the scheme lint's
+          message describes distribution points the certificate has none of
+correct : one error, from e_subscribers_shall_have_crl_distribution_points
+fix     : guard the Legacy branch on the list being non-empty, as its
+          sibling branch already is:
+              if IsLegacy(c) && len(c.CRLDistributionPoints) > 0 && httpCount == 0
+
+################ ZT-064-w_qcstatem_qcpds_lang_case
+zlint: /c/Users/nizhou/Downloads/linter-triage-2026-08-24/linter-triage-2026-08-24/zlint/08-hygiene/ZT-064-w_qcstatem_qcpds_lang_case/repro.sh: line 20: /c/Users/nizhou/.local/bin/zlint: No such file or directory
+
+positive/ZT-064-qcpds-bad-encoding
+
+negative/ZT-064-control-upper-case-language
+
+observed: a lint named w_ returns Error, and returns it for an encoding
+          fault its sibling e_qcstatem_qcpds_valid already reports
+correct : Warn for the language code, and nothing for the encoding --
+          one lint, one status, matching its prefix
+fix     : return Pass when errString is non-empty and leave the encoding
+          to e_qcstatem_qcpds_valid, or rename the lint e_ and drop the
+          Warn branch. The control shows the Warn branch is reachable
+          and correct, so the first is the smaller change.
+
+################ ZT-065-e_rsa_public_exponent_too_small
+== the three lints citing BRs: 6.1.6 about the public exponent
+  w_rsa_public_exponent_not_in_range
+      RSA: Public exponent SHOULD be in the range between 2^16 + 1 and 2^256 - 1
+  e_rsa_public_exponent_not_odd
+      RSA: Value of public exponent is an odd number equal to 3 or more.
+  e_rsa_public_exponent_too_small
+      RSA: Value of public exponent is an odd number equal to 3 or more.
+
+== the two identical descriptions
+      2 RSA: Value of public exponent is an odd number equal to 3 or more.
+      1 RSA: Public exponent SHOULD be in the range between 2^16 + 1 and 2^256 - 1
+
+== e = 3: odd, at least 3, below n. Only the SHOULD is breached.
+{
+  "e_rsa_public_exponent_not_odd": {
+    "result": "pass"
+  },
+  "e_rsa_public_exponent_too_small": {
+    "result": "pass"
+  },
+  "w_rsa_public_exponent_not_in_range": {
+    "result": "warn"
+  }
+}
+
+
+observed  e_rsa_public_exponent_too_small is described as confirming
+          'an odd number equal to 3 or more'; it tests only e >= 3, and
+          the string is e_rsa_public_exponent_not_odd's verbatim.
+correct   a description naming its own predicate, e.g.
+          'RSA: Value of public exponent is 3 or more.'
+
+################ ZT-066-e_wrong_time_format_pre2050
+== the certificate's validity, and the encoding of notAfter
+notBefore=Nov  8 21:35:53 2018 GMT
+notAfter=Jan  1 00:00:00 1 GMT
+   notAfter is encoded as GeneralizedTime: 69:d=3  hl=2 l=  15 prim: GENERALIZEDTIME   :00010101000000Z
+
+== what the lint says
+{
+  "e_wrong_time_format_pre2050": {
+    "result": "error"
+  }
+}
+
+
+== the range UTCTime can express, RFC 5280 4.1.2.5.1
+   1950-01-01 through 2049-12-31. Year 1 is not in it.
+
+observed  error, telling the CA to encode year 1 as UTCTime.
+correct   this lint should not fire below 1950. The certificate is
+          defective -- a notAfter of year 1 is nonsense -- but the
+          defect is the value, and no encoding change repairs it.
+
+################ ZT-067-w_subject_common_name_included
+== the two certificates
+   both are subscriber certificates issued after SC62 took effect on
+   2023-09-15, and both carry a commonName. They differ in their type.
+   ZT-067-ev-subscriber-with-common-name.pem            May 20 06:59:48 2026 GMT
+   ZT-067-control-ov-subscriber-with-common-name.pem    Jul 10 04:56:17 2026 GMT
+
+== which reserved policy identifier each asserts
+   ZT-067-ev-subscriber-with-common-name.pem            2.23.140.1.1 
+   ZT-067-control-ov-subscriber-with-common-name.pem    2.23.140.1.2.2 
+   2.23.140.1.1 is Extended Validation; 2.23.140.1.2.2 is Organization
+   Validated. The first is judged by EVG 7.1.4.2, the second by the
+   Organization Validated subject table in BRs 7.1.2.7.4.
+
+== zlint's own EV lints, which decide EV-ness the same way
+   e_ev_business_category_missing                 EV=pass  OV=NA
+   e_ev_serial_number_missing                     EV=pass  OV=NA
+   e_ev_organization_name_missing                 EV=pass  OV=NA
+   e_ev_country_name_missing                      EV=pass  OV=NA
+   pass against NA: zlint knows which of the two is an EV certificate.
+
+== and the pair of commonName lints, which do not
+   n_subject_common_name_included                 EV=NE    OV=NE
+   w_subject_common_name_included                 EV=warn  OV=warn
+
+observed  an EV certificate draws w_subject_common_name_included, whose
+          description reads "commonName is NOT RECOMMENDED" and whose
+          citation is a section that hands the EV subject to another
+          document. Nothing reports the word that document uses.
+correct   NA on an EV certificate -- CheckApplies should exclude one,
+          the same test the cabf_ev lints above already make -- and a
+          notice from a lint citing EVG 7.1.4.2.2 in its place.
+
+################ ZT-068-e_ca_key_usage_missing
+== every lint whose name mentions key usage, on a subscriber with none
+FAILED
+
+observed  every key-usage lint returns NA
+correct   a warning that keyUsage is absent from a subscriber certificate
+
+Note: the companion claim that no lint reports a missing
+authorityKeyIdentifier was REFUTED - e_ext_authority_key_identifier_no_key_identifier
+reports it, 454 times on this corpus. See REFUTED.md.
+
+################ ZT-094-BR-6.1.5-s-Subordinate-CA-column-is-a-disjun
+== CONTROL  (begins on or before 31 Dec 2010 -- BR permits 1024)
+      subject=C=US, O=ZL-072 Reproduction, CN=ZL-072 Subordinate CA
+      notBefore=Jun  1 00:00:00 2010 GMT
+      notAfter=Jun  1 00:00:00 2013 GMT
+                      Public-Key: (1024 bit)
+                      CA:TRUE, pathlen:0
+
+== SUBJECT  (begins after 31 Dec 2010 -- BR requires 2048)
+      subject=C=US, O=ZL-072 Reproduction, CN=ZL-072 Subordinate CA
+      notBefore=Jun  1 00:00:00 2011 GMT
+      notAfter=Jun  1 00:00:00 2013 GMT
+                      Public-Key: (1024 bit)
+                      CA:TRUE, pathlen:0
+
+Observed: on the SUBJECT, all four key-size lints return NA. Nothing in zlint
+judges the modulus of a subordinate CA whose validity period begins after 31
+Dec 2010 and ends on or before 31 Dec 2013. Correct:
+e_rsa_mod_less_than_2048_bits, or a lint of its own, reporting an error -- BR
+6.1.5 requires 2048 bits of that certificate.
+
+On the CONTROL, e_old_sub_ca_rsa_mod_less_than_1024_bits applies and passes,
+which is right: 1024 was permitted there and the key is 1024 bits. The two
+certificates differ in one field.
+
+THE CLAUSE
+
+BR 6.1.5 is three tables, one per certificate type, and each draws its line
+somewhere different:
+
+  Root CA          beginning on or before 31 Dec 2010          | after
+  Subordinate CA   beginning on or before 31 Dec 2010 AND      | beginning after
+                   ending on or before 31 Dec 2013             | 31 Dec 2010 OR
+                                                               | ending after 31 Dec 2013
+  Subscriber       ending on or before 31 Dec 2013             | ending after
+
+zlint's four lints map onto them as:
+
+  e_old_root_ca_rsa_mod_less_than_2048_bits   IsRootCA && issueDate < 2010-12-31
+  e_old_sub_ca_rsa_mod_less_than_1024_bits    IsSubCA && issueDate < 2010-12-31
+                                                       && endDate < 2014-01-01
+  e_old_sub_cert_rsa_mod_less_than_1024_bits  !IsCACert && endDate < 2014-01-01
+  e_rsa_mod_less_than_2048_bits               OnOrAfter(NotAfter, 2014-01-01)
+
+The three "old" lints each mirror one left-hand column exactly. The fourth is
+meant to be every right-hand column, and it tests only `notAfter`. For a
+Subscriber that is the whole condition and the cover is complete. For a
+Subordinate CA the condition is a DISJUNCTION and only one branch is
+implemented; the same is true of a Root CA, whose right-hand column is keyed on
+the beginning of the validity period and not its end.
+
+zlint's own Description for the fourth lint says "For certificates valid after
+31 Dec 2013" -- which is the Subscriber column, stated accurately. The lint
+does what it says. The gap is that no other lint says the rest, so the
+requirement is unreported by the tool as a whole.
+
+REACH
+
+Zero over the corpus (21,802 certificates): no certificate there is a subordinate
+CA with a modulus of 1024 to 2047 bits, beginning after 2010-12-31 and ending
+on or before 2013-12-31. The window closed thirteen years ago and issuance in
+it is long expired, so this is a completeness finding about the clause rather
+than a live source of missed certificates. It is recorded because a rule that
+covers a clause and a rule that covers part of one look identical from
+outside.
+
+FIX
+
+Widen the fourth lint's CheckApplies to the disjunction the tables state, per
+certificate type:
+
+    IsSubCA(c)   -> OnOrAfter(c.NotBefore, NoRSA1024RootDate)
+                    || OnOrAfter(c.NotAfter, NoRSA1024Date)
+    IsRootCA(c)  -> OnOrAfter(c.NotBefore, NoRSA1024RootDate)
+    otherwise    -> OnOrAfter(c.NotAfter, NoRSA1024Date)     (unchanged)
+
+and update the Description, which currently states only the third branch.
+
+HOW THE CERTIFICATES WERE MADE
+
+A throwaway 2048-bit root signs two 1024-bit subordinate CAs -- CA:TRUE,
+pathlen 0, keyCertSign + cRLSign, serverAuth EKU, notAfter 2013-06-01 --
+identical but for notBefore, 2010-06-01 against 2011-06-01. They are signed by
+a root that is not in any trust store and are useless for anything but this
+test. The issuing root is beside them as positive/ZT-094-issuing-root.pem so
+the chain can be inspected. NOTE
+
+75 reproduction(s)

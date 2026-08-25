@@ -133,6 +133,33 @@ To see only `error`/`warn`/`fatal`:
 
 You can also use the bundled `zlint-runner/run_zlint.exe` (Python bundled, double-click, interactive). See `zlint-runner/README.md`.
 
+### Using the `run_zlint` helper
+
+`zlint-runner/run_zlint.py` (or its bundled `run_zlint.exe`) wraps the commands above with saved output and a batch mode. It works three ways:
+
+**Interactive (double-click `run_zlint.exe`, or `python run_zlint.py`)** — answer the prompts:
+1. path to your `zlint` binary (e.g. `zlint.exe`),
+2. `y` to batch-scan a folder, or `n`/`Enter` to check a single cert, then the folder / cert path,
+3. optional lint name (`-includeNames`); blank = all.
+
+**Single certificate, no prompts:**
+
+```powershell
+# From source (needs Python)
+python zlint-runner/run_zlint.py --cert "c:/.../some-cert.pem" --zlint "c:/.../zlint.exe"
+
+# From the bundled exe (no Python)
+zlint-runner/run_zlint.exe --cert "c:/.../some-cert.pem" --zlint "c:/.../zlint.exe"
+```
+
+**Batch-scan a whole folder (recursive, `.pem`/`.der`/`.crt`/`.cer`):**
+
+```powershell
+python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/positive/*.pem"
+```
+
+Each certificate is saved as `<cert>.zlint.json` (+ `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal`). Batch mode additionally writes `<folder>.batch.summary.json` summarizing all hits. Full reference: `zlint-runner/README.md`.
+
 ---
 
 ## 7. Self-check (no linter needed)

@@ -136,6 +136,33 @@ done
 
 也可以用本仓库提供的 `zlint-runner/run_zlint.exe`（自带 Python、双击即用、交互式填路径），详见 `zlint-runner/README.zh.md`。
 
+### 使用 `run_zlint` 辅助工具
+
+`zlint-runner/run_zlint.py`（或打包好的 `run_zlint.exe`）把上面的命令封装起来，额外支持保存结果和批量模式。有三种用法：
+
+**交互式（双击 `run_zlint.exe`，或 `python run_zlint.py`）**——按提示输入：
+1. `zlint` 可执行文件路径（如 `zlint.exe`），
+2. 填 `y` 批量扫描文件夹，或填 `n`/回车只检查单张证书，再输入文件夹 / 证书路径，
+3. 可选填 lint 名（`-includeNames`），留空表示全部。
+
+**单张证书，无需交互：**
+
+```powershell
+# 从源码运行（需 Python）
+python zlint-runner/run_zlint.py --cert "c:/.../某个证书.pem" --zlint "c:/.../zlint.exe"
+
+# 从打包好的 exe 运行（无需 Python）
+zlint-runner/run_zlint.exe --cert "c:/.../某个证书.pem" --zlint "c:/.../zlint.exe"
+```
+
+**批量扫描整个文件夹（递归，`.pem`/`.der`/`.crt`/`.cer`）：**
+
+```powershell
+python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/positive/*.pem"
+```
+
+每张证书会保存为 `<证书>.zlint.json`（另有 `<证书>.zlint.summary.json` 只含 `error`/`warn`/`fatal`）。批量模式还会在文件夹下额外生成 `<文件夹>.batch.summary.json` 汇总所有命中。完整说明见 `zlint-runner/README.zh.md`。
+
 ---
 
 ## 7. 包内自检（不需要任何 linter）

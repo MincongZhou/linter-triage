@@ -25,9 +25,11 @@ zlint-runner/
 2. Double-click it (or run from a terminal).
 3. When prompted, enter:
    - the path to your `zlint` executable (e.g. `C:\...\zlint.exe`),
-   - the path to the certificate to check (e.g. `cert.pem`),
+   - **whether to batch-scan a folder** (`y`) or check a single certificate (`n`/`Enter`):
+     - choose `y` → enter the **folder** to recursively scan (`.pem`/`.der`/`.crt`/`.cer`),
+     - choose `n` → enter the **single certificate file** to check (e.g. `cert.pem`),
    - optionally a single lint name (`-includeNames`); leave blank for all.
-4. Results print to screen and are saved as `<cert>.zlint.json`. If the output is JSON, a `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal` entries is also written.
+4. Results print to screen and are saved as `<cert>.zlint.json`. If the output is JSON, a `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal` entries is also written. In batch mode, an extra `<folder-name>.batch.summary.json` summarizes hits across all certificates.
 
 ### Batch mode — scan every certificate in a folder
 
@@ -39,6 +41,12 @@ python run_zlint.py --dir "path/to/cert-folder" --zlint "path/to/zlint.exe"
 
 # Or from the bundled standalone exe (no Python needed)
 run_zlint.exe --dir "path/to/cert-folder" --zlint "path/to/zlint.exe"
+```
+
+You can also target a single certificate directly without interaction:
+
+```powershell
+python run_zlint.py --cert "path/to/cert.pem" --zlint "path/to/zlint.exe"
 ```
 
 Optional arguments:

@@ -25,9 +25,11 @@ zlint-runner/
 2. 双击运行（或在终端里运行）。
 3. 按提示输入：
    - `zlint` 可执行文件的路径（如 `C:\...\zlint.exe`），
-   - 要检查的证书路径（如 `cert.pem`），
+   - **是否批量扫描一个文件夹**（`y`）还是只检查单个证书（`n`/回车）：
+     - 选 `y` → 输入要递归扫描的**文件夹**（内含 `.pem`/`.der`/`.crt`/`.cer`），
+     - 选 `n` → 输入要检查的**单个证书文件**（如 `cert.pem`），
    - 可选填单个 lint 名（`-includeNames`），留空表示全部。
-4. 结果会打印到屏幕，并保存为 `<证书>.zlint.json`。若输出为 JSON，还会额外生成一份只含 `error`/`warn`/`fatal` 的 `<证书>.zlint.summary.json`。
+4. 结果会打印到屏幕，并保存为 `<证书>.zlint.json`。若输出为 JSON，还会额外生成一份只含 `error`/`warn`/`fatal` 的 `<证书>.zlint.summary.json`。批量模式下，还会在文件夹下额外生成 `<文件夹名>.batch.summary.json`，汇总所有证书的命中结果。
 
 ### 批量模式 —— 遍历一个文件夹里的所有证书
 
@@ -39,6 +41,12 @@ python run_zlint.py --dir "路径/到/证书文件夹" --zlint "路径/到/zlint
 
 # 或从已打包的 exe（独立版无需 Python）
 run_zlint.exe --dir "路径/到/证书文件夹" --zlint "路径/到/zlint.exe"
+```
+
+也可以不交互地直接指定单个证书：
+
+```powershell
+python run_zlint.py --cert "路径/到/cert.pem" --zlint "路径/到/zlint.exe"
 ```
 
 可选参数：

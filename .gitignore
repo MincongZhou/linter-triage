@@ -1,0 +1,7 @@
+# PyInstaller 中间产物（保留 dist/run_zlint.exe 已打包文件）
+zlint-runner/build/
+zlint-runner/*.spec
+
+# Python 缓存
+__pycache__/
+*.pyc

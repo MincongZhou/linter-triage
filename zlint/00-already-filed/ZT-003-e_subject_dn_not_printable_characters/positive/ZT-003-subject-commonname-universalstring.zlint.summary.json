@@ -1,0 +1,27 @@
+{
+  "e_ext_authority_key_identifier_no_key_identifier": {
+    "result": "error"
+  },
+  "e_ext_san_missing": {
+    "result": "error"
+  },
+  "e_sub_cert_aia_missing": {
+    "result": "error"
+  },
+  "e_sub_cert_eku_missing": {
+    "result": "error"
+  },
+  "e_subject_dn_not_printable_characters": {
+    "result": "error"
+  },
+  "e_subject_rdns_correct_encoding": {
+    "result": "error",
+    "details": "Attribute commonName in subjectDN has the wrong encoding UniversalString."
+  },
+  "w_ext_subject_key_identifier_missing_sub_cert": {
+    "result": "warn"
+  },
+  "w_sub_cert_aia_does_not_contain_issuing_ca_url": {
+    "result": "warn"
+  }
+}

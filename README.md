@@ -1,5 +1,7 @@
 # Certificate linter defects, reproduced
 
+[![中文](https://img.shields.io/badge/中文-readme-blue)](README.zh.md) · [English](README.md)
+
 **193 confirmed defects across four linters.**
 
 | tool | entries | with a script | pinned at | tracker read |

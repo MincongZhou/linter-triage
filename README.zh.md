@@ -1,5 +1,7 @@
 # 证书 Linter 缺陷复现
 
+[![English](https://img.shields.io/badge/English-readme-blue)](README.md) · [中文](README.zh.md)
+
 **横跨四个 Linter 的 193 个已确认缺陷。**
 
 | 工具 | 条目数 | 带复现脚本 | 固定版本 | 跟踪器读取日期 |

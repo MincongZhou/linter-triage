@@ -131,7 +131,7 @@ To see only `error`/`warn`/`fatal`:
 "/c/Users/.../zlint.exe" -includeNames=e_sub_cert_cert_policy_empty cert.pem
 ```
 
-You can also use the bundled `zlint-runner/run_zlint.exe` (Python bundled, double-click, interactive). See `zlint-runner/README.md`.
+You can also use the bundled `zlint-runner/run_zlint.exe` (Python bundled, double-click, interactive). See [zlint-runner/README.md](zlint-runner/README.md).
 
 ### Using the `run_zlint` helper
 
@@ -158,7 +158,7 @@ zlint-runner/run_zlint.exe --cert "c:/.../some-cert.pem" --zlint "c:/.../zlint.e
 python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/positive/*.pem"
 ```
 
-Each certificate is saved as `<cert>.zlint.json` (+ `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal`). Batch mode additionally writes `<folder>.batch.summary.json` summarizing all hits. Full reference: `zlint-runner/README.md`.
+Each certificate is saved as `<cert>.zlint.json` (+ `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal`). Batch mode additionally writes `<folder>.batch.summary.json` summarizing all hits. Full reference: [zlint-runner/README.md](zlint-runner/README.md).
 
 ---
 

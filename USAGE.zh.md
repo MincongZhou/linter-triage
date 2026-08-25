@@ -134,7 +134,7 @@ done
 "/c/Users/.../zlint.exe" -includeNames=e_sub_cert_cert_policy_empty 证书.pem
 ```
 
-也可以用本仓库提供的 `zlint-runner/run_zlint.exe`（自带 Python、双击即用、交互式填路径），详见 `zlint-runner/README.zh.md`。
+也可以用本仓库提供的 `zlint-runner/run_zlint.exe`（自带 Python、双击即用、交互式填路径），详见 [zlint-runner/README.zh.md](zlint-runner/README.zh.md)。
 
 ### 使用 `run_zlint` 辅助工具
 
@@ -161,7 +161,7 @@ zlint-runner/run_zlint.exe --cert "c:/.../某个证书.pem" --zlint "c:/.../zlin
 python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/positive/*.pem"
 ```
 
-每张证书会保存为 `<证书>.zlint.json`（另有 `<证书>.zlint.summary.json` 只含 `error`/`warn`/`fatal`）。批量模式还会在文件夹下额外生成 `<文件夹>.batch.summary.json` 汇总所有命中。完整说明见 `zlint-runner/README.zh.md`。
+每张证书会保存为 `<证书>.zlint.json`（另有 `<证书>.zlint.summary.json` 只含 `error`/`warn`/`fatal`）。批量模式还会在文件夹下额外生成 `<文件夹>.batch.summary.json` 汇总所有命中。完整说明见 [zlint-runner/README.zh.md](zlint-runner/README.zh.md)。
 
 ---
 

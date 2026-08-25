@@ -80,6 +80,19 @@ bash certlint/run-all.sh "/c/Users/.../certlint"
 bash zlint/run-all.sh "/c/Users/.../zlint.exe" 2>&1 | tee zlint-run.log
 ```
 
+### 更易读的输出（推荐）：`run-readable.sh`
+
+原 `run-all.sh` 的 zlint 结果是**一行压扁的 JSON**，混在说明文字里不好读。仓库根目录的 `run-readable.sh` 是它的包装器，做两件事：
+
+1. 把全部输出落盘到 `zlint-readable.log`（原始完整内容）；
+2. 另外生成 `zlint-readable.pretty.log`——把其中压扁的 JSON 用 `jq`（优先）或 `python`（自动探测）**美化展开**，每条证书的 lint 结果缩进清晰。
+
+```bash
+bash run-readable.sh "/c/Users/.../zlint.exe"
+```
+
+跑完用编辑器打开上面两个文件即可。JSON 美化依赖 `jq` 或 `python`：Git Bash 默认不带 `jq`，脚本会自动退回用 Python（探测 `python`/`py` 及常见安装路径）；若两者都没有，则保留原始压扁 JSON。
+
 ---
 
 ## 5. 一次性跑全部四个工具

@@ -77,6 +77,19 @@ bash certlint/run-all.sh "/c/Users/.../certlint"
 bash zlint/run-all.sh "/c/Users/.../zlint.exe" 2>&1 | tee zlint-run.log
 ```
 
+### More readable output (recommended): `run-readable.sh`
+
+The raw `run-all.sh` prints zlint results as **one-line compressed JSON** mixed with explanatory text, which is hard to read. The root `run-readable.sh` wraps it and does two things:
+
+1. Dumps the full output to `zlint-readable.log` (raw, complete).
+2. Additionally produces `zlint-readable.pretty.log` — where the compressed JSON is **pretty-printed** (indented) using `jq` (preferred) or `python` (auto-detected), so each certificate's lint results are clear.
+
+```bash
+bash run-readable.sh "/c/Users/.../zlint.exe"
+```
+
+Open those two files in an editor afterwards. JSON pretty-printing needs `jq` or `python`: Git Bash does not ship `jq` by default, so the script falls back to Python (detecting `python`/`py` and common install paths); if neither exists, the raw compressed JSON is kept.
+
 ---
 
 ## 5. Run all four tools at once

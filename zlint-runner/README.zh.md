@@ -46,5 +46,6 @@ pyinstaller --onefile --console --name run_zlint run_zlint.py
 ## 注意事项
 
 - 本工具**不含 zlint 本体**，你需要自己提供 `zlint` 可执行文件。
+- 父仓库根目录附带的 `zlint.exe` 是 **3.6.8 版本**——这是 zlint 最后一个仍提供 Windows 二进制的发布版本。更新版本已取消 Windows（和 FreeBSD）的发布目标，因此对于钉住的 `v3.7.1-20-g1007b1d5` 没有预编译 exe；在 Windows 上需自行从源码编译，或使用 3.6.8。
 - 当 zlint 报告 `error` 结果时，进程会以非 0 退出码结束，这是正常现象，不代表本工具失败。
 - 父项目里的证书样本位于 `../zlint/<组>/<条目>/positive/` 目录下。

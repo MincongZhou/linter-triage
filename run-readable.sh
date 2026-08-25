@@ -21,11 +21,11 @@ find_formatter() {
   if command -v jq >/dev/null 2>&1; then echo "jq"; return; fi
   if command -v python >/dev/null 2>&1; then echo "python"; return; fi
   if command -v py >/dev/null 2>&1; then echo "py"; return; fi
-  # 常见安装路径兜底
+  # 常见安装路径兜底 (Git Bash 下 $LOCALAPPDATA 不可靠，用显式路径)
   for p in \
-    "$LOCALAPPDATA/Programs/Python/Python311/python.exe" \
-    "$LOCALAPPDATA/Programs/Python/Python310/python.exe" \
-    "C:/Python311/python.exe" "C:/Python310/python.exe"; do
+    "/c/Users/$USER/AppData/Local/Programs/Python/Python311/python.exe" \
+    "/c/Users/$USER/AppData/Local/Programs/Python/Python310/python.exe" \
+    "/c/Python311/python.exe" "/c/Python310/python.exe"; do
     if [ -x "$p" ]; then echo "$p"; return; fi
   done
   echo ""

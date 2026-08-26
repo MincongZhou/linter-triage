@@ -100,6 +100,19 @@ def decode_cert(cert):
                 a("      " + str(val).replace("\n", " | "))
             elif isinstance(val, x509.ExtendedKeyUsage):
                 a("      " + ", ".join(str(u) for u in val))
+            elif isinstance(val, x509.CertificatePolicies):
+                if not list(val):
+                    a("      (空，无 policy 标识符)  <-- 扩展存在但内容为空")
+                else:
+                    for pol in val:
+                        oid = pol.policy_identifier
+                        a("      policy: %s%s" % (
+                            oid.dotted_string,
+                            " (%s)" % oid._name if oid._name != oid.dotted_string else "",
+                        ))
+                        if pol.policy_qualifiers:
+                            for q in pol.policy_qualifiers:
+                                a("          qualifier: %s" % q)
             else:
                 a("      " + str(val).replace("\n", "  "))
         except Exception as e:

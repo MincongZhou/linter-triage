@@ -163,6 +163,23 @@ python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/
 
 每张证书会保存为 `<证书>.zlint.json`（另有 `<证书>.zlint.summary.json` 只含 `error`/`warn`/`fatal`）。批量模式还会在文件夹下额外生成 `<文件夹>.batch.summary.json` 汇总所有命中。完整说明见 [zlint-runner/README.zh.md](zlint-runner/README.zh.md)。
 
+### 解码证书（PEM/DER → 可读内容）
+
+`decode_cert.py` 用来查看证书内部到底有什么字段——当某个 `repro.sh` 的论断依赖特定字段时（例如空的 `certificatePolicies`）特别有用。它同时支持 PEM 和 DER，并自动识别。
+
+```powershell
+# 单张证书
+python decode_cert.py "c:/.../某个证书.pem"
+
+# 批量：递归解码文件夹下的所有证书
+python decode_cert.py "zlint"
+
+# 从 stdin 管道传入 PEM
+type cert.pem | python decode_cert.py -
+```
+
+输出包含主题/签发者、序列号、有效期、签名算法、公钥（算法/位数），以及每个扩展及其 `critical` 标记（如 `certificatePolicies`、SAN、KeyUsage）。依赖 `pip install cryptography`。在 Windows 上脚本会强制控制台使用 UTF-8，因此含非 ASCII 字符的主题也能正常显示。
+
 ---
 
 ## 7. 包内自检（不需要任何 linter）

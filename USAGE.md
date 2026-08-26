@@ -160,6 +160,23 @@ python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/
 
 Each certificate is saved as `<cert>.zlint.json` (+ `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal`). Batch mode additionally writes `<folder>.batch.summary.json` summarizing all hits. Full reference: [zlint-runner/README.md](zlint-runner/README.md).
 
+### Decode a certificate (PEM/DER → human-readable)
+
+`decode_cert.py` shows what is actually inside a certificate — useful when a `repro.sh` claim depends on a specific field (e.g. an empty `certificatePolicies`). It works on PEM **or** DER and auto-detects.
+
+```powershell
+# Single certificate
+python decode_cert.py "c:/.../some-cert.pem"
+
+# Batch: recursively decode every cert in a folder
+python decode_cert.py "zlint"
+
+# Pipe a PEM from stdin
+type cert.pem | python decode_cert.py -
+```
+
+Output includes Subject/Issuer, serial, validity, signature algorithm, public key (algorithm/size), and every extension with its `critical` flag (e.g. `certificatePolicies`, SAN, KeyUsage). Requires `pip install cryptography`. On Windows the console is forced to UTF-8 so non-ASCII subjects print correctly.
+
 ---
 
 ## 7. Self-check (no linter needed)

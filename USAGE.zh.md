@@ -182,6 +182,32 @@ type cert.pem | python decode_cert.py -
 
 输出包含主题/签发者、序列号、有效期、签名算法、公钥（算法/位数），以及每个扩展及其 `critical` 标记（如 `certificatePolicies`、SAN、KeyUsage）。依赖 `pip install cryptography`。在 Windows 上脚本会强制控制台使用 UTF-8，因此含非 ASCII 字符的主题也能正常显示。
 
+### 哪些证书算"有问题"？（positive 与 negative）
+
+本项目收集的 bug 是 **linter 工具自身（zlint/pkilint/...）的缺陷**，而不是"证书没通过检测"。每个缺陷目录下用两个子文件夹标明意图：
+
+- `positive/` —— **应当被该 lint 判为有问题**的证书（故意构造成不符合该规则）。这就是"有问题的证书"。
+- `negative/` —— **不应被该 lint 报错**的证书（合规/正常）。这就是"没问题的证书"，用来证明该 lint 不会误伤合规证书。
+
+所以在仓库内：`positive/` = 有问题，`negative/` = 没问题。
+
+**对于你自己的证书**，项目不会自动归类。判断方法：
+
+1. 用 zlint 全量跑，看有没有 `error` / `warn`：
+   ```powershell
+   zlint.exe "你的证书.pem"
+   # 或用辅助工具（还会生成只含 error/warn/fatal 的 *.zlint.summary.json）
+   zlint-runner/run_zlint.exe --cert "你的证书.pem" --zlint "zlint.exe"
+   ```
+   - 某条 lint `result: "error"` → 该检查认为证书有问题
+   - 全是 `pass` / `NA` → 按 zlint 的口径，证书没问题
+   - `warn` → 非致命警告，值得注意
+2. 用 `decode_cert.py` 看具体哪个扩展/字段不合规：
+   ```powershell
+   python decode_cert.py "你的证书.pem"
+   ```
+3. 想对照已知缺陷：拿 zlint 输出里的 `error`/`warn` lint 名，去 `zlint/*/*/` 下各缺陷的 `README.md` 里查找对应描述。
+
 ---
 
 ## 7. 包内自检（不需要任何 linter）

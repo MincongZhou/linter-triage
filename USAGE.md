@@ -179,6 +179,32 @@ type cert.pem | python decode_cert.py -
 
 Output includes Subject/Issuer, serial, validity, signature algorithm, public key (algorithm/size), and every extension with its `critical` flag (e.g. `certificatePolicies`, SAN, KeyUsage). Requires `pip install cryptography`. On Windows the console is forced to UTF-8 so non-ASCII subjects print correctly.
 
+### Which certificates are "problematic"? (positive vs negative)
+
+The bugs collected here are **bugs in the linter (zlint/pkilint/...)**, not certificates failing a check. Each defect directory uses two subfolders to mark intent:
+
+- `positive/` — certificates that **should be flagged** by that lint (constructed to be non-compliant w.r.t. that rule). These are the "problematic" certificates.
+- `negative/` — certificates that **should NOT be flagged** (valid / compliant). These are the "clean"对照 certificates, proving the lint does not wrongly reject good certs.
+
+So within this repo: `positive/` = problematic, `negative/` = fine.
+
+**For your own certificate**, the project does not auto-classify it. To judge it:
+
+1. Run zlint on the whole cert and look for `error` / `warn`:
+   ```powershell
+   zlint.exe "your-cert.pem"
+   # or via the helper (also writes *.zlint.summary.json with only error/warn/fatal)
+   zlint-runner/run_zlint.exe --cert "your-cert.pem" --zlint "zlint.exe"
+   ```
+   - `result: "error"` for a lint → that check considers the cert problematic
+   - all `pass` / `NA` → by zlint's reading, the cert is fine
+   - `warn` → a non-fatal warning worth noting
+2. Inspect fields with `decode_cert.py` to see exactly which extension/field is off:
+   ```powershell
+   python decode_cert.py "your-cert.pem"
+   ```
+3. To match against a known defect, take the `error`/`warn` lint names from zlint's output and look them up in the per-defect `README.md` files under `zlint/*/*/`.
+
 ---
 
 ## 7. Self-check (no linter needed)

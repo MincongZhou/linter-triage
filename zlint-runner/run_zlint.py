@@ -210,6 +210,11 @@ def main():
     else:
         interactive_mode()
 
+    try:
+        input("\n按回车退出...")
+    except EOFError:
+        pass
+
 
 if __name__ == "__main__":
     main()

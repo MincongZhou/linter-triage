@@ -30,6 +30,7 @@ zlint-runner/
      - choose `n` → enter the **single certificate file** to check (e.g. `cert.pem`),
    - optionally a single lint name (`-includeNames`); leave blank for all.
 4. Results print to screen and are saved as `<cert>.zlint.json`. If the output is JSON, a `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal` entries is also written. In batch mode, an extra `<folder-name>.batch.summary.json` summarizes hits across all certificates.
+5. At the end it prints `按回车退出...` ("press Enter to exit") and the window stays open (even when double-clicked), so you can read the results.
 
 ### Batch mode — scan every certificate in a folder
 
@@ -77,6 +78,7 @@ or double-click `build.bat`. The output lands in `dist/run_zlint.exe`.
 ## Notes
 
 - This tool does **not** include zlint itself. You must supply your own `zlint` executable.
-- The `zlint.exe` bundled in the parent repository root is **version 3.6.8** — the last zlint release that still ships a Windows binary. Newer versions dropped Windows (and FreeBSD) release targets, so no prebuilt `zlint.exe` exists for the pinned `v3.7.1-20-g1007b1d5`; on Windows you must build newer zlint from source or use 3.6.8.
+- The `zlint.exe` bundled in the parent repository root is **version 3.6.8** — the last zlint release that still ships a prebuilt Windows binary. Newer versions dropped Windows (and FreeBSD) release targets, so on Windows either keep using 3.6.8 or build a newer version from source.
 - zlint exits with a non-zero code when it reports `error` results; that is expected and not a failure of this tool.
 - The certificate samples from the parent project live under `../zlint/<group>/<entry>/positive/`.
+- To inspect a certificate's internals (subject, extensions, whether `certificatePolicies` is empty, etc.), use the parent's [`../decode_cert.py`](../decode_cert.py): `python ../decode_cert.py cert.pem`.

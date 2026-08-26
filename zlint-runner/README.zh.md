@@ -30,6 +30,7 @@ zlint-runner/
      - 选 `n` → 输入要检查的**单个证书文件**（如 `cert.pem`），
    - 可选填单个 lint 名（`-includeNames`），留空表示全部。
 4. 结果会打印到屏幕，并保存为 `<证书>.zlint.json`。若输出为 JSON，还会额外生成一份只含 `error`/`warn`/`fatal` 的 `<证书>.zlint.summary.json`。批量模式下，还会在文件夹下额外生成 `<文件夹名>.batch.summary.json`，汇总所有证书的命中结果。
+5. 运行结束后会显示 `按回车退出...`，窗口不会自动关闭（双击 exe 也不会秒关），方便你查看结果。
 
 ### 批量模式 —— 遍历一个文件夹里的所有证书
 
@@ -77,6 +78,7 @@ pyinstaller --onefile --console --name run_zlint run_zlint.py
 ## 注意事项
 
 - 本工具**不含 zlint 本体**，你需要自己提供 `zlint` 可执行文件。
-- 父仓库根目录附带的 `zlint.exe` 是 **3.6.8 版本**——这是 zlint 最后一个仍提供 Windows 二进制的发布版本。更新版本已取消 Windows（和 FreeBSD）的发布目标，因此对于钉住的 `v3.7.1-20-g1007b1d5` 没有预编译 exe；在 Windows 上需自行从源码编译，或使用 3.6.8。
+- 父仓库根目录附带的 `zlint.exe` 是 **3.6.8 版本**——这是 zlint 最后一个仍提供 Windows 预编译二进制的发布版本。更新版本已取消 Windows（和 FreeBSD）的发布目标，因此在 Windows 上要么沿用 3.6.8，要么自行从源码编译更新的版本。
 - 当 zlint 报告 `error` 结果时，进程会以非 0 退出码结束，这是正常现象，不代表本工具失败。
 - 父项目里的证书样本位于 `../zlint/<组>/<条目>/positive/` 目录下。
+- 想直接查看证书内部字段（主题、扩展、`certificatePolicies` 是否为空等），可用父目录的 [`../decode_cert.py`](../decode_cert.py)：`python ../decode_cert.py 证书.pem`。

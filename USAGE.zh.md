@@ -113,6 +113,8 @@ bash run-all.sh \
 
 ## 6. 只用 zlint + 证书（不跑复现项目）
 
+`zlint` 是本项目的被研究对象，开源地址：<https://github.com/zmap/zlint>
+
 如果你只是想用 `zlint.exe` 检查某个证书（不一定来自本项目），直接在 PowerShell 里：
 
 ```powershell

@@ -110,6 +110,8 @@ Any binary not passed is skipped (`skipping xxx (no binary given)`).
 
 ## 6. Just zlint + a certificate (not the reproduction project)
 
+`zlint` is the open-source linter this project studies: <https://github.com/zmap/zlint>
+
 To use `zlint.exe` on a cert (not necessarily from this repo), in PowerShell:
 
 ```powershell

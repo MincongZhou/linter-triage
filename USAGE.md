@@ -162,6 +162,54 @@ python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/
 
 Each certificate is saved as `<cert>.zlint.json` (+ `<cert>.zlint.summary.json` with only `error`/`warn`/`fatal`). Batch mode additionally writes `<folder>.batch.summary.json` summarizing all hits. Full reference: [zlint-runner/README.md](zlint-runner/README.md).
 
+**Why does a cert's Excel/JSON show fewer lints than the full rule set?**
+
+The rule inventory (`zlint-lint规则详解.xlsx`, 432 lints) is the **catalog** — how many checks zlint *knows about*. When zlint runs on a single cert it only *executes* the lints whose precondition (guard / `CheckApplies`) is satisfied by that cert; lints that don't apply are skipped and **never appear in the output**. So a per-cert result count lower than 432 is normal — it is simply the number of lints that cert triggers. `run_zlint.py` filters nothing; every row in the Excel is real zlint output.
+
+Common reasons a lint is skipped for a given cert:
+
+- cert type mismatch (leaf-only vs CA-only rules, etc.)
+- required extension/field absent (SCT, OCSP, AIA, CDP, ...)
+- specialized profiles (S/MIME, EV, code signing, ETSI, browser-specific policy)
+- version-specific rules (v2-only fields, pre-2014 certs, ...)
+
+Example: `testdata/arpa_sub0_rev4x_rev6x_effx.pem` outputs 382 lints (381 of them are inside the 432-lint catalog; the other 51 catalog lints are not applicable to this cert). Also note the catalog does not cover every zlint lint (zlint has 800+); for lints outside the catalog the Excel falls back to a keyword-based description.
+
+**Audit coverage: prove every rule has a conclusion**
+
+To turn the explanation above into an audit-ready artifact, run `audit_coverage.py`. It builds a matrix Excel — **rows = every rule** (the 432-lint catalog ∪ zlint's actual lints), **columns = each certificate** — so every rule has an explicit disposition:
+
+```powershell
+# single cert
+python audit_coverage.py --zlint zlint.exe --cert cert.pem --out coverage.xlsx
+
+# multiple certs in one matrix (each cert = one column)
+python audit_coverage.py --zlint zlint.exe --cert cert1.pem cert2.pem cert3.pem --out coverage.xlsx
+
+# a whole folder (recursive) in one matrix
+python audit_coverage.py --zlint zlint.exe --dir zlint --pattern "*/positive/*.pem" --out coverage.xlsx
+
+# batch: ONE table per cert, written to a folder (recommended for many certs)
+python audit_coverage.py --zlint zlint.exe --dir testdata --pattern "*aia*.pem" --out-dir out/
+#   → out/<cert-name>.audit.xlsx for every matched cert
+```
+
+No Python? Use the bundled exe (same arguments):
+
+```powershell
+zlint-runner/dist/audit_coverage.exe --zlint zlint.exe --cert cert.pem --out coverage.xlsx
+zlint-runner/dist/audit_coverage.exe --zlint zlint.exe --dir testdata --pattern "*aia*.pem" --out-dir out/
+```
+
+Cell values:
+
+- `pass` / `error` / `warn` / `NA` / `NE` / `info` — zlint's actual verdict for that rule
+- `不适用(guard未过)` — the lint exists in this zlint, but the cert fails its precondition (`CheckApplies`), so zlint never executes it (even `-includeNames` will not force it)
+- `版本无此规则` — the name exists only in the catalog, not in this zlint version
+- a row present only in zlint is labeled `清单未收录`
+
+The trailing summary rows give per-cert counts (executed / pass / problems / warnings / not-applicable / version-missing / total). A report can then state, e.g.: *"433 rules considered; 382 executed (0 error, 0 warn); 18 not applicable (guard); 33 not present in zlint 3.6.8; 0 unaccounted."* Requires Python with `openpyxl` (same as `run_zlint.py`).
+
 ### Decode a certificate (PEM/DER → human-readable)
 
 `decode_cert.py` shows what is actually inside a certificate — useful when a `repro.sh` claim depends on a specific field (e.g. an empty `certificatePolicies`). It works on PEM **or** DER and auto-detects.

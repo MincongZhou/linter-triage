@@ -165,6 +165,54 @@ python zlint-runner/run_zlint.py --dir "zlint" --zlint "zlint.exe" --pattern "*/
 
 每张证书会保存为 `<证书>.zlint.json`（另有 `<证书>.zlint.summary.json` 只含 `error`/`warn`/`fatal`）。批量模式还会在文件夹下额外生成 `<文件夹>.batch.summary.json` 汇总所有命中。完整说明见 [zlint-runner/README.zh.md](zlint-runner/README.zh.md)。
 
+**为什么检测条数不等于规则总数（如 382 ≠ 432）？**
+
+规则清单（`zlint-lint规则详解.xlsx`，432 条）是**规则库有多大**；而 zlint 对一张证书只会**执行"适用"的规则**——每条 lint 都有前置适用条件（guard / `CheckApplies`），条件不满足就跳过，**根本不会出现在输出里**。所以单张证书的结果条数少于 432 完全正常，只是"这张证书能触发多少条"。`run_zlint.py` 没有任何过滤，Excel 里每一行都是 zlint 真实执行的结果。
+
+常见"不适用"的原因：
+
+- 证书类型不匹配（如只查 CA 证书的规则，对叶子证书跳过）
+- 所需扩展/字段不存在（SCT、OCSP、AIA、CDP 等）
+- 特化场景（S/MIME、EV、代码签名、ETSI、浏览器专属策略）
+- 版本差异（只查 v2 特有字段、或旧证书的规则）
+
+实例：`testdata/arpa_sub0_rev4x_rev6x_effx.pem` 输出 382 条（其中 381 条在 432 条清单内，另外 51 条清单规则对该证书不适用）。另外注意：432 条清单并未覆盖 zlint 全部规则（zlint 有 800+ 条），不在清单内的 lint 名在 Excel 里会用关键词兜底翻译描述。
+
+**审计覆盖表：证明每条规则都有结论**
+
+要把上面的解释变成审计可用的证据，跑 `audit_coverage.py`。它会生成一张覆盖矩阵 Excel——**行 = 全部规则**（清单 432 条 ∪ zlint 实际 lint），**列 = 每张证书**，保证每条规则都有明确的处置结论：
+
+```powershell
+# 单张证书
+python audit_coverage.py --zlint zlint.exe --cert 证书.pem --out coverage.xlsx
+
+# 多张证书（一个矩阵，每证书一列）
+python audit_coverage.py --zlint zlint.exe --cert 证书1.pem 证书2.pem 证书3.pem --out coverage.xlsx
+
+# 整个文件夹（递归，一个矩阵）
+python audit_coverage.py --zlint zlint.exe --dir zlint --pattern "*/positive/*.pem" --out coverage.xlsx
+
+# 批量：每张证书单独生成一个表（证书很多时推荐）
+python audit_coverage.py --zlint zlint.exe --dir testdata --pattern "*aia*.pem" --out-dir out/
+#   → out/<证书名>.audit.xlsx，每张证书一个文件
+```
+
+没装 Python？直接用打包好的 exe（参数相同）：
+
+```powershell
+zlint-runner/dist/audit_coverage.exe --zlint zlint.exe --cert 证书.pem --out coverage.xlsx
+zlint-runner/dist/audit_coverage.exe --zlint zlint.exe --dir testdata --pattern "*aia*.pem" --out-dir out/
+```
+
+单元格含义：
+
+- `pass` / `error` / `warn` / `NA` / `NE` / `info` —— zlint 对该规则的实际结论
+- `不适用(guard未过)` —— 该 lint 在本版 zlint 里存在，但证书不满足其前置条件（`CheckApplies`），zlint 根本不执行（用 `-includeNames` 也强制不出来）
+- `版本无此规则` —— 只在清单里有、本版 zlint 没有的规则
+- 仅 zlint 实际有、清单未收录的规则会标注 `清单未收录`
+
+表格末尾还有每张证书的汇总行（已执行 / 通过 / 问题 / 警告 / 不适用 / 版本缺失 / 总计）。审计报告就能这样写：*"共 433 条规则：已执行 382 条（0 error、0 warn）；18 条不适用（guard 未过）；33 条为 zlint 3.6.8 无此规则；0 条无结论。"* 依赖 Python + `openpyxl`（与 `run_zlint.py` 相同）。
+
 ### 解码证书（PEM/DER → 可读内容）
 
 `decode_cert.py` 用来查看证书内部到底有什么字段——当某个 `repro.sh` 的论断依赖特定字段时（例如空的 `certificatePolicies`）特别有用。它同时支持 PEM 和 DER，并自动识别。

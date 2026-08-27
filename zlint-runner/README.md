@@ -8,13 +8,15 @@ An interactive helper for running [zlint](https://github.com/zmap/zlint) against
 
 ```
 zlint-runner/
-├── run_zlint.py      # interactive script (source)
-├── run_zlint.bat     # double-click launcher (requires Python)
-├── build.bat         # one-click repackage via PyInstaller
+├── run_zlint.py           # interactive script (source)
+├── run_zlint.bat          # double-click launcher (requires Python)
+├── build.bat              # one-click repackage via PyInstaller
 ├── dist/
-│   └── run_zlint.exe # standalone executable (Python bundled, no install needed)
-├── build/            # PyInstaller intermediate output (git-ignored)
-└── run_zlint.spec    # PyInstaller spec file
+│   ├── run_zlint.exe      # standalone executable (Python bundled, no install needed)
+│   └── audit_coverage.exe # audit coverage table (source lives at ../audit_coverage.py)
+├── build/                 # PyInstaller intermediate output (git-ignored)
+├── run_zlint.spec         # PyInstaller spec for run_zlint
+└── audit_coverage.spec    # PyInstaller spec for audit_coverage
 ```
 
 ## Usage
@@ -68,12 +70,27 @@ python run_zlint.py
 ```
 or double-click `run_zlint.bat`.
 
+### Audit coverage table (`audit_coverage`)
+
+The root [`../audit_coverage.py`](../audit_coverage.py) (or `dist/audit_coverage.exe`) produces an audit-ready matrix Excel: **rows = every lint rule** (the 432-rule catalog ∪ zlint's actual lints), **columns = each certificate**, each cell = that rule's disposition for that cert (`pass`/`error`/`warn`/`NA`/`NE`/`info`; `不适用(guard未过)` for rules whose precondition fails; `版本无此规则` for catalog names missing from this zlint version). See [../USAGE.md](../USAGE.md) → *Audit coverage* for details and background.
+
+```powershell
+# one matrix (each cert = a column)
+dist\audit_coverage.exe --zlint zlint.exe --cert cert.pem --out coverage.xlsx
+dist\audit_coverage.exe --zlint zlint.exe --dir ..\testdata --pattern "*aia*.pem" --out matrix.xlsx
+
+# batch: one table per cert into a folder
+dist\audit_coverage.exe --zlint zlint.exe --dir ..\testdata --pattern "*aia*.pem" --out-dir out\
+```
+
 ### Repackage
+
+Double-click `build.bat` — it rebuilds both `dist/run_zlint.exe` and `dist/audit_coverage.exe`. Individually:
 
 ```powershell
 pyinstaller --onefile --console --name run_zlint run_zlint.py
+pyinstaller audit_coverage.spec --noconfirm
 ```
-or double-click `build.bat`. The output lands in `dist/run_zlint.exe`.
 
 ## Notes
 

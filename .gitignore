@@ -1,14 +1,19 @@
-# PyInstaller 中间产物（保留 dist/run_zlint.exe 已打包文件）
+# PyInstaller 中间产物（保留 dist/ 下已打包 exe；audit_coverage.spec 需入库以便重建）
 zlint-runner/build/
-zlint-runner/*.spec
+zlint-runner/run_zlint.spec
 
 # Python 缓存
 __pycache__/
 *.pyc
 
-# 运行产物（run_zlint / run-readable 生成的输出）
+# 运行产物（run_zlint / audit_coverage / run-readable 生成的输出）
 *.zlint.json
 *.zlint.summary.json
 *.batch.summary.json
+*.zlint.xlsx
+*.audit.xlsx
 zlint-readable.log
 zlint-readable.pretty.log
+
+# Excel 临时锁文件
+~$*

@@ -8,13 +8,15 @@
 
 ```
 zlint-runner/
-├── run_zlint.py      # 交互式脚本（源码）
-├── run_zlint.bat     # 双击启动器（需安装 Python）
-├── build.bat         # 用 PyInstaller 一键重新打包
+├── run_zlint.py           # 交互式脚本（源码）
+├── run_zlint.bat          # 双击启动器（需安装 Python）
+├── build.bat              # 用 PyInstaller 一键重新打包
 ├── dist/
-│   └── run_zlint.exe # 独立可执行文件（已内置 Python，无需安装）
-├── build/            # PyInstaller 中间产物（已被 git 忽略）
-└── run_zlint.spec    # PyInstaller 规格文件
+│   ├── run_zlint.exe      # 独立可执行文件（已内置 Python，无需安装）
+│   └── audit_coverage.exe # 审计覆盖表（源码位于 ../audit_coverage.py）
+├── build/                 # PyInstaller 中间产物（已被 git 忽略）
+├── run_zlint.spec         # PyInstaller 规格文件（run_zlint）
+└── audit_coverage.spec    # PyInstaller 规格文件（audit_coverage）
 ```
 
 ## 使用方法
@@ -68,12 +70,27 @@ python run_zlint.py
 ```
 或直接双击 `run_zlint.bat`。
 
+### 审计覆盖表（`audit_coverage`）
+
+根目录的 [`../audit_coverage.py`](../audit_coverage.py)（或 `dist/audit_coverage.exe`）会生成一张审计可用的覆盖矩阵 Excel：**行 = 全部规则**（432 条清单 ∪ zlint 实际 lint），**列 = 每张证书**，每格 = 该规则对这张证书的处置结论（`pass`/`error`/`warn`/`NA`/`NE`/`info`；前置条件不满足的标 `不适用(guard未过)`；清单里有但本版 zlint 没有的标 `版本无此规则`）。背景与详细说明见 [../USAGE.zh.md](../USAGE.zh.md) → *审计覆盖表*。
+
+```powershell
+# 一个矩阵（每证书一列）
+dist\audit_coverage.exe --zlint zlint.exe --cert 证书.pem --out coverage.xlsx
+dist\audit_coverage.exe --zlint zlint.exe --dir ..\testdata --pattern "*aia*.pem" --out matrix.xlsx
+
+# 批量：每张证书单独生成一个表到文件夹
+dist\audit_coverage.exe --zlint zlint.exe --dir ..\testdata --pattern "*aia*.pem" --out-dir out\
+```
+
 ### 重新打包
+
+双击 `build.bat` 即可，会同时重建 `dist/run_zlint.exe` 和 `dist/audit_coverage.exe`。单独打包命令：
 
 ```powershell
 pyinstaller --onefile --console --name run_zlint run_zlint.py
+pyinstaller audit_coverage.spec --noconfirm
 ```
-或双击 `build.bat`，生成的 exe 位于 `dist/run_zlint.exe`。
 
 ## 注意事项
 

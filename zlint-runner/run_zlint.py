@@ -200,7 +200,31 @@ def guess_desc(name):
     return ""
 
 
+def _load_rules_json():
+    """从脚本同目录的 lint_rules.json 加载 432 条 lint 规则描述。
+    该 JSON 由 zlint-lint规则详解.xlsx 导出，找不到时返回 {}。
+    """
+    try:
+        base = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(base, "lint_rules.json")
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+_RULES = _load_rules_json()
+
+
 def lint_desc(name):
+    # 1) 优先: lint_rules.json (由 zlint-lint规则详解.xlsx 导出，432 条)
+    r = _RULES.get(name)
+    if r:
+        zh = r.get("zh") if isinstance(r, dict) else r
+        if zh:
+            return zh
+    # 2) 其次: 内置字典 (zlint-detection-guide.md)
+    # 3) 最后: 关键词兜底
     return LINT_DESC.get(name) or guess_desc(name)
 
 

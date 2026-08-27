@@ -1,0 +1,2162 @@
+{
+ "e_basic_constr_invalid_der": {
+  "en": "Checks the correct DER encoding of the cA field in the BasicConstraints ext",
+  "zh": "BasicConstraints 扩展中 cA 字段的 DER 编码必须正确",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_basic_constraints_not_critical": {
+  "en": "basicConstraints MUST appear as a critical extension",
+  "zh": "basicConstraints 扩展必须标记为 critical（关键）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ca_subject_field_empty": {
+  "en": "The subject field of a CA certificate MUST have a non-empty distinguished name",
+  "zh": "CA 证书的 subject 字段必须包含非空的可识别名称 DN",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_cert_contains_unique_identifier": {
+  "en": "CAs MUST NOT generate certificate with unique identifiers",
+  "zh": "CA 不得生成包含唯一标识符（uniqueIdentifier）字段的证书",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_cert_ext_invalid_der": {
+  "en": "Checks that the 'critical' flag of extensions is not FALSE when present (as per DER encoding)",
+  "zh": "扩展的 critical 标志为 FALSE 时不应存在该标志（按 DER 编码要求）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_cert_extensions_version_not_3": {
+  "en": "The extensions field MUST only appear in version 3 certificates",
+  "zh": "extensions 扩展字段只能出现在 v3 版本的证书中",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_cert_sig_alg_not_match_tbs_sig_alg": {
+  "en": "Certificate signature field must match TBSCertificate signature field",
+  "zh": "证书签名算法字段必须与 TBSCertificate 中的签名算法字段一致",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_cert_unique_identifier_version_not_2_or_3": {
+  "en": "Unique identifiers MUST only appear if the X.509 version is 2 or 3",
+  "zh": "唯一标识符字段仅允许出现在 X.509 v2 或 v3 证书中",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_empty_revoked_certificates": {
+  "en": "When there are no revoked certificates, the revoked certificates list MUST be absent",
+  "zh": "没有吊销证书时，revokedCertificates 列表必须省略",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_has_authority_key_identifier": {
+  "en": "The CRL must include Authority Key Identifier extension.",
+  "zh": "CRL 必须包含权威密钥标识符（AKI）扩展",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_has_next_update": {
+  "en": "Conforming CRL issuers MUST include the nextUpdate field in all CRLs.",
+  "zh": "合规的 CRL 签发者必须在所有 CRL 中包含 nextUpdate 字段",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_has_valid_reason_code": {
+  "en": "If a CRL entry has a reason code, it MUST be in RFC5280 section 5.3.1 and SHOULD be absent instead of using unspecified (0)",
+  "zh": "CRL 条目含吊销原因码时必须符合 RFC 5280 5.3.1 节；应省略而非使用未指定(0)",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_missing_crl_number": {
+  "en": "CRL issuers conforming to this profile MUST include this extension in all CRLs",
+  "zh": "合规 CRL 必须包含 CRL Number（CRL 编号）扩展",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_revocation_time_after_this_update": {
+  "en": "All revocation times for revoked certificates must be on or before the thisUpdate field of the CRL.",
+  "zh": "所有吊销时间必须不晚于 CRL 的 thisUpdate 字段",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_revoked_certificates_field_must_be_empty": {
+  "en": "When the revokedCertificates field is empty, it MUST be absent from the DER-encoded ASN.1 data structure.",
+  "zh": "revokedCertificates 为空时，该字段必须从 DER 编码的 ASN.1 结构中省略",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_crl_sigalgo_missing_null_params": {
+  "en": "Checks for mandatory NULL parameters in the SignatureAlgorithm",
+  "zh": "CRL 签名算法（RSA）必须包含 NULL 参数",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_distribution_point_incomplete": {
+  "en": "A DistributionPoint from the CRLDistributionPoints extension MUST NOT consist of only the reasons field; either distributionPoint or CRLIssuer must be present",
+  "zh": "CRLDistributionPoints 扩展的 DistributionPoint 不得仅含 reasons 字段，distributionPoint 或 cRLIssuer 必须存在",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ecdsa_allowed_ku": {
+  "en": "Key usage values keyEncipherment or dataEncipherment MUST NOT be present in certificates with ECDSA public keys",
+  "zh": "ECDSA 公钥证书中不得存在 keyEncipherment 或 dataEncipherment 密钥用途",
+  "source": "RFC 8813（ECDSA 签名算法）"
+ },
+ "e_empty_sct_list": {
+  "en": "At least one SCT MUST be included in the SignedCertificateTimestampList extension",
+  "zh": "SignedCertificateTimestampList 扩展中必须至少包含一个 SCT",
+  "source": "RFC 6962（证书透明 CT）"
+ },
+ "e_ext_aia_marked_critical": {
+  "en": "Conforming CAs must mark the Authority Information Access extension as non-critical",
+  "zh": "权威信息访问（AIA）扩展必须标记为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_authority_key_identifier_critical": {
+  "en": "The authority key identifier extension must be non-critical",
+  "zh": "权威密钥标识符（AKI）扩展必须为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_authority_key_identifier_no_key_identifier": {
+  "en": "CAs must include keyIdentifer field of AKI in all non-self-issued certificates",
+  "zh": "非自签证书必须包含 AKI 的 keyIdentifier 字段",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_cannot_be_empty_sequence": {
+  "en": "Extensions whose value is SEQUENCE SIZE (1..MAX) OF must have at least 1 element",
+  "zh": "值为 SEQUENCE SIZE (1..MAX) OF 的扩展必须至少包含 1 个元素",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_cert_policy_disallowed_any_policy_qualifier": {
+  "en": "When qualifiers are used with the special policy anyPolicy, they must be limited to qualifiers identified in this section: (4.2.1.4)",
+  "zh": "anyPolicy 策略使用 qualifier 时须限于规范 4.2.1.4 节定义的限定符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_cert_policy_duplicate": {
+  "en": "A certificate policy OID must not appear more than once in the extension",
+  "zh": "证书策略 OID 不得在扩展中出现多次",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_cert_policy_explicit_text_ia5_string": {
+  "en": "Compliant certificates must not encode explicitTest as an IA5String",
+  "zh": "合规证书不得将 explicitText 编码为 IA5String",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_cert_policy_explicit_text_too_long": {
+  "en": "Explicit text has a maximum size of 200 characters",
+  "zh": "策略显式文本（explicitText）最大长度为 200 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_duplicate_extension": {
+  "en": "A certificate MUST NOT include more than one instance of a particular extension",
+  "zh": "证书不得包含同一扩展的多个实例",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_freshest_crl_marked_critical": {
+  "en": "Freshest CRL MUST be marked as non-critical by conforming CAs",
+  "zh": "Freshest CRL 扩展必须标记为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_dns_not_ia5_string": {
+  "en": "DNSNames MUST be IA5 strings",
+  "zh": "IAN 扩展中的 DNSName 必须是 IA5 字符串",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_empty_name": {
+  "en": "General name fields must not be empty in IAN",
+  "zh": "IAN 中的通用名称字段不得为空",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_no_entries": {
+  "en": "If present, the IAN extension must contain at least one entry",
+  "zh": "IAN 扩展若存在则必须至少包含一个条目",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_rfc822_format_invalid": {
+  "en": "Email must not be surrounded with `<>`, and there MUST NOT be trailing comments in `()`",
+  "zh": "IAN 中的邮箱地址不得用<>包裹，也不得带有()尾随注释",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_space_dns_name": {
+  "en": "dNSName ' ' MUST NOT be used",
+  "zh": "IAN 中不得使用空格作为 dNSName",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_uri_format_invalid": {
+  "en": "URIs in the subjectAltName extension MUST have a scheme and scheme specific part",
+  "zh": "subjectAltName 扩展中的 URI 必须包含 scheme 和具体部分",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_uri_host_not_fqdn_or_ip": {
+  "en": "URIs that include an authority ([RFC3986], Section 3.2) MUST include a fully qualified domain name or IP address as the host",
+  "zh": "含 authority 的 URI 主机必须是完全限定域名或 IP 地址",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_uri_not_ia5": {
+  "en": "When issuer alternative name contains a URI, the name MUST be an IA5 string",
+  "zh": "签发者备用名称中的 URI 必须是 IA5 字符串",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_ian_uri_relative": {
+  "en": "When issuerAltName extension is present and the URI is used, the name MUST NOT be a relative URI",
+  "zh": "issuerAltName 扩展中的 URI 不得是相对 URI",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_key_usage_cert_sign_without_ca": {
+  "en": "if the keyCertSign bit is asserted, then the cA bit in the basic constraints extension MUST also be asserted",
+  "zh": "若设置 keyCertSign 位，则 basicConstraints 的 cA 位也必须设置",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_key_usage_without_bits": {
+  "en": "When the keyUsage extension is included, at least one bit MUST be set to 1",
+  "zh": "包含 keyUsage 扩展时至少要将一个位设为 1",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_name_constraints_not_critical": {
+  "en": "If it is included, conforming CAs MUST mark the name constraints extension as critical",
+  "zh": "nameConstraints 扩展必须标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_name_constraints_not_in_ca": {
+  "en": "The name constraints extension MUST only be used in CA certificates",
+  "zh": "nameConstraints 扩展只能用于 CA 证书",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_policy_constraints_empty": {
+  "en": "Conforming CAs MUST NOT issue certificates where policy constraints is an empty sequence. That is, either the inhibitPolicyMapping field or the requireExplicityPolicy field MUST be present",
+  "zh": "policyConstraints 不得为空序列，inhibitPolicyMapping 或 requireExplicitPolicy 至少一个必须存在",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_policy_constraints_not_critical": {
+  "en": "Conforming CAs MUST mark the policy constraints extension as critical",
+  "zh": "policyConstraints 扩展必须标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_policy_map_any_policy": {
+  "en": "Policies must not be mapped to or from the anyPolicy value",
+  "zh": "策略映射不得映射到或来自 anyPolicy 值",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_dns_name_too_long": {
+  "en": "DNSName must be less than or equal to 253 bytes",
+  "zh": "DNSName 不得超过 253 字节",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_dns_not_ia5_string": {
+  "en": "dNSNames MUST be IA5 strings",
+  "zh": "SAN 中的 dNSName 必须是 IA5 字符串",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_empty_name": {
+  "en": "General name fields MUST NOT be empty in subjectAlternateNames",
+  "zh": "subjectAltName 中的通用名称字段不得为空",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_no_entries": {
+  "en": "If present, the SAN extension MUST contain at least one entry",
+  "zh": "SAN 扩展若存在则必须至少包含一个条目",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_not_critical_without_subject": {
+  "en": "If there is an empty subject field, then the SAN extension MUST be critical",
+  "zh": "subject 字段为空时，SAN 扩展必须标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_rfc822_format_invalid": {
+  "en": "Email MUST NOT be surrounded with `<>`, and there must be no trailing comments in `()`",
+  "zh": "SAN 中的邮箱地址不得用<>包裹，也不得带有()尾随注释",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_space_dns_name": {
+  "en": "The dNSName ` ` MUST NOT be used",
+  "zh": "SAN 中不得使用空格作为 dNSName",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_uri_format_invalid": {
+  "en": "URIs in SAN extension must have a scheme and scheme specific part",
+  "zh": "SAN 扩展中的 URI 必须包含 scheme 和具体部分",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_uri_host_not_fqdn_or_ip": {
+  "en": "URIs that include an authority ([RFC3986], Section 3.2) MUST include a fully qualified domain name or IP address as the host",
+  "zh": "含 authority 的 URI 主机必须是完全限定域名或 IP 地址",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_uri_not_ia5": {
+  "en": "When subjectAlternateName contains a URI, the name MUST be an IA5 string",
+  "zh": "subjectAltName 中的 URI 必须是 IA5 字符串",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_san_uri_relative": {
+  "en": "When the subjectAlternateName extension is present and a URI is used, the name MUST NOT be a relative URI",
+  "zh": "subjectAltName 扩展中的 URI 不得是相对 URI",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_subject_directory_attr_critical": {
+  "en": "Conforming CAs MUST mark the Subject Directory Attributes extension as not critical",
+  "zh": "Subject Directory Attributes 扩展必须标记为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_subject_key_identifier_critical": {
+  "en": "The subject key identifier extension MUST be non-critical",
+  "zh": "主体密钥标识符（SKI）扩展必须为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_ext_subject_key_identifier_missing_ca": {
+  "en": "CAs MUST include a Subject Key Identifier in all CA certificates",
+  "zh": "CA 证书必须包含主体密钥标识符（SKI）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_generalized_time_does_not_include_seconds": {
+  "en": "Generalized time values MUST include seconds",
+  "zh": "GeneralizedTime 时间值必须包含秒",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_generalized_time_includes_fraction_seconds": {
+  "en": "Generalized time values MUST NOT include fractional seconds",
+  "zh": "GeneralizedTime 时间值不得包含小数秒",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_generalized_time_not_in_zulu": {
+  "en": "Generalized time values MUST be expressed in Greenwich Mean Time (Zulu)",
+  "zh": "GeneralizedTime 时间值必须以格林尼治标准时间（Zulu）表示",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_incorrect_ku_encoding": {
+  "en": "RFC 5280 Section 4.2.1.3 describes the value of a KeyUsage to be a DER encoded BitString, which itself defines that all trailing 0 bits be counted as being \"unused\".",
+  "zh": "KeyUsage 应为 DER 编码的 BitString，尾部多余的 0 位应计为 unused",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_inhibit_any_policy_not_critical": {
+  "en": "CAs MUST mark the inhibitAnyPolicy extension as critical",
+  "zh": "inhibitAnyPolicy 扩展必须标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_international_dns_name_not_nfc": {
+  "en": "Internationalized DNSNames must be normalized by Unicode normalization form C",
+  "zh": "国际化 DNSName 必须使用 Unicode 规范化形式 C（NFC）",
+  "source": "RFC 5891（国际化域名 IDNA）"
+ },
+ "e_international_dns_name_not_unicode": {
+  "en": "Internationalized DNSNames punycode not valid Unicode",
+  "zh": "国际化 DNSName 的 punycode 编码必须是有效的 Unicode",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_issuer_dn_country_not_printable_string": {
+  "en": "X520 Distinguished Name Country MUST BE encoded as PrintableString",
+  "zh": "X520 可识别名称中的国家（C）必须编码为 PrintableString",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_issuer_field_empty": {
+  "en": "Certificate issuer field MUST NOT be empty and must have a non-empty distinguished name",
+  "zh": "证书 issuer 字段不得为空，且必须包含非空的可识别名称",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_key_usage_and_extended_key_usage_inconsistent": {
+  "en": "The certificate MUST only be used for a purpose consistent with both key usage extension and extended key usage extension.",
+  "zh": "证书用途必须同时符合 keyUsage 与 extendedKeyUsage 扩展",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_key_usage_incorrect_length": {
+  "en": "The key usage is a bit string with exactly nine possible flags",
+  "zh": "keyUsage 是恰好包含 9 个标志位的位串",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_name_constraint_empty": {
+  "en": "Conforming CAs MUST NOT issue certificates where name constraints is an empty sequence. That is, either the permittedSubtree or excludedSubtree fields must be present",
+  "zh": "nameConstraints 不得为空序列，permittedSubtrees 或 excludedSubtrees 至少一个必须存在",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_name_constraint_maximum_not_absent": {
+  "en": "Within the name constraints name form, the maximum field is not used and therefore MUST be absent",
+  "zh": "名称约束中的 maximum 字段不使用，必须省略",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_name_constraint_minimum_non_zero": {
+  "en": "Within the name constraints name forms, the minimum field is not used and therefore MUST be zero",
+  "zh": "名称约束中的 minimum 字段不使用，必须为零",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_name_constraint_not_fqdn": {
+  "en": "For URIs, the constraint MUST be specified as a fully qualified domain name [...] When the constraint begins with a period, it MAY be expanded with one or more labels.",
+  "zh": "URI 名称约束必须指定为完全限定域名；以句点开头时可扩展一个或多个标签",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_path_len_constraint_improperly_included": {
+  "en": "CAs MUST NOT include the pathLenConstraint field unless the CA boolean is asserted and the keyCertSign bit is set",
+  "zh": "仅当 cA 位与 keyCertSign 位均设置时才允许包含 pathLenConstraint 字段",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_path_len_constraint_zero_or_less": {
+  "en": "Where it appears, the pathLenConstraint field MUST be greater than or equal to zero",
+  "zh": "pathLenConstraint 字段必须大于或等于零",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_precert_with_sct_list": {
+  "en": "SCTs must be embedded in the final certificate, not in a precertificate",
+  "zh": "SCT 必须嵌入最终证书，而非预证书（precertificate）",
+  "source": "RFC 6962（证书透明 CT）"
+ },
+ "e_rfc_dnsname_empty_label": {
+  "en": "DNSNames should not have an empty label.",
+  "zh": "DNSName 不得包含空标签",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_rfc_dnsname_hyphen_in_sld": {
+  "en": "DNSName should not have a hyphen beginning or ending the SLD",
+  "zh": "DNSName 的二级域名（SLD）不得以连字符开头或结尾",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_rfc_dnsname_label_too_long": {
+  "en": "DNSName labels MUST be less than or equal to 63 characters",
+  "zh": "DNSName 标签长度必须小于等于 63 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_rfc_dnsname_underscore_in_sld": {
+  "en": "DNSName MUST NOT contain underscore characters",
+  "zh": "DNSName 不得包含下划线字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_rsa_allowed_ku_ca": {
+  "en": "Key usage values digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyCertSign, and cRLSign may only be present in a CA certificate with an RSA key",
+  "zh": "RSA 密钥的 CA 证书只能包含 digitalSignature、nonRepudiation、keyEncipherment、dataEncipherment、keyCertSign、cRLSign 等密钥用途",
+  "source": "RFC 3279（证书算法与 ASN.1 结构）"
+ },
+ "e_rsa_allowed_ku_ee": {
+  "en": "Key usage values digitalSignature, nonRepudiation, keyEncipherment, and dataEncipherment may only be present in an end entity certificate with an RSA key",
+  "zh": "RSA 密钥的终端实体证书只能包含 digitalSignature、nonRepudiation、keyEncipherment、dataEncipherment 密钥用途",
+  "source": "RFC 3279（证书算法与 ASN.1 结构）"
+ },
+ "e_rsa_allowed_ku_no_encipherment_ca": {
+  "en": "If Key usage value keyCertSign or cRLSign is present in a CA certificate both keyEncipherment and dataEncipherment SHOULD NOT be present",
+  "zh": "CA 证书含 keyCertSign 或 cRLSign 时，不应同时含 keyEncipherment 和 dataEncipherment",
+  "source": "RFC 3279（证书算法与 ASN.1 结构）"
+ },
+ "e_serial_number_longer_than_20_octets": {
+  "en": "Certificates must not have a DER encoded serial number longer than 20 octets",
+  "zh": "证书序列号的 DER 编码不得超过 20 字节",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_serial_number_not_positive": {
+  "en": "Certificates must have a positive serial number",
+  "zh": "证书序列号必须为正整数",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_spki_rsa_encryption_parameter_not_null": {
+  "en": "RSA: Encoded public key algorithm identifier MUST have NULL parameters",
+  "zh": "RSA 公钥算法标识符必须带有 NULL 参数",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subj_email_not_in_san": {
+  "en": "Certificates with email addresses MUST include them in the SAN extension",
+  "zh": "含邮箱地址的证书必须将其放入 SAN 扩展",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_common_name_max_length": {
+  "en": "The commonName field of the subject MUST be less than 65 characters",
+  "zh": "subject 的 commonName 字段必须小于 65 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_dn_country_not_printable_string": {
+  "en": "X520 Distinguished Name Country MUST be encoded as PrintableString",
+  "zh": "X520 可识别名称中的国家（C）必须编码为 PrintableString",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_dn_not_printable_characters": {
+  "en": "X520 Subject fields MUST only contain printable control characters",
+  "zh": "X520 主体字段只能包含可打印的控制字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_dn_serial_number_max_length": {
+  "en": "The 'Serial Number' field of the subject MUST be less than 65 characters",
+  "zh": "subject 的 SerialNumber 字段必须小于 65 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_dn_serial_number_not_printable_string": {
+  "en": "X520 Distinguished Name SerialNumber MUST be encoded as PrintableString",
+  "zh": "X520 可识别名称中的 SerialNumber 必须编码为 PrintableString",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_email_max_length": {
+  "en": "The 'Email' field of the subject MUST be less than 256 characters",
+  "zh": "subject 的 Email 字段必须小于 256 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_empty_without_san": {
+  "en": "CAs MUST support subject alternative name if the subject field is an empty sequence",
+  "zh": "subject 字段为空序列时，必须支持主体备用名称（SAN）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_given_name_max_length": {
+  "en": "The 'GivenName' field of the subject MUST be less than 32769 characters",
+  "zh": "subject 的 GivenName 字段必须小于 32769 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_info_access_marked_critical": {
+  "en": "Conforming CAs MUST mark the Subject Info Access extension as non-critical",
+  "zh": "Subject Info Access 扩展必须标记为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_locality_name_max_length": {
+  "en": "The 'Locality Name' field of the subject MUST be less than 129 characters",
+  "zh": "subject 的 Locality Name（L）字段必须小于 129 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_not_dn": {
+  "en": "When not empty, the subject field MUST be a distinguished name",
+  "zh": "subject 字段非空时必须为可识别名称（DN）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_organization_name_max_length": {
+  "en": "The 'Organization Name' field of the subject MUST be less than 65 characters",
+  "zh": "subject 的 Organization Name（O）字段必须小于 65 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_organizational_unit_name_max_length": {
+  "en": "The 'Organizational Unit Name' field of the subject MUST be less than 65 characters",
+  "zh": "subject 的 Organizational Unit Name（OU）字段必须小于 65 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_postal_code_max_length": {
+  "en": "The 'PostalCode' field of the subject MUST be less than 17 characters",
+  "zh": "subject 的 PostalCode 字段必须小于 17 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_printable_string_badalpha": {
+  "en": "PrintableString type's alphabet only includes a-z, A-Z, 0-9, and 11 special characters",
+  "zh": "PrintableString 字母表仅包含 a-z、A-Z、0-9 和 11 个特殊字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_state_name_max_length": {
+  "en": "The 'State Name' field of the subject MUST be less than 129 characters",
+  "zh": "subject 的 State Name（ST）字段必须小于 129 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_street_address_max_length": {
+  "en": "The 'StreetAddress' field of the subject MUST be less than 129 characters",
+  "zh": "subject 的 StreetAddress 字段必须小于 129 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_subject_surname_max_length": {
+  "en": "The 'Surname' field of the subject MUST be less than 32769 characters",
+  "zh": "subject 的 Surname 字段必须小于 32769 字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_superfluous_ku_encoding": {
+  "en": "RFC 5280 Section 4.2.1.3 describes the value of a KeyUsage to be a DER encoded BitString, which itself must not have unnecessary trailing 00 bytes.",
+  "zh": "KeyUsage 的 DER 编码 BitString 不得有冗余的尾随 00 字节",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_tbs_signature_rsa_encryption_parameter_not_null": {
+  "en": "RSA: Encoded signature algorithm identifier MUST have NULL parameters",
+  "zh": "RSA 签名算法标识符必须带有 NULL 参数",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_this_update_not_after_produced_at": {
+  "en": "The value of thisUpdate MUST be prior to the time at which the response is produced, i.e., the value of producedAt",
+  "zh": "OCSP 响应的 thisUpdate 必须早于 producedAt（响应生成时间）",
+  "source": "RFC 6960（OCSP 在线证书状态协议）"
+ },
+ "e_utc_time_does_not_include_seconds": {
+  "en": "UTCTime values MUST include seconds",
+  "zh": "UTCTime 时间值必须包含秒",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_utc_time_not_in_zulu": {
+  "en": "UTCTime values MUST be expressed in Greenwich Mean Time (Zulu)",
+  "zh": "UTCTime 时间值必须以格林尼治标准时间（Zulu）表示",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_wrong_time_format_pre2050": {
+  "en": "Certificates valid through the year 2049 MUST be encoded in UTC time",
+  "zh": "有效期至 2049 年的证书时间必须编码为 UTC 时间",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "n_ecdsa_ee_invalid_ku": {
+  "en": "ECDSA end-entity certificates MAY have key usages: digitalSignature, nonRepudiation and keyAgreement",
+  "zh": "ECDSA 终端实体证书允许的密钥用途：digitalSignature、nonRepudiation 和 keyAgreement",
+  "source": "RFC 5480（ECC 公钥算法）"
+ },
+ "w_distribution_point_missing_ldap_or_uri": {
+  "en": "When present in the CRLDistributionPoints extension, DistributionPointName SHOULD include at least one LDAP or HTTP URI",
+  "zh": "CRLDistributionPoints 扩展中的 DistributionPointName 应至少包含一个 LDAP 或 HTTP URI",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_eku_critical_improperly": {
+  "en": "Conforming CAs SHOULD NOT mark extended key usage extension as critical if the anyExtendedKeyUsage KeyPurposedID is present",
+  "zh": "含 anyExtendedKeyUsage 时，不应将 extendedKeyUsage 扩展标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_aia_access_location_missing": {
+  "en": "When the id-ad-caIssuers accessMethod is used, at least one instance SHOULD specify an accessLocation that is an HTTP or LDAP URI",
+  "zh": "使用 id-ad-caIssuers 访问方法时，至少一个 accessLocation 应为 HTTP 或 LDAP URI",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_cert_policy_contains_noticeref": {
+  "en": "Compliant certificates SHOULD NOT use the noticeRef option",
+  "zh": "合规证书不应使用 noticeRef 选项",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_cert_policy_explicit_text_includes_control": {
+  "en": "Explicit text should not include any control characters",
+  "zh": "策略显式文本不应包含任何控制字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_cert_policy_explicit_text_not_nfc": {
+  "en": "When utf8string or bmpstring encoding is used for explicitText field in certificate policy, it SHOULD be normalized by NFC format",
+  "zh": "explicitText 使用 utf8string 或 bmpstring 编码时应按 NFC 规范化",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_cert_policy_explicit_text_not_utf8": {
+  "en": "Compliant certificates should use the utf8string encoding for explicitText",
+  "zh": "合规证书应使用 utf8string 编码 explicitText",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_crl_distribution_marked_critical": {
+  "en": "If included, the CRL Distribution Points extension SHOULD NOT be marked critical",
+  "zh": "CRL Distribution Points 扩展不应标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_ian_critical": {
+  "en": "Issuer alternate name should be marked as non-critical",
+  "zh": "签发者备用名称（IAN）扩展应标记为非 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_key_usage_not_critical": {
+  "en": "The keyUsage extension SHOULD be critical",
+  "zh": "keyUsage 扩展应标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_policy_map_not_critical": {
+  "en": "Policy mappings should be marked as critical",
+  "zh": "policyMappings 扩展应标记为 critical",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_policy_map_not_in_cert_policy": {
+  "en": "Each issuerDomainPolicy named in the policy mappings extension should also be asserted in a certificate policies extension",
+  "zh": "policyMappings 中的每个 issuerDomainPolicy 也应出现在 certificatePolicies 扩展中",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_ext_subject_key_identifier_missing_sub_cert": {
+  "en": "Sub certificates SHOULD include Subject Key Identifier in end entity certs",
+  "zh": "终端实体证书应包含主体密钥标识符（SKI）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_name_constraint_on_edi_party_name": {
+  "en": "The name constraints extension SHOULD NOT impose constraints on the ediPartyName name form",
+  "zh": "nameConstraints 不应约束 ediPartyName 名称形式",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_name_constraint_on_registered_id": {
+  "en": "The name constraints extension SHOULD NOT impose constraints on the registeredID name form",
+  "zh": "nameConstraints 不应约束 registeredID 名称形式",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_name_constraint_on_x400": {
+  "en": "The name constraints extension SHOULD NOT impose constraints on the x400Address name form",
+  "zh": "nameConstraints 不应约束 x400Address 名称形式",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_rfc_dnsname_underscore_in_trd": {
+  "en": "DNSName MUST NOT contain underscore characters",
+  "zh": "DNSName 不应包含下划线字符",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_subject_given_name_recommended_max_length": {
+  "en": "X.411 (1988) describes ub-common-name-length to be 64 bytes long. As systems may have",
+  "zh": "subject 的 GivenName 字段建议不超过 64 字节（X.411）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "w_subject_surname_recommended_max_length": {
+  "en": "X.411 (1988) describes ub-common-name-length to be 64 bytes long. As systems may have",
+  "zh": "subject 的 Surname 字段建议不超过 64 字节（X.411）",
+  "source": "RFC 5280（X.509 PKI 证书/CRL 标准）"
+ },
+ "e_aia_ca_issuers_must_have_http_only": {
+  "en": "The id-ad-caIssuers accessMethod must contain an HTTP URL of the Issuing CA’s certificate. Other schemes are not allowed.",
+  "zh": "AIA 的 id-ad-caIssuers 访问方法必须包含签发 CA 证书的 HTTP URL，不允许其他协议",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_aia_must_contain_permitted_access_method": {
+  "en": "The AIA must contain only the id-ad-ocsp or id-ad-caIssuers accessMethod. Others are not allowed. Also, each accessLocation MUST be encoded as uniformResourceIdentifier GeneralName.",
+  "zh": "AIA 只能包含 id-ad-ocsp 或 id-ad-caIssuers 访问方法，且每个访问位置必须编码为 uniformResourceIdentifier 通用名称形式",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_aia_ocsp_must_have_http_only": {
+  "en": "The id-ad-ocsp accessMethod must contain an HTTP URL of the of the Issuing CA’s OCSP responder. Other schemes are not allowed.",
+  "zh": "AIA 的 id-ad-ocsp 访问方法必须包含签发 CA 的 OCSP 响应器的 HTTP URL，不允许其他协议",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_aia_unique_access_locations": {
+  "en": "When multiple AccessDescriptions are present with the same accessMethod in the AIA extension, then each accessLocation MUST be unique.",
+  "zh": "AIA 中同一访问方法有多个 AccessDescription 时，每个访问位置必须唯一",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_algorithm_identifier_improper_encoding": {
+  "en": "Encoded AlgorithmObjectIdentifier objects inside a SubjectPublicKeyInfo field",
+  "zh": "SubjectPublicKeyInfo 中的算法对象标识符（AlgorithmObjectIdentifier）必须正确编码",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_arpa_domain_not_allowed": {
+  "en": "CAs SHALL NOT issue Certificates containing Domain Names that end in an IP Reverse Zone Suffix",
+  "zh": "CA 不得签发包含以 IP 反向解析后缀（.arpa 保留区）结尾的域名的证书",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_br_prohibit_dsa_usage": {
+  "en": "DSA was removed from the Baseline Requirements as a valid signature algorithm in 1.7.1.",
+  "zh": "基线要求 1.7.1 起 DSA 不再是允许的签名算法",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_aia_non_http_url": {
+  "en": "Within the AIA extension of CA certificates, accessLocations must contain HTTP URLs",
+  "zh": "CA 证书 AIA 扩展中的访问位置必须包含 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_common_name_missing": {
+  "en": "CA Certificates common name MUST be included.",
+  "zh": "CA 证书必须包含 Common Name（CN）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_country_name_invalid": {
+  "en": "Root and Subordinate CA certificates MUST have a two-letter country code specified in ISO 3166-1",
+  "zh": "根 CA 和下级 CA 证书必须使用 ISO 3166-1 规定的两位国家代码",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_country_name_missing": {
+  "en": "Root and Subordinate CA certificates MUST have a countryName present in subject information",
+  "zh": "根 CA 和下级 CA 证书的 subject 中必须存在 countryName（国家）字段",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_crl_sign_not_set": {
+  "en": "Root and Subordinate CA certificate keyUsage extension's crlSign bit MUST be set",
+  "zh": "根 CA 和下级 CA 证书 keyUsage 扩展的 cRLSign 位必须设置",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_invalid_eku": {
+  "en": "Checks that SubCA certificates do not contain forbidden values in their EKU extension.",
+  "zh": "检查下级 CA 证书 EKU 扩展中不得包含禁止的值",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_is_ca": {
+  "en": "Root and Sub CA Certificate: The CA field MUST be set to true.",
+  "zh": "根 CA 和下级 CA 证书的 basicConstraints cA 字段必须为 true",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_key_cert_sign_not_set": {
+  "en": "CA Certificate Key Usage: Bit position for keyCertSign is REQUIRED.",
+  "zh": "CA 证书 KeyUsage 必须设置 keyCertSign（证书签名）位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_key_usage_missing": {
+  "en": "Root and Subordinate CA certificate keyUsage extension MUST be present",
+  "zh": "根 CA 和下级 CA 证书必须包含 keyUsage 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_key_usage_not_critical": {
+  "en": "Root and Subordinate CA certificate keyUsage extension MUST be marked as critical",
+  "zh": "根 CA 和下级 CA 证书的 keyUsage 扩展必须标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_multiple_reserved_policy_oids": {
+  "en": "The CA MUST include exactly one Reserved Certificate Policy Identifier",
+  "zh": "CA 证书必须且只能包含一个 CA/B Forum 保留证书策略标识符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ca_organization_name_missing": {
+  "en": "Root and Subordinate CA certificates MUST have an organizationName present in subject information",
+  "zh": "根 CA 和下级 CA 证书的 subject 中必须存在 organizationName（组织名）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_crl_has_valid_reason_code": {
+  "en": "Only the following CRLReasons MAY be present: 1, 3, 4, 5, 9.",
+  "zh": "CRL 吊销原因码只允许为 1、3、4、5、9",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_crl_reason_code_not_critical": {
+  "en": "If present, CRL Reason Code extension MUST NOT be marked critical.",
+  "zh": "CRL 吊销原因码扩展如果存在，不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_conflicts_with_locality": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, locality name MUST NOT be included in subject",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，subject 中不得包含 localityName（地区名）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_conflicts_with_org": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, organization name MUST NOT be included in subject",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，subject 中不得包含 organizationName（组织名）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_conflicts_with_postal": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, postalCode MUST NOT be included in subject",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，subject 中不得包含 postalCode（邮编）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_conflicts_with_province": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, stateOrProvinceName MUST NOT be included in subject",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，subject 中不得包含 stateOrProvinceName（省/州）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_conflicts_with_street": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, streetAddress MUST NOT be included in subject",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，subject 中不得包含 streetAddress（街道地址）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_dv_subject_invalid_values": {
+  "en": "If certificate policy 2.23.140.1.2.1 (CA/B BR domain validated) is included, only country and/or common name is allowed in SubjectDN.",
+  "zh": "含 DV 策略（2.23.140.1.2.1）的证书，SubjectDN 只允许 country 和/或 commonName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_iv_requires_personal_name": {
+  "en": "If certificate policy 2.23.140.1.2.3 is included, either organizationName or givenName and surname MUST be included in subject",
+  "zh": "含 IV 策略（2.23.140.1.2.3）的证书，subject 中必须包含 organizationName 或 givenName 加 surname",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_iv_requires_personal_name_strict": {
+  "en": "If certificate policy 2.23.140.1.2.3 is included givenName and surname MUST be included in subject",
+  "zh": "含 IV 策略（2.23.140.1.2.3）的证书，subject 中必须包含 givenName 和 surname（严格模式）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cab_ov_requires_org": {
+  "en": "If certificate policy 2.23.140.1.2.2 is included, organizationName MUST be included in subject",
+  "zh": "含 OV 策略（2.23.140.1.2.2）的证书，subject 中必须包含 organizationName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cabf_ecc_allowed_key_usages": {
+  "en": "For certificates with ECC public keys, digitalSignature MUST be present and only digitalSignature and keyAgreement key usages are allowed.",
+  "zh": "ECC 公钥证书必须设置 digitalSignature，且只允许 digitalSignature 和 keyAgreement 密钥用途",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cert_policy_iv_requires_country": {
+  "en": "If certificate policy 2.23.140.1.2.3 is included, countryName MUST be included in subject",
+  "zh": "含 IV 策略（2.23.140.1.2.3）的证书，subject 中必须包含 countryName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cert_policy_iv_requires_province_or_locality": {
+  "en": "If certificate policy 2.23.140.1.2.3 is included, localityName or stateOrProvinceName MUST be included in subject",
+  "zh": "含 IV 策略（2.23.140.1.2.3）的证书，subject 中必须包含 localityName 或 stateOrProvinceName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cert_policy_ov_requires_country": {
+  "en": "If certificate policy 2.23.140.1.2.2 is included, countryName MUST be included in subject",
+  "zh": "含 OV 策略（2.23.140.1.2.2）的证书，subject 中必须包含 countryName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cert_policy_ov_requires_province_or_locality": {
+  "en": "If certificate policy 2.23.140.1.2.2 is included, localityName or stateOrProvinceName MUST be included in subject",
+  "zh": "含 OV 策略（2.23.140.1.2.2）的证书，subject 中必须包含 localityName 或 stateOrProvinceName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crl_auth_key_id_only_contains_keyid": {
+  "en": "The AuthKey extension must only contain the KeyIdentifier field.",
+  "zh": "CRL 的权威密钥标识符（AKI）扩展只能包含 KeyIdentifier 字段",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crl_distrib_points_not_http": {
+  "en": "The scheme of each CRL Distribution Point MUST be 'http'",
+  "zh": "每个 CRL 分发点的协议必须为 http",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crl_extensions_validity": {
+  "en": "Checks that only allowed extensions are present in a CRL and that their criticality is set correctly.",
+  "zh": "检查 CRL 中只能出现允许的扩展，且其 critical 标记正确",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crl_next_update_invalid": {
+  "en": "For CRLs covering (EE|CA) certificates, nextUpdate must be at most (10 days|12 months) beyond thisUpdate",
+  "zh": "CRL 的 nextUpdate 最迟不得超过 thisUpdate 后 10 天（EE 证书）或 12 个月（CA 证书）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crl_number_out_of_range": {
+  "en": "The CRL number must be greater than or equal to 0 and less than 2^159.",
+  "zh": "CRL 编号必须大于等于 0 且小于 2^159",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_crlissuer_must_not_be_present_in_cdp": {
+  "en": "crlIssuer and/or Reason field MUST NOT be present in the CDP extension.",
+  "zh": "CDP 扩展中不得包含 cRLIssuer 和/或 Reason 字段",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_bad_character_in_label": {
+  "en": "Characters in labels of DNSNames MUST be alphanumeric, - , _ or *",
+  "zh": "DNS 名称标签中的字符必须为字母数字、-、_ 或 *",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_contains_bare_iana_suffix": {
+  "en": "DNSNames should not contain a bare IANA suffix.",
+  "zh": "DNS 名称不得包含裸的 IANA 后缀（如裸 TLD）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_contains_prohibited_reserved_label": {
+  "en": "FQDNs MUST consist solely of Domain Labels that are P‐Labels or Non‐Reserved LDH Labels",
+  "zh": "FQDN 必须完全由 P 标签（punycode）或非保留的 LDH 标签构成",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_empty_label": {
+  "en": "DNSNames should not have an empty label.",
+  "zh": "DNS 名称不得有空标签（如 foo..com）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_hyphen_in_sld": {
+  "en": "DNSName should not have a hyphen beginning or ending the SLD",
+  "zh": "DNS 名称的二级域名（SLD）不得以连字符开头或结尾",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_label_too_long": {
+  "en": "DNSName labels MUST be less than or equal to 63 characters",
+  "zh": "DNS 名称标签长度必须小于等于 63 字符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_left_label_wildcard_correct": {
+  "en": "Wildcards in the left label of DNSName should only be *",
+  "zh": "DNS 名称最左侧标签中的通配符只能是 *",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_not_valid_tld": {
+  "en": "DNSNames must have a valid TLD.",
+  "zh": "DNS 名称必须使用有效的顶级域名（TLD）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_underscore_in_sld": {
+  "en": "DNSName MUST NOT contain underscore characters",
+  "zh": "DNS 名称不得包含下划线字符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dnsname_wildcard_only_in_left_label": {
+  "en": "DNSName should not have wildcards except in the left-most label",
+  "zh": "通配符只能出现在 DNS 名称的最左侧标签",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dsa_correct_order_in_subgroup": {
+  "en": "DSA: Public key value has the unique correct representation in the field, and that the key has the correct order in the subgroup",
+  "zh": "DSA 公钥值必须在域中具有唯一正确表示，且密钥在子群中具有正确的阶",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dsa_improper_modulus_or_divisor_size": {
+  "en": "Certificates MUST meet the following requirements for DSA algorithm type and key size: L=2048 and N=224,256 or L=3072 and N=256",
+  "zh": "DSA 算法类型和密钥大小必须满足：L=2048 且 N=224/256，或 L=3072 且 N=256",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dsa_params_missing": {
+  "en": "DSA: Certificates MUST include all domain parameters",
+  "zh": "DSA 证书必须包含全部域参数（p、q、g）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dsa_shorter_than_2048_bits": {
+  "en": "DSA modulus size must be at least 2048 bits",
+  "zh": "DSA 模数长度必须至少为 2048 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_dsa_unique_correct_representation": {
+  "en": "DSA: Public key value has the unique correct representation in the field, and that the key has the correct order in the subgroup",
+  "zh": "DSA 公钥值必须在域中具有唯一正确表示，且密钥在子群中具有正确的阶",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_duplicate_subject_attribs": {
+  "en": "Each Name MUST NOT contain more than one instance of a given AttributeTypeAndValue across all RDNs",
+  "zh": "所有 RDN 中不得有多个相同的属性类型和值（AttributeTypeAndValue）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ec_improper_curves": {
+  "en": "Only one of NIST P‐256, P‐384, or P‐521 can be used",
+  "zh": "只允许使用 NIST P-256、P-384、P-521 椭圆曲线",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_eku_critical": {
+  "en": "Subscriber Certificate extkeyUsage extension MUST NOT be marked critical",
+  "zh": "订户（叶子）证书的 extkeyUsage 扩展不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_excessively backdated": {
+  "en": "notBefore [must be] a value within 48 hours of the certificate signing",
+  "zh": "证书 notBefore 必须在证书签发时间前 48 小时之内",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_nc_intersects_reserved_ip": {
+  "en": "iPAddress name constraint intersects an IANA reserved network",
+  "zh": "iPAddress 名称约束与 IANA 保留网络地址相交",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_contains_reserved_ip": {
+  "en": "CAs SHALL NOT issue certificates with a subjectAltName extension or subject:commonName field containing a Reserved IP Address or Internal Name.",
+  "zh": "CA 不得签发 SAN 扩展或 subject:commonName 含保留 IP 地址或内部名称的证书",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_directory_name_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 directoryName）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_edi_party_name_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 ediPartyName）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_missing": {
+  "en": "Subscriber certificates MUST contain the Subject Alternate Name extension",
+  "zh": "订户证书必须包含 SAN（主题备用名称）扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_other_name_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types.",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 otherName）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_registered_id_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types.",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 registeredID）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_rfc822_name_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types.",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 rfc822Name 邮箱）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_san_uniform_resource_identifier_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' and 'ipaddress' name types",
+  "zh": "SAN 扩展只允许包含 dnsName 和 ipAddress 名称类型（不允许 URI）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ext_tor_service_descriptor_hash_invalid": {
+  "en": "certificates with v2 .onion names need valid TorServiceDescriptors in extension",
+  "zh": "含 v2 .onion 域名的证书必须在扩展中提供有效的 Tor 服务描述符哈希",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_invalid_ca_certificate_policies": {
+  "en": "Checks that the Policy OIDs in the CertificatePolicies extension of a SubCA certificate comply with CABF requirements",
+  "zh": "检查下级 CA 证书 certificatePolicies 扩展中的策略 OID 是否符合 CABF 要求",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_invalid_certificate_version": {
+  "en": "Certificates MUST be of type X.509 v3",
+  "zh": "证书必须是 X.509 v3 版本",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_invalid_cps_uri": {
+  "en": "If the CPS URI policyQualifier is present in a certificate, it MUST contain an HTTP or HTTPS URL",
+  "zh": "证书中的 CPS URI 策略限定符必须为 HTTP 或 HTTPS URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_invalid_subject_rdn_order": {
+  "en": "Subject field attributes (RDNs) SHALL be encoded in a specific order",
+  "zh": "subject 字段的属性（RDN）必须按特定顺序编码",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_missing_crl_distrib_point": {
+  "en": "Checks for the CDP extension in non-Short-lived Subscriber Certificates lacking an OCSP pointer",
+  "zh": "非短期订户证书若没有 OCSP 指针，则必须包含 CDP 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_no_underscores_before_1_6_2": {
+  "en": "Before explicitly stating as such in CABF 1.6.2, the stance of RFC5280 is adopted that DNSNames MUST NOT contain an underscore character.",
+  "zh": "在 CABF 1.6.2 明确允许之前，遵循 RFC5280 立场：DNS 名称不得含下划线",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ocsp_cert_cdp_forbidden": {
+  "en": "In OCSP certificates, the CDP extension MUST NOT appear",
+  "zh": "OCSP 响应签名证书不得包含 CDP 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ocsp_cert_cp_forbidden": {
+  "en": "In OCSP certificates, the CP extension MUST NOT appear",
+  "zh": "OCSP 响应签名证书不得包含 CP（证书策略）扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ocsp_cert_invalid_ku": {
+  "en": "For OCSP certificates, only digitalSignature is allowed in the KU ext",
+  "zh": "OCSP 响应签名证书的 KeyUsage 只允许 digitalSignature",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_ocsp_id_pkix_ocsp_nocheck_ext_not_included_server_auth": {
+  "en": "OCSP signing Certificate MUST contain an extension of type id-pkixocsp-nocheck, as",
+  "zh": "OCSP 签名证书必须包含 id-pkix-ocsp-nocheck 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_old_root_ca_rsa_mod_less_than_2048_bits": {
+  "en": "In a validity period beginning on or before 31 Dec 2010, root CA certificates using RSA public key algorithm MUST use a 2048 bit modulus",
+  "zh": "有效期始于 2010-12-31 之前的根 CA 证书，RSA 模数必须为 2048 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_old_sub_ca_rsa_mod_less_than_1024_bits": {
+  "en": "In a validity period beginning on or before 31 Dec 2010 and ending on or before 31 Dec 2013, subordinate CA certificates using RSA public key algorithm MUST use a 1024 bit modulus",
+  "zh": "有效期始于 2010-12-31 前且止于 2013-12-31 前的下级 CA 证书，RSA 模数必须为 1024 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_old_sub_cert_rsa_mod_less_than_1024_bits": {
+  "en": "In a validity period ending on or before 31 Dec 2013, subscriber certificates using RSA public key algorithm MUST use a 1024 bit modulus",
+  "zh": "有效期止于 2013-12-31 前的订户证书，RSA 模数必须为 1024 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_organizational_unit_name_prohibited": {
+  "en": "OrganizationalUnitName is prohibited if...the certificate was issued on or after September 1, 2022",
+  "zh": "2022-09-01 起签发的证书禁止使用 OrganizationalUnitName（OU）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_policy_qualifiers_other_than_cps_not_permitted": {
+  "en": "Policy Qualifiers other than id-qt-cps MUST NOT be present for certificates issued on or after September 15, 2023",
+  "zh": "2023-09-15 起签发的证书不得包含除 id-qt-cps 之外的策略限定符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_public_key_type_not_allowed": {
+  "en": "Certificates MUST have RSA, DSA, or ECDSA public key type",
+  "zh": "证书公钥类型必须为 RSA、DSA 或 ECDSA",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_root_ca_extended_key_usage_present": {
+  "en": "Root CA Certificate: extendedKeyUsage MUST NOT be present.t",
+  "zh": "根 CA 证书不得包含 extendedKeyUsage 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_root_ca_key_usage_must_be_critical": {
+  "en": "Root CA certificates MUST have Key Usage Extension marked critical",
+  "zh": "根 CA 证书的 KeyUsage 扩展必须标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_root_ca_key_usage_present": {
+  "en": "Root CA certificates MUST have Key Usage Extension Present",
+  "zh": "根 CA 证书必须包含 KeyUsage 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_rsa_mod_less_than_2048_bits": {
+  "en": "For certificates valid after 31 Dec 2013, all certificates using RSA public key algorithm MUST have 2048 bits of modulus",
+  "zh": "2013-12-31 后有效的所有 RSA 证书，模数必须为 2048 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_rsa_public_exponent_not_odd": {
+  "en": "RSA: Value of public exponent is an odd number equal to 3 or more.",
+  "zh": "RSA 公钥指数必须为大于等于 3 的奇数",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_rsa_public_exponent_too_small": {
+  "en": "RSA: Value of public exponent is an odd number equal to 3 or more.",
+  "zh": "RSA 公钥指数必须为大于等于 3 的奇数（且实践中应大于 65536）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_san_dns_name_onion_invalid": {
+  "en": "certificates with a .onion subject name must be issued in accordance with the Tor address/rendezvous specification",
+  "zh": "含 .onion 主体的证书必须按 Tor 地址/rendezvous 规范签发",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_san_dns_name_onion_not_ev_cert": {
+  "en": "certificates with a .onion subject name must be issued in accordance with EV Guidelines",
+  "zh": "含 .onion 主体的证书必须符合 EV 指南要求",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_server_cert_valid_time_longer_than_100_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2027 00:00 GMT/UTC must not have a validity period greater than 100 days",
+  "zh": "2027-03-15 起签发的 TLS 服务器证书有效期不得超过 100 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_server_cert_valid_time_longer_than_200_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2026 00:00 GMT/UTC must not have a validity period greater than 200 days",
+  "zh": "2026-03-15 起签发的 TLS 服务器证书有效期不得超过 200 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_server_cert_valid_time_longer_than_47_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2029 00:00 GMT/UTC must not have a validity period greater than 47 days",
+  "zh": "2029-03-15 起签发的 TLS 服务器证书有效期不得超过 47 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_signature_algorithm_not_supported": {
+  "en": "Certificates MUST meet the following requirements for algorithm Source: SHA-1*, SHA-256, SHA-384, SHA-512",
+  "zh": "证书签名算法必须为 SHA-256、SHA-384、SHA-512（及限定的 SHA-1）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_state_or_province_name_must_not_contain_control_characters": {
+  "en": "stateOrProvinceName MUST come from an authoritative data source of plain, human readable, names",
+  "zh": "stateOrProvinceName 必须来自权威数据源且为纯人类可读名称（无控制字符）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_aia_marked_critical": {
+  "en": "Subordinate CA Certificate: authorityInformationAccess MUST NOT be marked critical",
+  "zh": "下级 CA 证书的 authorityInformationAccess（AIA）不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_aia_missing": {
+  "en": "Subordinate CA Certificate: authorityInformationAccess MUST be present, with the exception of stapling.",
+  "zh": "下级 CA 证书必须包含 AIA 扩展（OCSP 装订情况除外）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_certificate_policies_missing": {
+  "en": "Subordinate CA certificates must have a certificatePolicies extension",
+  "zh": "下级 CA 证书必须包含 certificatePolicies 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_crl_distribution_points_does_not_contain_url": {
+  "en": "Subordinate CA Certificate: cRLDistributionPoints MUST contain the HTTP URL of the CA's CRL service.",
+  "zh": "下级 CA 证书的 cRLDistributionPoints 必须包含 CA 的 CRL 服务的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_crl_distribution_points_marked_critical": {
+  "en": "Subordinate CA Certificate: cRLDistributionPoints MUST be present and MUST NOT be marked critical.",
+  "zh": "下级 CA 证书的 cRLDistributionPoints 必须存在且不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_ca_crl_distribution_points_missing": {
+  "en": "Subordinate CA Certificate: cRLDistributionPoints MUST be present and MUST NOT be marked critical.",
+  "zh": "下级 CA 证书必须包含 cRLDistributionPoints 扩展且不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_aia_does_not_contain_ocsp_url": {
+  "en": "Subscriber Certificate: authorityInformationAccess MUST contain the HTTP URL of the Issuing CA's OSCP responder.",
+  "zh": "订户证书的 AIA 必须包含签发 CA 的 OCSP 响应器的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_aia_marked_critical": {
+  "en": "Subscriber Certificate: authorityInformationAccess MUST NOT be marked critical",
+  "zh": "订户证书的 authorityInformationAccess 不得标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_aia_missing": {
+  "en": "Subscriber Certificate: authorityInformationAccess MUST be present.",
+  "zh": "订户证书必须包含 authorityInformationAccess（AIA）扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_basic_constraints_not_critical": {
+  "en": "basicConstraints MAY appear in the certificate, and when it is included MUST be marked as critical",
+  "zh": "订户证书若包含 basicConstraints 扩展必须标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_cert_policy_empty": {
+  "en": "Subscriber certificates must contain at least one policy identifier that indicates adherence to CAB standards",
+  "zh": "订户证书必须包含至少一个表明遵循 CABF 标准的策略标识符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_certificate_policies_missing": {
+  "en": "Subscriber Certificate: certificatePolicies MUST be present and SHOULD NOT be marked critical.",
+  "zh": "订户证书必须包含 certificatePolicies 扩展，且不应标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_country_name_must_appear": {
+  "en": "Subscriber Certificate: subject:countryName MUST appear if the subject:organizationName field, subject:givenName field, or subject:surname fields are present.",
+  "zh": "订户证书若 subject 含 organizationName、givenName 或 surname，则必须包含 countryName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_crl_distribution_points_does_not_contain_url": {
+  "en": "Subscriber certificate cRLDistributionPoints extension must contain the HTTP URL of the CA’s CRL service",
+  "zh": "订户证书 cRLDistributionPoints 扩展必须包含 CA 的 CRL 服务的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_crl_distribution_points_marked_critical": {
+  "en": "Subscriber Certificate: cRLDistributionPoints MUST NOT be marked critical, and MUST contain the HTTP URL of the CA's CRL service.",
+  "zh": "订户证书的 cRLDistributionPoints 不得标记为 critical，且必须包含 CRL 服务的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_eku_check": {
+  "en": "Subscriber certificates MUST have id-kp-serverAuth and MAY have id-kp-clientAuth present in extKeyUsage",
+  "zh": "订户证书的 extKeyUsage 必须包含 id-kp-serverAuth，可以包含 id-kp-clientAuth",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_eku_missing": {
+  "en": "Subscriber certificates MUST have the extended key usage extension present",
+  "zh": "订户证书必须包含 extended key usage（EKU）扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_eku_server_auth_client_auth_missing": {
+  "en": "Subscriber certificates MUST have either id-kp-serverAuth or id-kp-clientAuth or both present in extKeyUsage",
+  "zh": "订户证书的 extKeyUsage 必须包含 id-kp-serverAuth 或 id-kp-clientAuth 之一或两者",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_given_name_surname_contains_correct_policy": {
+  "en": "Subscriber Certificate: A certificate containing a subject:givenName field or subject:surname field MUST contain the (2.23.140.1.2.3) certPolicy OID.",
+  "zh": "含 givenName 或 surname 的订户证书必须包含 IV 策略 OID（2.23.140.1.2.3）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_key_usage_cert_sign_bit_set": {
+  "en": "Subscriber Certificate: keyUsage if present, bit positions for keyCertSign and cRLSign MUST NOT be set.",
+  "zh": "订户证书若含 keyUsage，不得设置 keyCertSign 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_key_usage_crl_sign_bit_set": {
+  "en": "Subscriber Certificate: keyUsage if present, bit positions for keyCertSign and cRLSign MUST NOT be set.",
+  "zh": "订户证书若含 keyUsage，不得设置 cRLSign 位",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_locality_name_must_appear": {
+  "en": "Subscriber Certificate: subject:localityName MUST appear if subject:organizationName, subject:givenName, or subject:surname fields are present but the subject:stateOrProvinceName field is absent.",
+  "zh": "订户证书 subject 含组织/个人名但无 stateOrProvinceName 时，必须包含 localityName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_locality_name_must_not_appear": {
+  "en": "Subscriber Certificate: subject:localityName MUST NOT appear if subject:organizationName, subject:givenName, and subject:surname fields are absent.",
+  "zh": "订户证书 subject 不含组织/个人名时，不得包含 localityName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_not_is_ca": {
+  "en": "Subscriber Certificate: basicContrainsts cA field MUST NOT be true.",
+  "zh": "订户证书的 basicConstraints cA 字段不得为 true",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_or_sub_ca_using_sha1": {
+  "en": "CAs MUST NOT issue any new Subscriber certificates or Subordinate CA certificates using SHA-1 after 1 January 2016",
+  "zh": "2016-01-01 之后 CA 不得使用 SHA-1 签发新的订户证书或下级 CA 证书",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_postal_code_must_not_appear": {
+  "en": "Subscriber Certificate: subject:postalCode MUST NOT appear if the subject:organizationName field, subject:givenName field, or subject:surname fields are absent.",
+  "zh": "订户证书 subject 不含组织/个人名时，不得包含 postalCode",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_province_must_appear": {
+  "en": "Subscriber Certificate: subject:stateOrProvinceName MUST appear if the subject:organizationName, subject:givenName, or subject:surname fields are present and subject:localityName is absent.",
+  "zh": "订户证书 subject 含组织/个人名但无 localityName 时，必须包含 stateOrProvinceName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_province_must_not_appear": {
+  "en": "Subscriber Certificate: subject:stateOrProvinceName MUST NOT appear if the subject:organizationName, subject:givenName, and subject:surname fields are absent.",
+  "zh": "订户证书 subject 不含组织/个人名时，不得包含 stateOrProvinceName",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_street_address_should_not_exist": {
+  "en": "Subscriber Certificate: subject:streetAddress MUST NOT appear if subject:organizationName, subject:givenName, and subject:surname fields are absent.",
+  "zh": "订户证书 subject 不含组织/个人名时，不得包含 streetAddress",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_valid_time_longer_than_39_months": {
+  "en": "Subscriber Certificates issued after 1 July 2016 but prior to 1 March 2018 MUST have a Validity Period no greater than 39 months.",
+  "zh": "2016-07-01 至 2018-03-01 之间签发的订户证书有效期不得超过 39 个月",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_sub_cert_valid_time_longer_than_825_days": {
+  "en": "Subscriber Certificates issued after 1 March 2018, but prior to 1 September 2020, MUST NOT have a Validity Period greater than 825 days.",
+  "zh": "2018-03-01 至 2020-09-01 之间签发的订户证书有效期不得超过 825 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subj_orgunit_in_ca_cert": {
+  "en": "The organizationalUnitName MUST NOT be included in Root CA certs or TLS Subordinate CA certs. organizationalUnitName is allowed for cross signed certificates, although not recommended. This lint may be configured to signify that the target is a cross signed certificate.",
+  "zh": "根 CA 证书或 TLS 下级 CA 证书不得包含 organizationalUnitName（OU），交叉签名证书允许但不推荐",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_common_name_not_exactly_from_san": {
+  "en": "The common name field in subscriber certificates must include only names from the SAN extension",
+  "zh": "订户证书的 commonName 字段只能包含 SAN 扩展中的名称",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_common_name_not_from_san": {
+  "en": "The common name field in subscriber certificates must include only names from the SAN extension",
+  "zh": "订户证书的 commonName 字段必须仅包含 SAN 扩展中的名称",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_contains_noninformational_value": {
+  "en": "Subject name fields must not contain '.','-',' ' or any other indication that the field has been omitted",
+  "zh": "subject 名称字段不得包含 '.'、'-'、' ' 等表示字段被省略的字符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_contains_organizational_unit_name_and_no_organization_name": {
+  "en": "If a subject organization name is absent then an organizational unit name MUST NOT be included in subject",
+  "zh": "subject 缺少组织名时，不得包含组织单位名（OU）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_contains_reserved_arpa_ip": {
+  "en": "Checks no subject domain name contains a rDNS entry in an .arpa zone specifying a reserved IP address",
+  "zh": "subject 域名不得包含 .arpa 反向解析区中指向保留 IP 地址的记录",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_contains_reserved_ip": {
+  "en": "Certificates expiring later than 11 Jan 2015 MUST NOT contain a reserved IP address in the common name field",
+  "zh": "有效期晚于 2015-01-11 的证书，commonName 不得包含保留 IP 地址",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_country_not_iso": {
+  "en": "The country name field MUST contain the two-letter ISO code for the country or XX",
+  "zh": "countryName 字段必须为两位 ISO 国家代码或 XX",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_subject_rdns_correct_encoding": {
+  "en": "CAs that include attributes in the Certificate subject field that are listed in the Tables 77 and 78 of BR 2.0.0 SHALL follow the specified encoding requirements for the attribute",
+  "zh": "subject 中 BR 2.0.0 表 77、78 列出的属性必须按指定编码要求编码",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_underscore_not_permissible_in_dnsname": {
+  "en": "DNSNames MUST NOT contain underscore characters",
+  "zh": "DNS 名称不得包含下划线字符",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_underscore_permissible_in_dnsname_if_valid_when_replaced": {
+  "en": "From December 10th 2018 to April 1st 2019 DNSNames may contain underscores if-and-only-if every label within each DNS name is a valid LDH label after replacing all underscores with hyphens",
+  "zh": "2018-12-10 至 2019-04-01 间，DNS 名称可含下划线，前提是每个标签将下划线替换为连字符后仍是合法 LDH 标签",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_underscore_present_with_too_long_validity": {
+  "en": "From 2018-12-10 to 2019-04-01, DNSNames may contain underscores if-and-only-if the certificate is valid for less than thirty days.",
+  "zh": "2018-12-10 至 2019-04-01 间，DNS 名称含下划线时证书有效期必须小于 30 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "n_ca_digital_signature_not_set": {
+  "en": "Root and Subordinate CA Certificates that wish to use their private key for signing OCSP responses will not be able to without their digital signature set",
+  "zh": "根 CA 和下级 CA 证书未设置 digitalSignature 位将无法用于签署 OCSP 响应",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "n_dnsname_wildcard_left_of_public_suffix": {
+  "en": "the CA MUST establish and follow a documented procedure[^pubsuffix] that determines if the wildcard character occurs in the first label position to the left of a “registry‐controlled” label or “public suffix”",
+  "zh": "CA 必须建立文档化流程，确定通配符出现在公共后缀左侧第一个标签位置",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "n_sub_ca_eku_missing": {
+  "en": "To be considered Technically Constrained, the Subordinate CA certificate MUST have extkeyUsage extension",
+  "zh": "为被视为技术上受约束，下级 CA 证书必须包含 extkeyUsage 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "n_sub_ca_eku_not_technically_constrained": {
+  "en": "Subordinate CA extkeyUsage, either id-kp-serverAuth or id-kp-clientAuth or both values MUST be present to be technically constrained.",
+  "zh": "下级 CA 的 extkeyUsage 必须包含 id-kp-serverAuth 或 id-kp-clientAuth 才被视为技术上受约束",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "n_subject_common_name_included": {
+  "en": "Subscriber Certificate: commonName is deprecated.",
+  "zh": "订户证书的 commonName 已废弃（信息提示）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_cabf_ecc_ku_keyagreement_present": {
+  "en": "For certificates with ECC public keys the keyAgreement key usage is allowed and not recommended.",
+  "zh": "ECC 公钥证书的 keyAgreement 密钥用途虽允许但不推荐",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_dnsname_underscore_in_trd": {
+  "en": "DNSName MUST NOT contain underscore characters",
+  "zh": "DNS 名称不得包含下划线字符（警告）",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_ext_san_critical_with_subject_dn": {
+  "en": "If the subject contains a distinguished name, subjectAlternateName SHOULD be non-critical",
+  "zh": "subject 含可识别名称时，subjectAlternateName 应标记为非 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_ext_subject_key_identifier_not_recommended_subscriber": {
+  "en": "Subscriber certificates use of Subject Key Identifier is NOT RECOMMENDED",
+  "zh": "订户证书使用 Subject Key Identifier 不推荐",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_extra_subject_common_names": {
+  "en": "if present the subject commonName field MUST contain a single IP address or Fully-Qualified Domain Name",
+  "zh": "subject commonName 字段若存在必须包含单个 IP 地址或 FQDN",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_root_ca_basic_constraints_path_len_constraint_field_present": {
+  "en": "Root CA certificate basicConstraint extension pathLenConstraint field SHOULD NOT be present",
+  "zh": "根 CA 证书 basicConstraints 的 pathLenConstraint 字段不应存在",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_root_ca_contains_cert_policy": {
+  "en": "Root CA Certificate: certificatePolicies SHOULD NOT be present.",
+  "zh": "根 CA 证书不应包含 certificatePolicies 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_rsa_mod_factors_smaller_than_752": {
+  "en": "RSA: Modulus SHOULD also have the following characteristics: no factors smaller than 752",
+  "zh": "RSA 模数不应有小于 752 的因子",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_rsa_mod_not_odd": {
+  "en": "RSA: Modulus SHOULD also have the following characteristics: an odd number",
+  "zh": "RSA 模数应为奇数",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_rsa_public_exponent_not_in_range": {
+  "en": "RSA: Public exponent SHOULD be in the range between 2^16 + 1 and 2^256 - 1",
+  "zh": "RSA 公钥指数应在 2^16+1 和 2^256-1 之间",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_server_cert_valid_time_longer_than_199_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2026 00:00 GMT/UTC should not have a validity period greater than 199 days",
+  "zh": "2026-03-15 起签发的 TLS 服务器证书有效期不应超过 199 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_server_cert_valid_time_longer_than_46_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2029 00:00 GMT/UTC should not have a validity period greater than 46 days",
+  "zh": "2029-03-15 起签发的 TLS 服务器证书有效期不应超过 46 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_server_cert_valid_time_longer_than_99_days": {
+  "en": "TLS server certificates issued on or after on or after March 15, 2027 00:00 GMT/UTC should not have a validity period greater than 99 days",
+  "zh": "2027-03-15 起签发的 TLS 服务器证书有效期不应超过 99 天",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_ca_aia_does_not_contain_issuing_ca_url": {
+  "en": "Subordinate CA Certificate: authorityInformationAccess SHOULD also contain the HTTP URL of the Issuing CA's certificate.",
+  "zh": "下级 CA 证书的 AIA 也应包含签发 CA 证书的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_ca_aia_missing": {
+  "en": "Subordinate CA Certificate: authorityInformationAccess SHOULD be present.",
+  "zh": "下级 CA 证书应包含 authorityInformationAccess 扩展",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_ca_certificate_policies_marked_critical": {
+  "en": "Subordinate CA certificates certificatePolicies extension should not be marked as critical",
+  "zh": "下级 CA 证书的 certificatePolicies 扩展不应标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_ca_eku_critical": {
+  "en": "Subordinate CA certificate extkeyUsage extension should be marked non-critical if present",
+  "zh": "下级 CA 证书若含 extkeyUsage 扩展应标记为非 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_ca_name_constraints_not_critical": {
+  "en": "Subordinate CA Certificate: NameConstraints if present, SHOULD be marked critical.",
+  "zh": "下级 CA 证书若含 NameConstraints 应标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_cert_aia_contains_internal_names": {
+  "en": "Subscriber certificates authorityInformationAccess extension should contain the HTTP URL of the issuing CA’s certificate, for public certificates this should not be an internal name",
+  "zh": "订户证书的 AIA 应包含签发 CA 证书的 HTTP URL，公网证书不应为内部名称",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_cert_aia_does_not_contain_issuing_ca_url": {
+  "en": "Subscriber certificates authorityInformationAccess extension should contain the HTTP URL of the issuing CA’s certificate",
+  "zh": "订户证书的 AIA 应包含签发 CA 证书的 HTTP URL",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_cert_certificate_policies_marked_critical": {
+  "en": "Subscriber Certificate: certificatePolicies MUST be present and SHOULD NOT be marked critical.",
+  "zh": "订户证书的 certificatePolicies 必须存在且不应标记为 critical",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_cert_eku_extra_values": {
+  "en": "Subscriber Certificate: extKeyUsage values other than id-kp-serverAuth, id-kp-clientAuth, and id-kp-emailProtection SHOULD NOT be present.",
+  "zh": "订户证书 extKeyUsage 不应包含 id-kp-serverAuth、id-kp-clientAuth、id-kp-emailProtection 之外的值",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_sub_cert_sha1_expiration_too_long": {
+  "en": "Subscriber certificates using the SHA-1 algorithm SHOULD NOT have an expiration date later than 1 Jan 2017",
+  "zh": "使用 SHA-1 的订户证书有效期不应晚于 2017-01-01",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_subject_common_name_included": {
+  "en": "Subscriber Certificate: commonName is NOT RECOMMENDED.",
+  "zh": "订户证书的 commonName 不推荐使用",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "w_subject_contains_malformed_arpa_ip": {
+  "en": "Checks no subject domain name contains a rDNS entry in the",
+  "zh": "检查 subject 域名是否包含 .arpa 反向解析区中的格式错误条目",
+  "source": "CA/B Forum 基线要求（TLS 服务器证书）"
+ },
+ "e_cabf_org_identifier_joic_mismatch": {
+  "en": "The cabfOrganizationIdentifier field country mismatches the JOI country in the subject DN",
+  "zh": "cabfOrganizationIdentifier 字段的国家代码与 subject DN 中 JOI（法人/个人标识符）的国家不一致",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_cabf_org_identifier_psd_vat_has_state": {
+  "en": "The cabfOrganizationIdentifier field for PSD org VAT Registration Schemes cannot include the referenceStateOrProvince field.",
+  "zh": "PSD 组织增值税登记方案的 cabfOrganizationIdentifier 字段不得包含 referenceStateOrProvince",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_business_category_missing": {
+  "en": "EV certificates must include businessCategory in subject",
+  "zh": "EV 证书 subject 必须包含 businessCategory（业务类别）",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_country_name_missing": {
+  "en": "EV certificates must include countryName in subject",
+  "zh": "EV 证书 subject 必须包含 countryName（国家）",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_extra_subject_attribs": {
+  "en": "CAs SHALL NOT include any Subject Distinguished Name attributes except as specified...",
+  "zh": "EV 证书不得包含指南规定之外的任何 Subject DN 属性",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_invalid_business_category": {
+  "en": "Checks that businessCategory contains a valid value as per EV Guidelines 7.1.4.2.3",
+  "zh": "businessCategory 必须为 EV 指南 7.1.4.2.3 规定的有效值",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_invalid_orgid_reg_scheme": {
+  "en": "The Registration Schemes allowed in organizationIdentifier are those listed in Appendix H",
+  "zh": "organizationIdentifier 中允许的注册方案限于附录 H 所列",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_not_wildcard": {
+  "en": "Wildcard certificates are not allowed for EV Certificates except for those with .onion as the TLD.",
+  "zh": "EV 证书不允许使用通配符证书，除非 TLD 为 .onion",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_organization_id_missing": {
+  "en": "Effective January 31, 2020, if the subject:organizationIdentifier field is",
+  "zh": "2020-01-31 起 EV 证书必须包含 subject:organizationIdentifier 字段",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_organization_name_missing": {
+  "en": "EV certificates must include organizationName in subject",
+  "zh": "EV 证书 subject 必须包含 organizationName（组织名）",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_orgid_inconsistent_subj_and_ext": {
+  "en": "Checks that the organizationIdentifier Subject attribute and the CABFOrganizationIdentifier extension are consistent",
+  "zh": "subject 的 organizationIdentifier 属性与 CABFOrganizationIdentifier 扩展必须一致",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_san_ip_address_present": {
+  "en": "The Subject Alternate Name extension MUST contain only 'dnsName' name types.",
+  "zh": "EV 证书 SAN 扩展只允许包含 dnsName 名称类型（不允许 IP 地址）",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_serial_number_missing": {
+  "en": "EV certificates must include serialNumber in subject",
+  "zh": "EV 证书 subject 必须包含 serialNumber（主体序列号）",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_ev_valid_time_too_long": {
+  "en": "EV certificates must be 27 months in validity or less",
+  "zh": "EV 证书有效期不得超过 27 个月",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_onion_subject_validity_time_too_large": {
+  "en": "",
+  "zh": ".onion 主体证书的有效期不得超过 EV 指南规定的限制",
+  "source": "CA/B Forum 扩展验证（EV）证书指南"
+ },
+ "e_cs_aia_missing_ca_issuers_http_url": {
+  "en": "The authorityInformationAccess extension MUST contain the HTTP URL of the Issuing CA's certificate (id-ad-caIssuers).",
+  "zh": "代码签名证书的 AIA 扩展必须包含签发 CA 证书的 HTTP URL（id-ad-caIssuers）",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_aia_ocsp_not_http": {
+  "en": "If the CA provides OCSP responses, the authorityInformationAccess extension MUST contain the HTTP URL of the Issuing CA's OCSP responder (id-ad-ocsp).",
+  "zh": "若 CA 提供 OCSP 响应，代码签名证书 AIA 必须包含签发 CA 的 OCSP 响应器 HTTP URL（id-ad-ocsp）",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_authority_information_access": {
+  "en": "The authorityInformationAccess extension MUST be present and MUST NOT be marked critical.",
+  "zh": "代码签名证书必须包含 AIA 扩展且不得标记为 critical",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_crl_distribution_points": {
+  "en": "This extension MUST be present. It MUST NOT be marked critical. It MUST contain the HTTP URL of the CA's CRL service",
+  "zh": "代码签名证书必须包含 CDP 扩展，不得标记 critical，且必须含 CA 的 CRL 服务的 HTTP URL",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_ecdsa_prohibited_curve": {
+  "en": "If the Key is ECDSA, then the curve MUST be one of NIST P-256, P-384, or P-521",
+  "zh": "代码签名证书若为 ECDSA 密钥，曲线必须是 NIST P-256、P-384 或 P-521",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_eku_required": {
+  "en": "If the Certificate is a Code Signing Certificate, then id-kp-codeSigning MUST be present. anyExtendedKeyUsage and id-kp-serverAuth MUST NOT be present.",
+  "zh": "代码签名证书必须含 id-kp-codeSigning EKU，不得含 anyExtendedKeyUsage 和 id-kp-serverAuth",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_key_usage_required": {
+  "en": "This extension MUST be present and MUST be marked critical. The bit position for digitalSignature MUST be set. The bit positions for keyCertSign and cRLSign MUST NOT be set. All other bit positions SHOULD NOT be set.",
+  "zh": "代码签名证书 KeyUsage 必须存在且 critical，必须设置 digitalSignature，不得设置 keyCertSign 和 cRLSign",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_max_validity_period_39_months": {
+  "en": "Code Signing certificate validity must not exceed 39 months for certificates issued before March 1st, 2026",
+  "zh": "2026-03-01 前签发的代码签名证书有效期不得超过 39 个月",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_max_validity_period_460_days": {
+  "en": "Code Signing certificate validity must not exceed 460 days for certificates issued on or after March 1st, 2026",
+  "zh": "2026-03-01 起签发的代码签名证书有效期不得超过 460 天",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_requires_org": {
+  "en": "Code Signing certificates MUST include organizationName in the subject field",
+  "zh": "代码签名证书 subject 必须包含 organizationName（组织名）",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_rsa_key_size": {
+  "en": "If the Key is RSA, then the modulus MUST be at least 3072 bits in length",
+  "zh": "代码签名证书若为 RSA 密钥，模数必须至少 3072 位",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_signature_algorithm_not_supported": {
+  "en": "Certificates MUST meet the following requirements for algorithm Source: SHA-1*, SHA-256, SHA-384, SHA-512",
+  "zh": "代码签名证书签名算法必须为 SHA-256、SHA-384、SHA-512（及限定的 SHA-1）",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_subject_country_name": {
+  "en": "The subject:countryName MUST contain the two-letter ISO 3166-1 country code associated with the location of the Subject verified under BR Section 3.2.2.3.",
+  "zh": "代码签名证书 subject:countryName 必须为与主体所在地对应的两位 ISO 3166-1 国家代码",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_subject_locality_or_province_required": {
+  "en": "Non-EV Code Signing Certificate: at least one of subject:localityName or subject:stateOrProvinceName must be present.",
+  "zh": "非 EV 代码签名证书至少包含 subject:localityName 或 subject:stateOrProvinceName 之一",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_cs_subject_prohibited": {
+  "en": "The subject:domainComponent MUST not be present in a Code Signing Certificate.",
+  "zh": "代码签名证书 subject 中不得包含 domainComponent",
+  "source": "CA/B Forum 代码签名基线要求"
+ },
+ "e_adobe_extensions_legacy_multipurpose_criticality": {
+  "en": "If present, Adobe Time‐stamp X509 extension (1.2.840.113583.1.1.9.1) or the Adobe ArchiveRevInfo extension (1.2.840.113583.1.1.9.2) SHALL NOT be marked as critical for multipurpose/legacy SMIME certificates",
+  "zh": "Legacy/Multipurpose S/MIME 证书中的 Adobe 时间戳扩展或 ArchiveRevInfo 扩展不得标记为 critical",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_adobe_extensions_strict_presence": {
+  "en": "Adobe Time‐stamp X509 extension (1.2.840.113583.1.1.9.1) and the Adobe ArchiveRevInfo extension (1.2.840.113583.1.1.9.2) are prohibited for strict SMIME certificates",
+  "zh": "Strict S/MIME 证书禁止包含 Adobe 时间戳扩展和 ArchiveRevInfo 扩展",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_authority_key_identifier_correct": {
+  "en": "authorityKeyIdentifier SHALL be present. This extension SHALL NOT be marked critical. The keyIdentifier field SHALL be present. authorityCertIssuer and authorityCertSerialNumber fields SHALL NOT be present.",
+  "zh": "S/MIME 证书必须包含 AKI 扩展，不得 critical，必须含 keyIdentifier，不得含 authorityCertIssuer 和 authorityCertSerialNumber",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_commonname_mailbox_validated": {
+  "en": "If present, the commonName attribute of a mailbox-validated certificate SHALL contain a mailbox address",
+  "zh": "邮箱验证的 S/MIME 证书若含 commonName，其值必须为邮箱地址",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_ec_other_key_usages": {
+  "en": "Other bit positions SHALL NOT be set.",
+  "zh": "S/MIME 证书 KeyUsage 的其他位不得设置",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_ecpublickey_key_usages": {
+  "en": "For signing only, bit positions SHALL be set for digitalSignature and MAY be set for nonRepudiation. For key management only, bit positions SHALL be set for keyEncipherment.For dual use, bit positions SHALL be set for digitalSignature and keyEncipherment and MAY be set for nonRepudiation.",
+  "zh": "EC 公钥 S/MIME 证书：签名用途须设 digitalSignature（可设 nonRepudiation），密钥管理须设 keyEncipherment，双重用途须设 digitalSignature+keyEncipherment",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_edwardspublickey_key_usages": {
+  "en": "Bit positions SHALL be set for digitalSignature and MAY be set for nonRepudiation.",
+  "zh": "Edwards 公钥 S/MIME 证书须设置 digitalSignature，可设置 nonRepudiation",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_exactly_one_smime_policy": {
+  "en": "The subscriber cert SHALL include exactly one of the reserved policy OIDs in §7.1.6.1",
+  "zh": "S/MIME 订户证书必须且只能包含 7.1.6.1 节中的一个保留策略 OID",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_invalid_individual_identity": {
+  "en": "Non-legacy IV and SV certificates... SHALL include either subject:givenName and/or subject:surname, or the subject:pseudonym.",
+  "zh": "非 Legacy 的 IV/SV S/MIME 证书必须包含 givenName 和/或 surname，或 pseudonym",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_invalid_legacy_spki_algoid": {
+  "en": "Checks that SubjectPublicKeyInfo.AlgorithmIdentifier is allowed",
+  "zh": "检查 SubjectPublicKeyInfo 的算法标识符是否在允许范围内（Legacy 模式）",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_invalid_spki_algoid": {
+  "en": "Checks that SubjectPublicKeyInfo.AlgorithmIdentifier is allowed, including PQC algorithms.",
+  "zh": "检查 SubjectPublicKeyInfo 的算法标识符是否在允许范围内（含 PQC 后量子算法）",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_key_usage_presence": {
+  "en": "keyUsage (SHALL be present)",
+  "zh": "S/MIME 证书必须包含 keyUsage 扩展",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_legacy_generation_deprecated": {
+  "en": "S/MIME Subscriber Certificates SHALL NOT be issued using the Legacy Generation profiles",
+  "zh": "S/MIME 订户证书不得使用已废弃的 Legacy Generation 配置文件签发",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_legal_entity_identifier": {
+  "en": "Mailbox/individual: prohibited. Organization/sponsor: may be present",
+  "zh": "S/MIME 证书中 Mailbox/Individual 类型禁止、Organization/Sponsor 类型允许包含法律实体标识符",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_mailbox_validated_allowed_subjectdn_attributes": {
+  "en": "Only certain Subject DN attributes are permitted to be present in mailbox-validated certificates.",
+  "zh": "邮箱验证证书只允许包含规定的 Subject DN 属性",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_mailbox_validated_enforce_subject_field_restrictions": {
+  "en": "SMIME certificates complying to mailbox validated profiles MAY only contain commonName, serialNumber or emailAddress attributes in the Subject DN",
+  "zh": "邮箱验证配置文件的 S/MIME 证书 Subject DN 只允许 commonName、serialNumber 或 emailAddress 属性",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_org_validated_invalid_cn": {
+  "en": "In OV S/MIME certs, the Subject CN must either contain an email address or match organizatioName",
+  "zh": "OV S/MIME 证书的 CN 必须为邮箱地址或与组织名一致",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_registration_scheme_id_matches_subject_country": {
+  "en": "The country code used in the Registration Scheme identifier SHALL match that of the subject:countryName in the Certificate as specified in Section 7.1.4.2.2",
+  "zh": "注册方案标识符中的国家代码必须与证书 subject:countryName 一致",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_rsa_key_usage_legacy_multipurpose": {
+  "en": "For signing only, bit positions SHALL be set for digitalSignature and MAY be set for nonRepudiation. For key management only, bit positions SHALL be set for keyEncipherment and MAY be set for dataEncipherment. For dual use, bit positions SHALL be set for digitalSignature and keyEncipherment and MAY be set for nonRepudiation and dataEncipherment.",
+  "zh": "RSA S/MIME（Legacy/Multipurpose）KeyUsage：签名须设 digitalSignature（可 nonRepudiation），密钥管理须设 keyEncipherment（可 dataEncipherment）",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_rsa_key_usage_strict": {
+  "en": "For signing only, bit positions SHALL be set for digitalSignature and MAY be set for nonRepudiation. For key management only, bit positions SHALL be set for keyEncipherment. For dual use, bit positions SHALL be set for digitalSignature and keyEncipherment and MAY be set for nonRepudiation.",
+  "zh": "RSA S/MIME（Strict）KeyUsage：签名须设 digitalSignature（可 nonRepudiation），密钥管理只可设 keyEncipherment",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_rsa_other_key_usages": {
+  "en": "Other bit positions SHALL NOT be set.",
+  "zh": "S/MIME 证书 KeyUsage 的其他位不得设置",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_san_shall_be_present": {
+  "en": "Subject alternative name SHALL be present",
+  "zh": "S/MIME 证书必须包含 SAN（主题备用名称）扩展",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_single_email_if_present": {
+  "en": "If present, the subject:emailAddress SHALL contain a single Mailbox Address. All Mailbox Addresses in the subject field SHALL be repeated as rfc822Name or otherName values of type id-on-SmtpUTF8Mailbox in SAN extension.",
+  "zh": "subject:emailAddress 若存在必须为单一邮箱地址，且 subject 中所有邮箱地址都必须在 SAN 中重复为 rfc822Name 或 SmtpUTF8Mailbox 类型",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_single_email_subject_if_present": {
+  "en": "If present, the subject:emailAddress SHALL contain a single Mailbox Address",
+  "zh": "subject:emailAddress 若存在必须为单一邮箱地址",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_smime_legacy_aia_shall_have_one_http": {
+  "en": "SMIME Legacy certificates authorityInformationAccess When provided, at least one accessMethod SHALL have the URI scheme HTTP. Other schemes (LDAP, FTP, ...) MAY be present.",
+  "zh": "Legacy S/MIME 证书 AIA 若提供，至少一个访问方法必须为 HTTP 协议",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_smime_legacy_multipurpose_eku_check": {
+  "en": "Strict/Multipurpose and Legacy: id-kp-emailProtection SHALL be present. Other values MAY be present.  The values id-kp-serverAuth, id-kp-codeSigning, id-kp-timeStamping, and anyExtendedKeyUsage values SHALL NOT be present.",
+  "zh": "Strict/Multipurpose/Legacy S/MIME 必须含 id-kp-emailProtection EKU，不得含 serverAuth、codeSigning、timeStamping 和 anyExtendedKeyUsage",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_smime_qc_statements_must_not_be_critical": {
+  "en": "This extension MAY be present and SHALL NOT be marked critical.",
+  "zh": "S/MIME 证书的 qcStatements 扩展可以存在但不得标记为 critical",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_smime_strict_aia_shall_have_http_only": {
+  "en": "SMIME Strict certificates authorityInformationAccess. When provided, every accessMethod SHALL have the URI scheme HTTP. Other schemes SHALL NOT be present.",
+  "zh": "Strict S/MIME 证书 AIA 若提供，所有访问方法的协议必须为 HTTP",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_smime_strict_eku_check": {
+  "en": "Strict: id-kp-emailProtection SHALL be present.  Other values SHALL NOT be present",
+  "zh": "Strict S/MIME 证书必须含 id-kp-emailProtection EKU，不得含其他值",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_strict_multipurpose_smime_ext_subject_directory_attr": {
+  "en": "SMIME Strict and Multipurpose certificates cannot have Subject Directory Attributes",
+  "zh": "Strict/Multipurpose S/MIME 证书不得包含 Subject Directory Attributes 扩展",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_subject_country_name": {
+  "en": "If present, the subject:countryName SHALL contain the two‐letter ISO 3166‐1 country code associated with the location of the Subject",
+  "zh": "S/MIME 证书 subject:countryName 若存在必须为与主体所在地对应的两位 ISO 3166-1 国家代码",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_subscribers_crl_distribution_points_are_http": {
+  "en": "cRLDistributionPoints SHALL have URI scheme HTTP.",
+  "zh": "S/MIME 证书 cRLDistributionPoints 的协议必须为 HTTP",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_subscribers_shall_have_crl_distribution_points": {
+  "en": "cRLDistributionPoints SHALL be present.",
+  "zh": "S/MIME 证书必须包含 cRLDistributionPoints 扩展",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "w_key_usage_criticality": {
+  "en": "keyUsage... This extension SHOULD be marked critical",
+  "zh": "S/MIME 证书的 keyUsage 扩展应标记为 critical",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "w_san_should_not_be_critical": {
+  "en": "subjectAlternativeName SHOULD NOT be marked critical unless the subject field is an empty sequence.",
+  "zh": "subjectAlternativeName 不应标记为 critical，除非 subject 为空序列",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "w_smime_aia_contains_internal_names": {
+  "en": "SMIME certificates authorityInformationAccess. Internal domain names should not be included.",
+  "zh": "S/MIME 证书 AIA 不应包含内部域名",
+  "source": "CA/B Forum S/MIME 邮件证书基线要求"
+ },
+ "e_tls_server_cert_valid_time_longer_than_398_days": {
+  "en": "TLS server certificates issued on or after September 1, 2020",
+  "zh": "2020-09-01 起签发的 TLS 服务器证书有效期不得超过 398 天（Apple 策略）",
+  "source": "Apple 根证书存储策略"
+ },
+ "w_ct_sct_policy_count_unsatisfied": {
+  "en": "Check if certificate has enough embedded SCTs to meet Apple CT Policy",
+  "zh": "检查证书内嵌的 SCT（证书透明日志证明）数量是否满足 Apple CT 策略",
+  "source": "Apple 根证书存储策略"
+ },
+ "w_tls_server_cert_valid_time_longer_than_397_days": {
+  "en": "TLS server certificates issued on or after September 1, 2020",
+  "zh": "2020-09-01 起签发的 TLS 服务器证书有效期不应超过 397 天（Apple 策略，警告）",
+  "source": "Apple 根证书存储策略"
+ },
+ "e_mp_authority_key_identifier_correct": {
+  "en": "CAs MUST NOT issue certificates that have authority key IDs that include both the key ID and the issuer's issuer name and serial number",
+  "zh": "CA 不得签发 AKI 同时包含密钥 ID 与签发者名称和序列号的证书（Mozilla 策略）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_ecdsa_pub_key_encoding_correct": {
+  "en": "The encoded algorithm identifiers for ECDSA public keys MUST match specific bytes",
+  "zh": "ECDSA 公钥的算法标识符编码必须匹配特定字节（Mozilla 策略）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_ecdsa_signature_encoding_correct": {
+  "en": "The encoded algorithm identifiers for ECDSA signatures MUST match specific hex-encoded bytes",
+  "zh": "ECDSA 签名的算法标识符编码必须匹配特定十六进制字节（Mozilla 策略）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_exponent_cannot_be_one": {
+  "en": "CAs MUST NOT issue certificates that have invalid public keys (e.g., RSA certificates with public exponent equal to 1)",
+  "zh": "CA 不得签发公钥无效的证书（如 RSA 公钥指数为 1）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_modulus_must_be_2048_bits_or_more": {
+  "en": "RSA keys must have modulus size of at least 2048 bits",
+  "zh": "RSA 密钥模数必须至少为 2048 位（Mozilla 策略）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_modulus_must_be_divisible_by_8": {
+  "en": "RSA keys must have a modulus size divisible by 8",
+  "zh": "RSA 密钥模数大小必须能被 8 整除（Mozilla 策略）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_rsassa-pss_in_spki": {
+  "en": "CAs MUST NOT use the id-RSASSA-PSS OID (1.2.840.113549.1.1.10) within a SubjectPublicKeyInfo to represent a RSA key.",
+  "zh": "SubjectPublicKeyInfo 中不得使用 id-RSASSA-PSS OID 表示 RSA 密钥",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_mp_rsassa-pss_parameters_encoding_in_signature_algorithm_correct": {
+  "en": "The encoded AlgorithmIdentifier for RSASSA-PSS in the signature algorithm MUST match specific bytes",
+  "zh": "签名算法中 RSASSA-PSS 的算法标识符编码必须匹配特定字节",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_prohibit_dsa_usage": {
+  "en": "DSA is not an explicitly allowed signature algorithm, therefore it is forbidden.",
+  "zh": "DSA 不是明确允许的签名算法，因此禁止使用",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "n_mp_allowed_eku": {
+  "en": "A SubCA certificate must not have key usage that allows for both server auth and email protection, and must not use anyExtendedKeyUsage",
+  "zh": "下级 CA 证书的密钥用途不得同时允许服务器认证和邮件保护，且不得使用 anyExtendedKeyUsage（提示）",
+  "source": "Mozilla 根证书存储策略"
+ },
+ "e_client_auth_not_allowed": {
+  "en": "Checks that Server certs do not contain clientAuth in the EKU extension",
+  "zh": "服务器证书的 EKU 扩展中不得包含 clientAuth（Chrome 策略）",
+  "source": "Chrome 根证书存储策略"
+ },
+ "e_crl_no_duplicate_extensions": {
+  "en": "The CRL must not include duplicate extensions.",
+  "zh": "CRL 不得包含重复的扩展",
+  "source": "社区共识检查"
+ },
+ "e_crl_revocation_date_too_early": {
+  "en": "The revocation time of each revoked certificate should not before the publication date of RFC 2459.",
+  "zh": "每个已吊销证书的吊销时间不得早于 RFC 2459 的发布日期",
+  "source": "社区共识检查"
+ },
+ "e_crl_revoked_certificate_crl_entry_has_no_duplicate_extensions": {
+  "en": "The revoked certificate in the CRL must not have duplicate extensions.",
+  "zh": "CRL 中被吊销证书条目不得包含重复的扩展",
+  "source": "社区共识检查"
+ },
+ "e_crl_unique_revoked_certificate": {
+  "en": "The CRL must not include duplicate serial numbers in its revoked certificates list.",
+  "zh": "CRL 的吊销证书列表中不得出现重复的序列号",
+  "source": "社区共识检查"
+ },
+ "e_ian_bare_wildcard": {
+  "en": "A wildcard MUST be accompanied by other data to its right (Only checks IANDNSNames)",
+  "zh": "通配符右侧必须有其他数据（仅检查 IAN 的 DNS 名称）",
+  "source": "社区共识检查"
+ },
+ "e_ian_dns_name_includes_null_char": {
+  "en": "DNSName MUST NOT include a null character",
+  "zh": "DNS 名称不得包含空字符",
+  "source": "社区共识检查"
+ },
+ "e_ian_dns_name_starts_with_period": {
+  "en": "DNSName MUST NOT start with a period",
+  "zh": "DNS 名称不得以句点开头",
+  "source": "社区共识检查"
+ },
+ "e_ian_wildcard_not_first": {
+  "en": "A wildcard MUST be in the first label of FQDN (ie not: www.*.com) (Only checks IANDNSNames)",
+  "zh": "通配符必须位于 FQDN 的第一个标签（不允许 www.*.com）（仅检查 IAN）",
+  "source": "社区共识检查"
+ },
+ "e_rsa_exp_negative": {
+  "en": "RSA public key exponent MUST be positive",
+  "zh": "RSA 公钥指数必须为正数",
+  "source": "社区共识检查"
+ },
+ "e_rsa_fermat_factorization": {
+  "en": "RSA key pairs that are too close to each other are susceptible to the Fermat Factorization",
+  "zh": "RSA 密钥对的素数过于接近易受费马分解攻击",
+  "source": "社区共识检查"
+ },
+ "e_rsa_no_public_key": {
+  "en": "The RSA public key should be present",
+  "zh": "RSA 公钥必须存在",
+  "source": "社区共识检查"
+ },
+ "e_san_bare_wildcard": {
+  "en": "A wildcard MUST be accompanied by other data to its right (Only checks DNSName)",
+  "zh": "通配符右侧必须有其他数据（仅检查 SAN 的 DNS 名称）",
+  "source": "社区共识检查"
+ },
+ "e_san_dns_name_includes_null_char": {
+  "en": "DNSName MUST NOT include a null character",
+  "zh": "DNS 名称不得包含空字符",
+  "source": "社区共识检查"
+ },
+ "e_san_dns_name_starts_with_period": {
+  "en": "DNSName MUST NOT start with a period",
+  "zh": "DNS 名称不得以句点开头",
+  "source": "社区共识检查"
+ },
+ "e_san_wildcard_not_first": {
+  "en": "A wildcard MUST be in the first label of FQDN (ie not: www.*.com) (Only checks DNSName)",
+  "zh": "通配符必须位于 FQDN 的第一个标签（不允许 www.*.com）（仅检查 SAN）",
+  "source": "社区共识检查"
+ },
+ "e_subj_contains_html_entities": {
+  "en": "Detects the presence of HTML entities (e.g. '&amp;') in the Subject, which probably shouldn't be there",
+  "zh": "检测 subject 中是否包含 HTML 实体（如 &amp;），这些通常不应存在",
+  "source": "社区共识检查"
+ },
+ "e_subj_country_not_uppercase": {
+  "en": "Alpha-2 country codes shall consist of LATIN CAPITAL LETTER A through LATIN CAPITAL LETTER Z",
+  "zh": "两位国家代码必须为大写拉丁字母",
+  "source": "社区共识检查"
+ },
+ "e_utf8_latin1_mixup": {
+  "en": "Checks for wrongly encoded diacritics due to UTF-8 mistaken for Latin-1",
+  "zh": "检测因将 UTF-8 误当作 Latin-1 导致的变音符号错误编码",
+  "source": "社区共识检查"
+ },
+ "e_utf8_replacement_char_in_subject": {
+  "en": "Detects the UTF8 Replacement Character anywhere in the Subject field",
+  "zh": "检测 subject 字段中是否包含 UTF-8 替换字符（U+FFFD）",
+  "source": "社区共识检查"
+ },
+ "e_validity_time_not_positive": {
+  "en": "Certificates MUST have a positive time for which they are valid",
+  "zh": "证书的有效时间必须为正（有效期长度大于 0）",
+  "source": "社区共识检查"
+ },
+ "n_contains_redacted_dnsname": {
+  "en": "Some precerts are redacted and of the form ?.?.a.com or *.?.a.com",
+  "zh": "部分预证书被编辑，形式为 ?.?.a.com 或 *.?.a.com（提示信息）",
+  "source": "社区共识检查"
+ },
+ "n_multiple_subject_rdn": {
+  "en": "Certificates typically do not have multiple attributes in a single RDN (subject). This may be an error.",
+  "zh": "证书通常在单个 RDN 中不含多个属性，这可能是错误（提示）",
+  "source": "社区共识检查"
+ },
+ "n_san_dns_name_duplicate": {
+  "en": "SAN DNSName contains duplicate values",
+  "zh": "SAN 的 DNS 名称包含重复值（提示）",
+  "source": "社区共识检查"
+ },
+ "n_san_iana_pub_suffix_empty": {
+  "en": "The domain SHOULD NOT have a bare public suffix",
+  "zh": "域名不应为裸的公共后缀（提示）",
+  "source": "社区共识检查"
+ },
+ "w_ian_iana_pub_suffix_empty": {
+  "en": "Domain SHOULD NOT have a bare public suffix",
+  "zh": "域名不应为裸的公共后缀（IAN，警告）",
+  "source": "社区共识检查"
+ },
+ "w_issuer_dn_leading_whitespace": {
+  "en": "AttributeValue in issuer RelativeDistinguishedName sequence SHOULD NOT have leading whitespace",
+  "zh": "issuer 的 RDN 属性值不应有前导空白",
+  "source": "社区共识检查"
+ },
+ "w_issuer_dn_trailing_whitespace": {
+  "en": "AttributeValue in issuer RelativeDistinguishedName sequence SHOULD NOT have trailing whitespace",
+  "zh": "issuer 的 RDN 属性值不应有尾随空白",
+  "source": "社区共识检查"
+ },
+ "w_multiple_issuer_rdn": {
+  "en": "Certificates should not have multiple attributes in a single RDN (issuer)",
+  "zh": "证书 issuer 不应在单个 RDN 中有多个属性",
+  "source": "社区共识检查"
+ },
+ "w_subject_dn_leading_whitespace": {
+  "en": "AttributeValue in subject RelativeDistinguishedName sequence SHOULD NOT have leading whitespace",
+  "zh": "subject 的 RDN 属性值不应有前导空白",
+  "source": "社区共识检查"
+ },
+ "w_subject_dn_trailing_whitespace": {
+  "en": "AttributeValue in subject RelativeDistinguishedName sequence SHOULD NOT have trailing whitespace",
+  "zh": "subject 的 RDN 属性值不应有尾随空白",
+  "source": "社区共识检查"
+ },
+ "e_duplicate_etsi_qcstatement": {
+  "en": "Checks for any duplicated ETSI QcStatements",
+  "zh": "检查是否存在重复的 ETSI QcStatement",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_etsi_natural_person_key_usage_correct_values": {
+  "en": "The key usage extension shall contain a valid key usage setting for ETSI certificates issued to natural persons",
+  "zh": "签发给自然人的 ETSI 证书，keyUsage 扩展必须包含有效的密钥用途设置",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_etsi_natural_person_key_usage_mandatory": {
+  "en": "The key usage extension shall be present for ETSI certificates issued to natural persons",
+  "zh": "签发给自然人的 ETSI 证书必须包含 keyUsage 扩展",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_etsi_present_qcs_critical": {
+  "en": "Checks that a QC Statement which contains any of the id-etsi-qcs-... QC Statements is not marked critical",
+  "zh": "含 id-etsi-qcs-... QC 语句的 QC Statement 不得标记为 critical",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_etsi_type_as_statem": {
+  "en": "Checks for erroneous QC Statement OID that actually are represented by ETSI ESI QC type OID.",
+  "zh": "检查是否误将 ETSI ESI QC 类型 OID 用作 QC 语句 OID",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_mandatory_etsi_statems": {
+  "en": "Checks that a QC Statement that contains at least one of the ETSI ESI statements, also features the set of mandatory ETSI ESI QC statements.",
+  "zh": "含至少一个 ETSI ESI 语句的 QC Statement 还必须包含 ETSI ESI 强制要求的 QC 语句集",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_pds_must_have_https_only": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcPDS contains a URL that uses the https scheme.",
+  "zh": "类型为 id-etsi-qcs-QcPDS 的 QC 语句中的 URL 必须使用 https 协议",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qccompliance_valid": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcCompliance has the correct form",
+  "zh": "类型为 id-etsi-qcs-QcCompliance 的 QC 语句格式必须正确",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qclimitvalue_valid": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcLimitValue has the correct form",
+  "zh": "类型为 id-etsi-qcs-QcLimitValue 的 QC 语句格式必须正确",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qcpds_valid": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcPDS has the correct form",
+  "zh": "类型为 id-etsi-qcs-QcPDS 的 QC 语句格式必须正确",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qcretentionperiod_valid": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcRetentionPeriod has the correct form",
+  "zh": "类型为 id-etsi-qcs-QcRetentionPeriod 的 QC 语句格式必须正确",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qcsscd_valid": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcSSCD has the correct form",
+  "zh": "类型为 id-etsi-qcs-QcSSCD 的 QC 语句格式必须正确",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qctype_oneonly": {
+  "en": "Checks that a QC Statement of the type Id-etsi-qcs-QcType features exactly one of the allowed QcType OIDs",
+  "zh": "Id-etsi-qcs-QcType 类型的 QC 语句必须恰好包含一个允许的 QcType OID",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qctype_smime": {
+  "en": "Checks that a QC Statement of the type Id-etsi-qcs-QcType features at least one of the types IdEtsiQcsQctEsign or IdEtsiQcsQctEseal, in case of an S/MIME certificate.",
+  "zh": "S/MIME 证书的 QcType 语句必须至少包含 ESign 或 ESeal 类型之一",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qctype_valid": {
+  "en": "Checks that a QC Statement of the type Id-etsi-qcs-QcType features a non-empty list of only the allowed QcType OIDs",
+  "zh": "Id-etsi-qcs-QcType 类型的 QC 语句必须为非空且只含允许的 QcType OID 列表",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "e_qcstatem_qctype_web": {
+  "en": "Checks that a QC Statement of the type Id-etsi-qcs-QcType features at least the type IdEtsiQcsQctWeb",
+  "zh": "QcType 类型的 QC 语句必须至少包含 IdEtsiQcsQctWeb 类型（网站认证）",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "w_etsi_natural_person_key_usage_preferred_values": {
+  "en": "The key usage extension should use specific key usage settings for ETSI certificates issued to natural persons",
+  "zh": "签发给自然人的 ETSI 证书应使用特定的 keyUsage 设置",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ },
+ "w_qcstatem_qcpds_lang_case": {
+  "en": "Checks that a QC Statement of the type id-etsi-qcs-QcPDS features a language code comprised of only lower case letters",
+  "zh": "id-etsi-qcs-QcPDS 类型 QC 语句的语言代码应全为小写字母",
+  "source": "ETSI 欧洲电子签名/合格证书（QC）"
+ }
+}

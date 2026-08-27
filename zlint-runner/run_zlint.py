@@ -49,6 +49,160 @@ RESULT_FILL = {
     "NA": "D9D9D9",      # 灰
 }
 
+# lint 名称 -> 中文含义（来源: zlint-detection-guide.md 详解）。
+# 未列出的名称会走 guess_desc() 关键词兜底翻译。
+LINT_DESC = {
+    # 1. 基础字段
+    "e_serial_number_not_positive": "序列号必须为正整数（不能为 0 或负数），且不超过 20 字节",
+    "e_cert_extensions_version_not_3": "含扩展的证书版本必须是 v3",
+    "e_cert_unique_identifier_version_not_2_or_3": "唯一标识符字段只在 v2/v3 中允许",
+    "e_cert_contains_unique_identifier": "不允许包含 subjectUniqueID/issuerUniqueID 字段",
+    "e_cert_ext_invalid_der": "扩展字段必须使用合法的 DER 编码",
+    "e_basic_constr_invalid_der": "BasicConstraints 扩展的 DER 编码必须合法",
+    "e_eku_critical_improperly": "部分扩展被错误地标记为 critical",
+    "e_ext_duplicate_extension": "同一 OID 扩展不允许重复出现",
+    "e_ext_cannot_be_empty_seq": "扩展值不允许是空序列",
+    # 2. 有效期
+    "e_sub_cert_valid_time_longer_than_398_days": "2020-09-01 后签发的 TLS 服务器证书有效期不得超过 398 天",
+    "w_sub_cert_valid_time_longer_than_825_days": "早期证书有效期不得超过 825 天（历史要求）",
+    "e_validity_time_not_positive": "证书有效期长度必须为正",
+    # 3. Subject / Issuer
+    "e_ca_subject_field_empty": "CA 证书的 Subject 不允许为空",
+    "e_ca_country_name_missing": "CA 证书必须有合法的国家代码",
+    "e_ca_country_name_invalid": "CA 证书的国家代码必须合法（2 字母 ISO）",
+    "e_ca_common_name_missing": "根 CA 证书必须包含 Common Name",
+    "e_ca_organization_name_missing": "CA 证书必须有组织名",
+    "e_ca_dns_name_invalid": "Subject CN 中的 DNS 名称必须合法",
+    "e_subject_contains_noninformational_value": "Subject 中不允许包含私人邮箱、电话等非机构信息",
+    "w_subject_common_name_included": "CN 不建议保留（应迁移到 SAN）",
+    "e_subject_common_name_not_from_san": "新规下 CN 应从 SAN 中复制，不允许独立设置",
+    "e_subject_contains_reserved_arp": "不允许包含保留的 ARPA 域名",
+    "e_subject_contains_reserved_ip": "不允许包含保留 IP 地址",
+    "e_cab_ov_requires_org": "OV 证书必须包含组织名",
+    "e_cab_iv_requires_personal_name": "IV（个人验证）证书必须有个人姓名",
+    "e_ca_multiple_reserved_policy_oids": "不允许同时使用多个 CABF 保留策略 OID",
+    # 4. DNS / SAN
+    "e_dnsname_label_too_long": "域名标签长度不得超过 63 字符",
+    "e_dnsname_contains_empty_label": "不允许空标签（如 foo..com）",
+    "e_dnsname_contains_bare_iana_suffix": "不允许裸 TLD（如只签 com）",
+    "e_dnsname_right_label_valid_tld": "最右侧标签必须是有效 TLD",
+    "e_dnsname_hyphen_in_sld": "SLD 中不允许连字符开头/结尾",
+    "e_dnsname_underscore_in_sld": "SLD 中不允许下划线",
+    "e_dnsname_underscore_in_trd": "三级域名中不允许下划线",
+    "e_dnsname_bad_character_in_label": "标签中不允许非法字符",
+    "e_dnsname_contains_prohibited_reserved_label": "不允许保留标签",
+    "e_dnsname_wildcard_left_of_public_suffix": "通配符必须覆盖整个公共后缀左侧（不允许 *.com）",
+    "e_dnsname_check_left_label_wildcard": "通配符 *. 只允许出现在最左侧标签",
+    "e_ext_san_dns_name_valid": "SAN 中的 DNS 名称必须可解析且符合规范",
+    "e_arpa_domain_not_allowed": "不允许使用 .arpa 保留域名",
+    # 5. 公钥 / 签名算法
+    "e_rsa_mod_less_than_2048_bits": "RSA 密钥长度不得小于 2048 位",
+    "e_rsa_public_exponent_too_small": "RSA 公钥指数 E 过小（应为 ≥ 65537 且为奇数）",
+    "e_rsa_public_exponent_not_odd": "RSA 公钥指数 E 必须为奇数",
+    "e_rsa_mod_not_odd": "RSA 模数必须是奇数",
+    "e_ecdsa_allowed_ku": "ECDSA 证书的 KeyUsage 必须符合规范",
+    "e_ecdsa_ee_invalid_ku": "ECDSA 终端实体证书的 KeyUsage 不合法",
+    "e_signature_algorithm_not_supported": "签名算法必须是已知/受支持的",
+    "w_rsa_public_exponent_too_small": "RSA 公钥指数过小的警告",
+    "e_dh_params_missing": "DH 证书必须包含 DH 参数",
+    "e_old_sub_cert_rsa_mod_less_than_1024_bits": "2014 年前签发证书 RSA 不得小于 1024 位",
+    # 6. 扩展
+    "e_basic_constraints_not_critical": "CA 证书的 BasicConstraints 必须标记为 critical",
+    "w_basic_constraints_not_critical": "叶子证书若含 BasicConstraints 也应 critical",
+    "e_is_ca": "根/中间 CA 必须 cA=TRUE",
+    "e_ca_key_usage_missing": "CA 证书必须包含 KeyUsage",
+    "e_ca_key_usage_not_critical": "CA 证书的 KeyUsage 必须 critical",
+    "e_ca_key_cert_sign_not_set": "CA 证书必须设置 keyCertSign 位",
+    "e_ca_crl_sign_not_set": "CA 证书必须设置 cRLSign 位",
+    "e_ca_digital_signature_not_set": "CA 证书必须设置 digitalSignature 位",
+    "e_sub_cert_key_usage_cert_sign": "叶子证书禁止设置 keyCertSign",
+    "e_sub_cert_eku_server_auth_client_auth": "不允许同时包含 serverAuth 和 clientAuth",
+    "e_subject_key_identifier_missing": "所有证书必须包含 SKI（主题密钥标识符）",
+    "w_subject_key_identifier_missing": "CA 证书必须包含 SKI（早期要求）",
+    "e_subject_key_identifier_not_20_bytes": "SKI 必须是 20 字节规范形式",
+    "e_ext_authority_key_identifier_no_key_identifier": "AKI 必须包含 keyIdentifier",
+    "e_ext_authority_key_identifier_critical": "AKI 不允许标记 critical",
+    "e_ca_akid_key_identifier_missing": "CA 证书 AKI 必须与签发者 SKI 匹配",
+    "e_aia_ocsp_must_have_http_only": "AIA 中 OCSP URL 必须仅为 HTTP",
+    "e_aia_ca_issuers_must_have_http_only": "AIA 中 caIssuers URL 必须仅为 HTTP",
+    "e_aia_must_contain_permitted_access_method": "AIA 必须包含允许的访问方法",
+    "e_aia_unique_locations": "AIA 中不允许重复位置",
+    "e_ext_aia_access_location_missing": "AIA 条目必须包含 location",
+    "e_ext_aia_marked_critical": "AIA 不允许 critical",
+    "e_crl_distrib_points_not_http": "CDP（CRL 分发点）必须为 HTTP",
+    "e_crl_distrib_points_marked_critical": "CDP 不允许 critical",
+    "e_crlissuer_must_not_be_present_in_cdp": "CDP 中不允许包含 cRLIssuer",
+    "w_distribution_point_incomplete": "DP 必须完整（name+reasons+cRLIssuer 一致）",
+    "e_ext_cert_policy_duplicate": "证书策略不允许重复",
+    "e_ext_cert_policy_disallowed_any_policy_qualifier": "anyPolicy 不允许带 qualifier",
+    "e_ext_cert_policy_contains_noticeref": "不允许使用 noticeRef（仅允许 CPS/explicitText）",
+    "e_empty_sct_list": "SCT 列表不允许为空",
+    "e_qcstatem_qccompliance_valid": "ETSI QcCompliance 声明必须格式正确",
+    "e_qcstatem_qclimitvalue_valid": "QC 限制值（金额限制）声明必须正确编码",
+    "e_qcstatem_qcretentionperiod_valid": "证书保留期声明必须合法",
+    "e_qcstatem_qcsscd_valid": "私钥存储在 SSCD 的声明必须合法",
+    # 7. CRL
+    "e_crl_missing_crl_number": "CRL 必须包含 CRL Number 扩展",
+    "e_crl_has_authority_key_identifier": "CRL 必须包含 AKI 扩展",
+    "e_crl_has_next_update": "CRL 必须包含 nextUpdate 字段",
+    "e_crl_empty_revoked_certificates": "CRL 中 revokedCertificates 不允许为空",
+    "e_crl_revoked_certificates_field_empty": "CRL 中 revokedCertificates 字段不允许为空",
+    "e_crl_revocation_time_not_after_this_update": "吊销时间不能晚于 thisUpdate",
+    "e_crl_valid_reason_codes": "吊销原因码必须合法（0-10）",
+    "e_cabf_crl_valid_reason_codes": "CABF 下吊销原因码必须合法",
+    "e_crl_sigalgo_missing_null_params": "CRL 签名算法的 RSA 参数必须包含 NULL",
+    "e_crl_number_range": "CRL Number 必须为非负整数且在 20 字节内",
+    "e_crl_next_update_invalid": "nextUpdate 必须晚于 thisUpdate",
+    "e_crl_extensions": "CRL 扩展必须合法（CABF BR 规定只能含指定扩展）",
+    "e_crl_auth_key_id_only_contains_keyid": "CRL 的 AKI 只能包含 keyIdentifier",
+    "e_cabf_crl_reason_code_not_critical": "吊销原因扩展不应 critical",
+    "e_crl_this_update_in_future": "thisUpdate 不能在未来",
+    # 10. Root Store
+    "e_tls_server_cert_valid_time_longer_than_398_days": "TLS 服务器证书有效期 ≤ 398 天",
+    "e_server_auth_eku": "服务器证书必须含 serverAuth EKU",
+}
+
+# 关键词兜底翻译（当 LINT_DESC 未精确命中时使用）
+_KEYWORDS = [
+    ("serial", "序列号"), ("version", "版本"), ("validity", "有效期"), ("utc", "UTC时间"),
+    ("generalized", "GeneralizedTime"), ("time", "时间"), ("subject", "主体(Subject)"),
+    ("issuer", "签发者(Issuer)"), ("common_name", "通用名称(CN)"), ("country", "国家"),
+    ("organization", "组织"), ("dn", "可分辨名称"), ("dns", "DNS名称"), ("san", "主题备用名(SAN)"),
+    ("ian", "签发者备用名(IAN)"), ("rsa", "RSA"), ("ecdsa", "ECDSA"), ("ec", "椭圆曲线"),
+    ("dsa", "DSA"), ("dh", "DH"), ("key", "密钥"), ("signature", "签名"), ("algorithm", "算法"),
+    ("mod", "模数"), ("exponent", "指数"), ("curve", "曲线"), ("ext", "扩展"), ("extension", "扩展"),
+    ("critical", "critical 标记"), ("policy", "策略"), ("policies", "策略"), ("ocsp", "OCSP"),
+    ("aia", "权威信息访问(AIA)"), ("crl", "证书吊销列表(CRL)"), ("sct", "证书透明(SCT)"),
+    ("qc", "合格证书(QC)"), ("skid", "主题密钥标识符(SKI)"), ("aki", "签发者密钥标识符(AKI)"),
+    ("cabf", "CA/B Forum"), ("mozilla", "Mozilla"), ("apple", "Apple"), ("chrome", "Chrome"),
+    ("ev", "扩展验证(EV)"), ("smime", "S/MIME"), ("code_sign", "代码签名"), ("ev_", "EV"),
+    ("ca", "证书颁发机构(CA)"), ("sub", "订阅/叶子"), ("ee", "终端实体"), ("root", "根证书"),
+    ("empty", "为空"), ("missing", "缺失"), ("invalid", "不合法"), ("duplicate", "重复"),
+    ("not_positive", "非正"), ("less_than", "过小"), ("longer_than", "过长"), ("must", "必须"),
+    ("not", "不"), ("contains", "包含"), ("allowed", "允许"), ("disallowed", "不允许"),
+    ("wildcard", "通配符"), ("label", "标签"), ("reserved", "保留"), ("bare", "裸"),
+    ("hyphen", "连字符"), ("underscore", "下划线"), ("bad_character", "非法字符"),
+    ("name", "名称"), ("cert", "证书"), ("number", "编号"), ("reason", "原因码"),
+    ("explicit_text", "显式文本"), ("qualifier", "限定符"), ("notice", "通知"),
+    ("length", "长度"), ("bytes", "字节"), ("range", "范围"), ("future", "未来"),
+    ("exponent_too_small", "指数过小"),
+]
+
+
+def guess_desc(name):
+    """对未在 LINT_DESC 中列出的 lint 名，用关键词做近似中文释义。"""
+    low = name.lower()
+    parts = [zh for en, zh in _KEYWORDS if en in low]
+    if parts:
+        prefix = "错误检查: " if name.startswith("e_") else (
+            "警告检查: " if name.startswith("w_") else "")
+        return prefix + "检查" + "".join(parts)
+    return ""
+
+
+def lint_desc(name):
+    return LINT_DESC.get(name) or guess_desc(name)
+
 
 def prompt_path(label, must_exist=True):
     """让用户输入一个路径，做基本的存在性/可读性检查。"""
@@ -81,12 +235,12 @@ def write_xlsx(base, data, cert_name=""):
             continue
         result = info.get("result", "")
         details = info.get("details", "") or ""
-        rows.append((name, result, RESULT_MEANING.get(result, result), details))
+        rows.append((name, result, RESULT_MEANING.get(result, result), details, lint_desc(name)))
 
     wb = Workbook()
     ws = wb.active
     ws.title = "检测结果"
-    headers = ["序号", "Lint 名称", "结果", "结果含义", "详情"]
+    headers = ["序号", "Lint 名称", "结果", "结果含义", "检测内容说明", "详情"]
     ws.append(headers)
     hdr_fill = PatternFill("solid", fgColor="305496")
     hdr_font = Font(bold=True, color="FFFFFF")
@@ -96,8 +250,8 @@ def write_xlsx(base, data, cert_name=""):
         cell.font = hdr_font
         cell.alignment = Alignment(vertical="center")
 
-    for i, (name, result, meaning, details) in enumerate(rows, 1):
-        ws.append([i, name, result, meaning, details])
+    for i, (name, result, meaning, details, desc) in enumerate(rows, 1):
+        ws.append([i, name, result, meaning, desc, details])
         fill = RESULT_FILL.get(result)
         if fill:
             ws.cell(row=i + 1, column=3).fill = PatternFill("solid", fgColor=fill)
@@ -108,6 +262,7 @@ def write_xlsx(base, data, cert_name=""):
     ws.column_dimensions["C"].width = 10
     ws.column_dimensions["D"].width = 40
     ws.column_dimensions["E"].width = 60
+    ws.column_dimensions["F"].width = 60
     ws.freeze_panes = "A2"
 
     xlsx_path = base + ".zlint.xlsx"
